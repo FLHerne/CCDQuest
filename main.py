@@ -319,8 +319,6 @@ def Explosion(Dynamite, Centrex, Centrey):
                 RealMap[Centrex+x, Centrey+y].collectableItem = None
                 if RealMap[Centrex+x, Centrey+y].image == WoodImage:
                     RealMap[Centrex+x, Centrey+y].image = WaterImage
-
-            
     Dynamite -= 1
     return Dynamite
     
@@ -375,11 +373,6 @@ def UpdateVisible():
     '''copy parts of of RealMap into map, as appropriate'''
     #CrossCheck()
     DiagonalCheck()
-
-    
-#def TestNeighbours(x, y, centreTileType):
-#	if (RealMap[x, y+1] != centreTileType) and RealMap[x+1, y] != centreTileType:
-#		return 
     
     
 def DrawTiles():
@@ -400,7 +393,6 @@ def DrawPlayer(drawSurface):
 
 def DrawHud(scores, drawSurface):
     '''Draw the heads-up display, with current information'''
-    #pygame.draw.rect(drawSurface, BLACK, (windowSize[0]-100, 0, 100, windowSize[1]))
     drawSurface.blit(HudImage, (windowSize[0]-100, 0, 100, windowSize[1]))
     TextBox.Print(drawSurface,
                   False,
