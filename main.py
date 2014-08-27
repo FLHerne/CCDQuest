@@ -252,7 +252,7 @@ def DiagonalCheck():
         for Dir1 in (-1, 1):                        # left/right or up/down
             for Dir2 in (-1, 1):                    # final division into octants
                 Base = 0                            # how far horizontally or vertically the test ray is from the player
-                while (Base < VISIBILITY and
+                while (abs(Base) < VISIBILITY and
                     RealMap[Pos[0]+(Base if horizontal else 0),
                         Pos[1]+(0 if horizontal else Base)].transparent):   # repeatedly test if a cell is transparent and within a bounding square
                     Base += Dir1
