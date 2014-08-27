@@ -40,7 +40,7 @@ windowSize = (740, 480)
 
 scores = {"coins" : 0,
     "chocolate" : 10000, 
-    "dynamite" : 0}
+    "dynamite" : 5}
 
 animCounter = 0
 animLength = 36
