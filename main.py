@@ -344,19 +344,15 @@ def HandleEvents(scores):
             if event.key == UP:
                 if not RealMap[Pos[0], Pos[1]-1].solid:	#We haven't collided with anthing
                     Pos[1] -= 1
-                    #scrollPos[1] -= BLOCKSIZE
             if event.key == DOWN:
                 if not RealMap[Pos[0], Pos[1]+1].solid:
                     Pos[1] += 1
-                    #scrollPos[1] += BLOCKSIZE
             if event.key == LEFT:
                 if not RealMap[Pos[0]-1, Pos[1]].solid:
                     Pos[0] -= 1
-                    #scrollPos[0] -= BLOCKSIZE
             if event.key == RIGHT:
                 if not RealMap[Pos[0]+1, Pos[1]].solid:
                     Pos[0] += 1
-                    #scrollPos[0] += BLOCKSIZE
             if event.key == BLAST and ExplosionValid(Pos[0], Pos[1], scores["dynamite"]):
                 scores["dynamite"] = Explosion(scores["dynamite"], Pos[0], Pos[1])
             if scores["chocolate"] >= 0:
