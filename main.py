@@ -68,19 +68,19 @@ else:
 
 # -----------------------------------------------------------------------------
 
-UnknownImage = pygame.image.load("tiles/Unknown.png")
+UnknownImage = pygame.image.load("tiles/Unknown.png")           # Used for tiles that must appear to be empty blank nothingness
 
-DamageImage = pygame.image.load("tiles/Damage.png")
-DamageImage = DamageImage.convert_alpha()
+DamageImage = pygame.image.load("tiles/Damage.png")             # An overlay for damaged (blown-up) tiles
+DamageImage = DamageImage.convert_alpha()                       # this image is transparent, so the alpha must be used too
 
-CoinImage = pygame.image.load("tiles/Coin.png")
-CoinImage = CoinImage.convert_alpha()
+CoinImage = pygame.image.load("tiles/Coin.png")                 # images for collectables
+CoinImage = CoinImage.convert_alpha()                           # collectables have transparent backgrounds
 ChocImage = pygame.image.load("tiles/Chocolate.png")
 ChocImage = ChocImage.convert_alpha()
 DynamiteImage = pygame.image.load("tiles/Dynamite.png")
 DynamiteImage = DynamiteImage.convert_alpha()
 
-WaterImage = pygame.image.load("tiles/Water.png")
+WaterImage = pygame.image.load("tiles/Water.png")               # images for terrain
 DeepWaterImage = pygame.image.load("tiles/DeepWater.png")
 RockImage = pygame.image.load("tiles/Rock.png")
 SpaceImage = pygame.image.load("tiles/Floor.png")
@@ -93,7 +93,7 @@ TreesImage = pygame.image.load("tiles/Trees.png")
 SandImage = pygame.image.load("tiles/Sand.png")
 SnowImage = pygame.image.load("tiles/Snow.png")
 
-collectablesImages = { 1 : CoinImage,
+collectablesImages = { 1 : CoinImage,                           # semi-enum for referencing collectable images
                        2 : ChocImage,
                        3 : DynamiteImage}
                         
