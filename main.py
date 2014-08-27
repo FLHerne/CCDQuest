@@ -325,7 +325,7 @@ def Explosion(Dynamite, Centrex, Centrey):
     Dynamite -= 1
     return Dynamite
     
-def testNeighbours(centrex, centrey, cellType):
+def TestArea(centrex, centrey, cellType):
     count = 0
     for x in (-1, 0, 1):
         for y in (-1, 0, 1):
@@ -333,9 +333,11 @@ def testNeighbours(centrex, centrey, cellType):
                 count +=1
     return count
     
+    
 def updateContextMessages(x, y, currentMessage):
-    if testNeighbours(x, y, GLASS) >= 1:
+    if TestArea(x, y, GLASS) >= 1:
         currentMessage = "You peer through the window"
+
     return currentMessage
     
     
