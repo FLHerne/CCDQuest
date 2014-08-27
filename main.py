@@ -186,20 +186,25 @@ class StartPosUndefined(Exception):
 
 # -----------------------------------------------------------------------------
 
-RealMap = {}
-for x in range(1-VISIBILITY, worldSize[0]+1+VISIBILITY):	#Make the edge of the world a wall
-    for y in range(1-VISIBILITY, worldSize[1]+1+VISIBILITY):
-        RealMap[x, y] = WALL
+class ModDict(dict):
+    def __init__(self, *args):
+        dict.__init__(self, args)
 
+    def __getitem__(self, key):
+        return dict.__getitem__(self, (key[0] % worldSize[0], key[1] % worldSize[1]))
+
+    def __setitem__(self, key, val):
+        dict.__setitem__(self, (key[0] % worldSize[0], key[1] % worldSize[1]), val)
 
 groundMap = pygame.PixelArray(ground)
 collectablesMap = pygame.PixelArray(collectables)
 
-for x in range(1, worldSize[0]+1):
-    for y in range(1, worldSize[1]+1):
-        groundColour = ground.unmap_rgb(groundMap[x-1,y-1])
+RealMap = ModDict()
+for x in range(0, worldSize[0]):
+    for y in range(0, worldSize[1]):
+        groundColour = ground.unmap_rgb(groundMap[x,y])
         RealMap[x, y] = UnMapGroundColour(groundColour)
-        collectableColour = collectables.unmap_rgb(collectablesMap[x-1,y-1])
+        collectableColour = collectables.unmap_rgb(collectablesMap[x,y])
         RealMap[x, y] = Cell(RealMap[x, y].image,
                              RealMap[x, y].transparent,
                              RealMap[x, y].solid,
@@ -217,22 +222,15 @@ for x in range(1, worldSize[0]+1):
             Pos = [x, y]
 if Pos is None:
     raise StartPosUndefined()
-
-for x in (1, worldSize[0]+1):
-    for y in range(1, worldSize[1]+1):
-        RealMap[x, y] = UKWALL
-for x in range(1, worldSize[0]+1):
-    for y in (1, worldSize[1]+1):
-        RealMap[x, y] = UKWALL
     
 del groundMap
 del collectablesMap
 
 # -----------------------------------------------------------------------------
 
-Map = {}						#Initialise visible map with unknowness
-for x in range(1-VISIBILITY, worldSize[0]+1+VISIBILITY):
-    for y in range(1-VISIBILITY, worldSize[1]+1+VISIBILITY):
+Map = ModDict()						#Initialise visible map with unknowness
+for x in range(-VISIBILITY, worldSize[0]+VISIBILITY):
+    for y in range(-VISIBILITY, worldSize[1]+VISIBILITY):
         Map[x, y] = UNKNOWN
         
 # -----------------------------------------------------------------------------
