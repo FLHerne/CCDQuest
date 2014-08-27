@@ -428,6 +428,17 @@ def DrawHud(scores, drawSurface):
                   ChocAmountString,
                   True,
                   [False, windowSize[1]])
+
+    pygame.transform.scale(world, (90, (world.get_height()/world.get_width())*90), miniWorld)
+    drawSurface.blit(miniWorld, (windowSize[0]-90, 302))
+    miniWorldScale = 90.0/(worldSize[0]*BLOCKSIZE)
+    pygame.draw.rect(drawSurface,
+                     PLAYER1,
+                     ((windowSize[0]-90)-(scrollPos[0]*miniWorldScale),
+                      302-               (scrollPos[1]*miniWorldScale),
+                      1+ (windowSize[0]-100)*miniWorldScale,
+                      1+ windowSize[1]*miniWorldScale),
+                     1)
     if scores["chocolate"] <= 0:
         TextBox.Print(drawSurface,
                       False,
@@ -450,16 +461,6 @@ def DrawHud(scores, drawSurface):
                       "You found all the coins!",
                       True,
                       [True, windowSize[1]])
-    pygame.transform.scale(world, (90, (world.get_height()/world.get_width())*90), miniWorld)
-    drawSurface.blit(miniWorld, (windowSize[0]-90, 302))
-    miniWorldScale = 90.0/(worldSize[0]*BLOCKSIZE)
-    pygame.draw.rect(drawSurface,
-                     PLAYER1,
-                     ((windowSize[0]-90)-(scrollPos[0]*miniWorldScale),
-                      302-               (scrollPos[1]*miniWorldScale),
-                      1+ (windowSize[0]-100)*miniWorldScale,
-                      1+ windowSize[1]*miniWorldScale),
-                     1)
 
 
 def animCountUpdate(animCounter):
