@@ -255,7 +255,7 @@ def DiagonalCheck():
                 while (abs(Base) < VISIBILITY and
                     RealMap[Pos[0]+(Base if horizontal else 0),
                         Pos[1]+(0 if horizontal else Base)].transparent):   # repeatedly test if a cell is transparent and within a bounding square
-                    Base += Dir1
+                    Base += Dir1       #FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
                     if horizontal:
                         x = Pos[0] + Base
                         y = Pos[1]
@@ -272,7 +272,7 @@ def DiagonalCheck():
                             y += Dir1
                         Map[x, y] = RealMap[x, y]                                                           # make visible
                     Map[x, y] = RealMap[x, y]                                                               # make the first opaque cell visible too
-                    #Base += Dir1		#FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
+                    #Base += Dir1       FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
                 Map[x, y] = RealMap[x, y]
                 
 # -----------------------------------------------------------------------------
