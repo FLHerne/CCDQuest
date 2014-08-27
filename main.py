@@ -308,7 +308,6 @@ def ExplosionValid(x, y, Dynamite):
         
 def Explosion(Dynamite, Centrex, Centrey):
     '''Clear a 3x3 square using a stick of dynamite'''
-    #RealMap[Centrex, Centrey] = SPACE
     DebugPrint("Explosion at " + str(Centrex) + ", " + str(Centrey))
     for x in (-1, 0, 1):                                                        # explosion forms a 3x3 square
         for y in (-1, 0, 1):
