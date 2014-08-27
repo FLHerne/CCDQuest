@@ -295,6 +295,10 @@ def CrossCheck():
         
 def ExplosionValid(x, y, Dynamite):
     '''test if an explosion is currently possible'''
+    if (Dynamite <=0):
+        DebugPrint("No Dynamite:")
+    if not RealMap[x, y].destructable:
+        DebugPrint("Current cell cannot be destroyed")
     if (Dynamite > 0 and RealMap[x, y].destructable):
         DebugPrint("Explosion possible")
     else:
