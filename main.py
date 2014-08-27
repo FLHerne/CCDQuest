@@ -40,7 +40,7 @@ windowSize = (740, 480)
 
 scores = {"coins" : 0,
     "chocolate" : 10000, 
-    "dynamite" : 5}
+    "dynamite" : 15}
 
 animCounter = 0
 animLength = 36
@@ -101,7 +101,7 @@ class Cell:
     COIN = 1
     CHOCOLATE = 2
     DYNAMITE = 3
-    def __init__(self, image, trans, solid, difficulty, reDraw = False, collectableItem = None, top = False):
+    def __init__(self, image, trans, solid, difficulty, reDraw = False, collectableItem = None, top = False, destructable = True):
         self.image = image
         self.transparent = trans
         self.solid = solid
@@ -110,6 +110,7 @@ class Cell:
         self.alwaysRedraw = reDraw
         self.collectableItem = collectableItem
         self.top = top
+        self.destructable = destructable
     def draw(self, drawSurface, x, y):
         drawSurface.blit(self.image, ((x*BLOCKSIZE)-BLOCKSIZE, (y*BLOCKSIZE)-BLOCKSIZE))
         if self.damaged:
@@ -117,7 +118,7 @@ class Cell:
         if self.collectableItem != None:
             drawSurface.blit(collectablesImages[self.collectableItem], ((x*BLOCKSIZE)-BLOCKSIZE, (y*BLOCKSIZE)-BLOCKSIZE))
                    
-DEEPWATER = Cell(DeepWaterImage, True, True, 25, True)
+DEEPWATER = Cell(DeepWaterImage, True, True, 25, True, destructable = False)
 GLASS = Cell(GlassImage, True, True, 3)
 GRASS = Cell(GrassImage, True, False, 2)
 ROCK = Cell(RockImage, True, False, 5)
@@ -128,7 +129,7 @@ TREES = Cell(TreesImage, False, False, 8, False, None, True)
 UNKNOWN = Cell(UnknownImage, True, True, 3)
 WALL = Cell(WallImage, False, True, 3)
 UKWALL = Cell(UnknownImage, False, True, 3)
-WATER = Cell(WaterImage, True, False, 25, True)
+WATER = Cell(WaterImage, True, False, 25, True, None, False, False)
 MARSH = Cell(MarshImage, True, False, 20, True)
 WOOD = Cell(WoodImage, True, False, 2)
 
@@ -205,7 +206,8 @@ for x in range(1, worldSize[0]+1):
                              RealMap[x, y].difficulty,
                              RealMap[x, y].alwaysRedraw,
                              UnMapCollectablesColour(collectableColour),
-                             RealMap[x, y].top
+                             RealMap[x, y].top,
+                             RealMap[x, y].destructable
                              )
             
         if RealMap[x, y].collectableItem == Cell.COIN:
@@ -293,19 +295,22 @@ def CrossCheck():
         
 def ExplosionValid(x, y, Dynamite):
     '''test if an explosion is currently possible'''
-    return (Dynamite > 0 and RealMap[x, y] != WATER and RealMap[x, y] != DEEPWATER)
+    if (Dynamite > 0 and RealMap[x, y].destructable):
+        DebugPrint("Explosion possible")
+    else:
+        DebugPrint("Explosion not possible")
+    return (Dynamite > 0 and RealMap[x, y].destructable)
         
         
 def Explosion(Dynamite, Centrex, Centrey):
     '''Clear a 3x3 square using a stick of dynamite'''
     #RealMap[Centrex, Centrey] = SPACE
     DebugPrint("Explosion at " + str(Centrex) + ", " + str(Centrey))
-    for x in (-1, 0, 1):
+    for x in (-1, 0, 1):                                                        # explosion forms a 3x3 square
         for y in (-1, 0, 1):
             if RealMap[Centrex+x, Centrey+y].collectableItem == Cell.DYNAMITE:
-                Explosion(1, Centrex+x, Centrey+y)
-            if RealMap[Centrex+x, Centrey+y] != WATER:
-                #RealMap[Centrex+x, Centrey+y] = SPACE
+                Explosion(1, Centrex+x, Centrey+y)                              # dynamite sets off neighbouring dynamite
+            if RealMap[Centrex+x, Centrey+y].destructable:
                 RealMap[Centrex+x, Centrey+y] = Cell(RealMap[Centrex+x, Centrey+y].image, True, False, 4)
                 RealMap[Centrex+x, Centrey+y].damaged = True
                 RealMap[Centrex+x, Centrey+y].collectableItem = None
