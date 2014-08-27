@@ -143,6 +143,7 @@ HudImage = HudImage.convert_alpha()
 # -----------------------------------------------------------------------------
 
 def UnMapGroundColour(colour):
+    '''take colours from the ground image, and return the appropriate predefined cell'''
     if colour == BLACK:
         return WALL
     elif colour == GREY:
@@ -169,6 +170,7 @@ def UnMapGroundColour(colour):
         return SPACE
 
 def UnMapCollectablesColour(colour):
+    '''take colours from the collectables image, and set cell properties'''
     if colour == YELLOW:
         return Cell.COIN
     elif colour == BROWN:
@@ -290,6 +292,7 @@ def CrossCheck():
 
         
 def ExplosionValid(x, y, Dynamite):
+    '''test if an explosion is currently possible'''
     return (Dynamite > 0 and RealMap[x, y] != WATER and RealMap[x, y] != DEEPWATER)
         
         
@@ -315,9 +318,10 @@ def Explosion(Dynamite, Centrex, Centrey):
     
     
 def CollectItems(scores):
+    '''deal with any colllectables found on the current cell'''
         if RealMap[Pos[0], Pos[1]].collectableItem == Cell.COIN:	#Have we just walked into a coin
-            scores["coins"] += 1			#Increment score counter
-            RealMap[Pos[0], Pos[1]].collectableItem = None	#Remove coin
+            scores["coins"] += 1                                    #Increment score counter
+            RealMap[Pos[0], Pos[1]].collectableItem = None	        #Remove coin
             DebugPrint("Collected a coin")
         if RealMap[Pos[0], Pos[1]].collectableItem == Cell.DYNAMITE:
             scores["dynamite"] += 1
@@ -331,6 +335,7 @@ def CollectItems(scores):
 
         
 def HandleEvents(scores):
+    '''respond to user input'''
     quitting = False
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -363,6 +368,7 @@ def HandleEvents(scores):
     
     
 def UpdateVisible():
+    '''copy parts of of RealMap into map, as appropriate'''
     #CrossCheck()
     DiagonalCheck()
 
@@ -373,12 +379,14 @@ def UpdateVisible():
     
     
 def DrawTiles():
+    '''call the draw routine for every cell that might be visible'''
     for x in range(Pos[0]-VISIBILITY, Pos[0]+VISIBILITY+1):
         for y in range(Pos[1]-VISIBILITY, Pos[1]+VISIBILITY+1):
             Map[x, y].draw(world, x, y)
         
 
 def DrawPlayer(drawSurface):
+    '''draw the player as a blinking circle'''
     if (animCounter%9 != 0) and (Map[Pos[0], Pos[1]].top == False):
         x = (Pos[0]*BLOCKSIZE)-int(BLOCKSIZE/2)
         y = (Pos[1]*BLOCKSIZE)-int(BLOCKSIZE/2)
@@ -387,6 +395,7 @@ def DrawPlayer(drawSurface):
 
 
 def DrawHud(scores, drawSurface):
+    '''Draw the heads-up display, with current information'''
     #pygame.draw.rect(drawSurface, BLACK, (windowSize[0]-100, 0, 100, windowSize[1]))
     drawSurface.blit(HudImage, (windowSize[0]-100, 0, 100, windowSize[1]))
     TextBox.Print(drawSurface,
@@ -448,6 +457,7 @@ def DrawHud(scores, drawSurface):
 
 
 def animCountUpdate(animCounter):
+    '''a looping counter for crude animation'''
     if animCounter >= animLength:
         animCounter = 0
     else:
@@ -455,15 +465,19 @@ def animCountUpdate(animCounter):
     return animCounter
     
 def setup():
+    '''to be used at the beginning of the programme'''
     pass
 
 def loop():
+    '''to be used repeatedly'''
     pass
 
 def mapWorldToScreen(scrollPos):
+    '''show part of the world on screen'''
     window.blit(world, scrollPos)
 
 def calculateScrollPos(scrollPos):
+    '''scroll towards the correct position'''
     playerx = (Pos[0]*BLOCKSIZE)+scrollPos[0]
     playery = (Pos[1]*BLOCKSIZE)+scrollPos[1]
     if playerx+(VISIBILITY*BLOCKSIZE) > windowSize[0]-100:         #too far right
