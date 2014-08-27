@@ -3,4 +3,16 @@ CCDQuest
 
 A grid-based adventure game featuring coins, chocolate and dynamite
 
-Hey! Look! I can edit the readme file!
+Aims:
+    Collect coins
+    Collect chocolate
+    Collect dynamite
+    
+Basic concepts:
+    Dynamite can be used to destroy obsacles, but not in water
+    Each tile requires you to eat some chocolate - more for more difficult tiles
+    You must not run out of chocolate
+    
+Notes
+    There is no way to win the game currently, apart from collecting all the coins and then feeling smug.
+    This is a potential target application for FLHerne's mapgen
