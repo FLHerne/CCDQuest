@@ -22,10 +22,10 @@ def ErrorPrint(Message):            # Messages which indicate that something has
 
 # -----------------------------------------------------------------------------
         
-#groundFile = 'World7-ground.png'				#Image to use as map
-#collectablesFile = 'World7-collectables.png'
-groundFile = 'map/latestRandomGen.png'                #Image to use as map
-collectablesFile = 'map/blank.png'
+groundFile = 'map/World7-ground.png'				#Image to use as map
+collectablesFile = 'map/World7-collectables.png'
+#groundFile = 'map/latestRandomGen.png'                #Image to use as map
+#collectablesFile = 'map/blank.png'
 
 ground = pygame.image.load(groundFile)
 collectables = pygame.image.load(collectablesFile)
