@@ -24,8 +24,8 @@ def ErrorPrint(Message):
         
 #groundFile = 'World7-ground.png'				#Image to use as map
 #collectablesFile = 'World7-collectables.png'
-groundFile = 'latestRandomGen.png'                #Image to use as map
-collectablesFile = 'blank.png'
+groundFile = 'map/latestRandomGen.png'                #Image to use as map
+collectablesFile = 'map/blank.png'
 
 ground = pygame.image.load(groundFile)
 collectables = pygame.image.load(collectablesFile)
@@ -68,30 +68,30 @@ else:
 
 # -----------------------------------------------------------------------------
 
-UnknownImage = pygame.image.load("Unknown.png")
+UnknownImage = pygame.image.load("tiles/Unknown.png")
 
-DamageImage = pygame.image.load("Damage.png")
+DamageImage = pygame.image.load("tiles/Damage.png")
 DamageImage = DamageImage.convert_alpha()
 
-CoinImage = pygame.image.load("Coin.png")
+CoinImage = pygame.image.load("tiles/Coin.png")
 CoinImage = CoinImage.convert_alpha()
-ChocImage = pygame.image.load("Chocolate.png")
+ChocImage = pygame.image.load("tiles/Chocolate.png")
 ChocImage = ChocImage.convert_alpha()
-DynamiteImage = pygame.image.load("Dynamite.png")
+DynamiteImage = pygame.image.load("tiles/Dynamite.png")
 DynamiteImage = DynamiteImage.convert_alpha()
 
-WaterImage = pygame.image.load("Water.png")
-DeepWaterImage = pygame.image.load("DeepWater.png")
-RockImage = pygame.image.load("Rock.png")
-SpaceImage = pygame.image.load("Floor.png")
-GrassImage = pygame.image.load("Grass.png")
-MarshImage = pygame.image.load("Marsh.png")
-WallImage = pygame.image.load("Wall.png")
-GlassImage = pygame.image.load("Glass.png")
-WoodImage = pygame.image.load("Wood.png")
-TreesImage = pygame.image.load("Trees.png")
-SandImage = pygame.image.load("Sand.png")
-SnowImage = pygame.image.load("Snow.png")
+WaterImage = pygame.image.load("tiles/Water.png")
+DeepWaterImage = pygame.image.load("tiles/DeepWater.png")
+RockImage = pygame.image.load("tiles/Rock.png")
+SpaceImage = pygame.image.load("tiles/Floor.png")
+GrassImage = pygame.image.load("tiles/Grass.png")
+MarshImage = pygame.image.load("tiles/Marsh.png")
+WallImage = pygame.image.load("tiles/Wall.png")
+GlassImage = pygame.image.load("tiles/Glass.png")
+WoodImage = pygame.image.load("tiles/Wood.png")
+TreesImage = pygame.image.load("tiles/Trees.png")
+SandImage = pygame.image.load("tiles/Sand.png")
+SnowImage = pygame.image.load("tiles/Snow.png")
 
 collectablesImages = { 1 : CoinImage,
                        2 : ChocImage,
