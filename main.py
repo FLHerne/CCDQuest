@@ -308,15 +308,18 @@ def ExplosionValid(x, y, Dynamite):
         
 def Explosion(Dynamite, Centrex, Centrey):
     '''Clear a 3x3 square using a stick of dynamite'''
+    global currentMessage
     DebugPrint("Explosion at " + str(Centrex) + ", " + str(Centrey))
+    currentMessage = "BANG!"
     for x in (-1, 0, 1):                                                        # explosion forms a 3x3 square
         for y in (-1, 0, 1):
+            RealMap[Centrex, Centrey].collectableItem = None
             if RealMap[Centrex+x, Centrey+y].collectableItem == Cell.DYNAMITE:
                 Explosion(1, Centrex+x, Centrey+y)                              # dynamite sets off neighbouring dynamite
+                currentMessage = "The dynamite sets of a chain reaction"
             if RealMap[Centrex+x, Centrey+y].destructable:
                 RealMap[Centrex+x, Centrey+y] = Cell(RealMap[Centrex+x, Centrey+y].image, True, False, 4)
                 RealMap[Centrex+x, Centrey+y].damaged = True
-                RealMap[Centrex+x, Centrey+y].collectableItem = None
                 if RealMap[Centrex+x, Centrey+y].image == WoodImage:
                     RealMap[Centrex+x, Centrey+y].image = WaterImage
     Dynamite -= 1
@@ -325,18 +328,22 @@ def Explosion(Dynamite, Centrex, Centrey):
     
 def CollectItems(scores):
     '''deal with any colllectables found on the current cell'''
+    global currentMessage
     if RealMap[Pos[0], Pos[1]].collectableItem == Cell.COIN:    #Have we just walked into a coin
         scores["coins"] += 1                                    #Increment score counter
         RealMap[Pos[0], Pos[1]].collectableItem = None	        #Remove coin
         DebugPrint("Collected a coin")
+        currentMessage = "You find a gold coin"
     if RealMap[Pos[0], Pos[1]].collectableItem == Cell.DYNAMITE:
         scores["dynamite"] += 1
         RealMap[Pos[0], Pos[1]].collectableItem = None
         DebugPrint("Collected a stick of dynamite")
+        currentMessage = "You collect some dynamite"
     if RealMap[Pos[0], Pos[1]].collectableItem == Cell.CHOCOLATE:
         scores["chocolate"] += 50
         RealMap[Pos[0], Pos[1]].collectableItem = None
         DebugPrint("Collected a bar of chocolate")
+        currentMessage = "You pick up the bar of chocolate"
     return scores
 
         
@@ -390,7 +397,18 @@ def DrawPlayer(drawSurface):
         radius = int(BLOCKSIZE/2)
         pygame.draw.circle(drawSurface, PLAYER1, (x, y), radius)
 
-
+def DrawMessageBox(drawSurface):
+    TextBox.Print(drawSurface,
+                    False,
+                    0, windowSize[1]-20,
+                    windowSize[0]-100,
+                    BLACK,
+                    WHITE,
+                    'Arial', HUDFONTSIZE/2,
+                    currentMessage,
+                    True,
+                    [True, 20])    
+        
 def DrawHud(scores, drawSurface):
     '''Draw the heads-up display, with current information'''
     drawSurface.blit(HudImage, (windowSize[0]-100, 0, 100, windowSize[1]))
@@ -508,6 +526,7 @@ def calculateScrollPos(scrollPos):
     
 scrollPos = ((-BLOCKSIZE*Pos[0])+((windowSize[0]-100)/2), (-BLOCKSIZE*Pos[1])+(windowSize[1]/2))
 DebugPrint("Initial scrollPos" + str(scrollPos))
+currentMessage = "You find yourself in the middle of a strange and unknown landscape"
   
 quitting = False
 while not quitting:
@@ -518,6 +537,7 @@ while not quitting:
     DrawPlayer(world)
     scrollPos = calculateScrollPos(scrollPos)
     mapWorldToScreen(scrollPos)
+    DrawMessageBox(window)
     DrawHud(scores, window)
     animCounter = animCountUpdate(animCounter)
     pygame.display.update()
