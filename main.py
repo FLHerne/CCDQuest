@@ -319,19 +319,19 @@ def Explosion(Dynamite, Centrex, Centrey):
     
 def CollectItems(scores):
     '''deal with any colllectables found on the current cell'''
-        if RealMap[Pos[0], Pos[1]].collectableItem == Cell.COIN:	#Have we just walked into a coin
-            scores["coins"] += 1                                    #Increment score counter
-            RealMap[Pos[0], Pos[1]].collectableItem = None	        #Remove coin
-            DebugPrint("Collected a coin")
-        if RealMap[Pos[0], Pos[1]].collectableItem == Cell.DYNAMITE:
-            scores["dynamite"] += 1
-            RealMap[Pos[0], Pos[1]].collectableItem = None
-            DebugPrint("Collected a stick of dynamite")
-        if RealMap[Pos[0], Pos[1]].collectableItem == Cell.CHOCOLATE:
-            scores["chocolate"] += 50
-            RealMap[Pos[0], Pos[1]].collectableItem = None
-            DebugPrint("Collected a bar of chocolate")
-        return scores
+    if RealMap[Pos[0], Pos[1]].collectableItem == Cell.COIN:    #Have we just walked into a coin
+        scores["coins"] += 1                                    #Increment score counter
+        RealMap[Pos[0], Pos[1]].collectableItem = None	        #Remove coin
+        DebugPrint("Collected a coin")
+    if RealMap[Pos[0], Pos[1]].collectableItem == Cell.DYNAMITE:
+        scores["dynamite"] += 1
+        RealMap[Pos[0], Pos[1]].collectableItem = None
+        DebugPrint("Collected a stick of dynamite")
+    if RealMap[Pos[0], Pos[1]].collectableItem == Cell.CHOCOLATE:
+        scores["chocolate"] += 50
+        RealMap[Pos[0], Pos[1]].collectableItem = None
+        DebugPrint("Collected a bar of chocolate")
+    return scores
 
         
 def HandleEvents(scores):
