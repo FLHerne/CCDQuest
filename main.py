@@ -12,11 +12,11 @@ from colours import *
 printDebug = True
 printError = True
 
-def DebugPrint(Message):
+def DebugPrint(Message):            # Messages which the end-user need not see, but may be useful to the developer
     if printDebug:
         print(Message)
         
-def ErrorPrint(Message):
+def ErrorPrint(Message):            # Messages which indicate that something has gone wrong
     if printError:
         print(Message)
 
