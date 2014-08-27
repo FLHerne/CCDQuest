@@ -239,17 +239,17 @@ miniWorld = pygame.transform.scale(world, (90, (world.get_height()/world.get_wid
 
 # -----------------------------------------------------------------------------
 
-def DiagonalCheck():
-    Map[Pos[0], Pos[1]] = RealMap[Pos[0], Pos[1]]
+def DiagonalCheck():                                # Test visibility along diagronals away from player
     x = Pos[0]
     y = Pos[1]
-    for horizontal in (True, False):
-        for Dir1 in (-1, 1):
-            for Dir2 in (-1, 1):
-                Base = 0
+    Map[x, y] = RealMap[x, y]                       # make the currently occupied cell visible
+    for horizontal in (True, False):                # horizontal and vertical
+        for Dir1 in (-1, 1):                        # left/right or up/down
+            for Dir2 in (-1, 1):                    # final division into octants
+                Base = 0                            # how far horizontally or vertically the test ray is from the player
                 while (Base < VISIBILITY and
                     RealMap[Pos[0]+(Base if horizontal else 0),
-                        Pos[1]+(0 if horizontal else Base)].transparent): 
+                        Pos[1]+(0 if horizontal else Base)].transparent):   # repeatedly test if a cell is transparent and within a bounding square
                     Base += Dir1
                     if horizontal:
                         x = Pos[0] + Base
@@ -258,15 +258,15 @@ def DiagonalCheck():
                         x = Pos[0]
                         y = Pos[1] + Base
                     Map[x, y] = RealMap[x, y]
-                    while RealMap[x, y].transparent and ((Pos[1]-y)**2) + ((Pos[0]-x)**2) <= VISIBILITY**2:
-                        if horizontal:
+                    while RealMap[x, y].transparent and ((Pos[1]-y)**2) + ((Pos[0]-x)**2) <= VISIBILITY**2: # test in bounding circle
+                        if horizontal:                                                                      # move diagonally
                             x += Dir1
                             y += Dir2
                         else:
                             x += Dir2
                             y += Dir1
-                        Map[x, y] = RealMap[x, y]
-                    Map[x, y] = RealMap[x, y]
+                        Map[x, y] = RealMap[x, y]                                                           # make visible
+                    Map[x, y] = RealMap[x, y]                                                               # make the first opaque cell visible too
                     #Base += Dir1		#FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
                 Map[x, y] = RealMap[x, y]
                 
