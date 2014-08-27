@@ -416,7 +416,7 @@ def DrawMessageBox(drawSurface):
     TextBox.Print(drawSurface,
                     False,
                     0, windowSize[1]-20,
-                    windowSize[0]-100,
+                    windowSize[0]-95,
                     BLACK,
                     WHITE,
                     'Arial', HUDFONTSIZE/2,
