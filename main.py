@@ -325,6 +325,19 @@ def Explosion(Dynamite, Centrex, Centrey):
     Dynamite -= 1
     return Dynamite
     
+def testNeighbours(centrex, centrey, cellType):
+    count = 0
+    for x in (-1, 0, 1):
+        for y in (-1, 0, 1):
+            if RealMap[centrex+x, centrey+y] == cellType:
+                count +=1
+    return count
+    
+def updateContextMessages(x, y, currentMessage):
+    if testNeighbours(x, y, GLASS) >= 1:
+        currentMessage = "You peer through the window"
+    return currentMessage
+    
     
 def CollectItems(scores):
     '''deal with any colllectables found on the current cell'''
@@ -537,6 +550,7 @@ while not quitting:
     DrawPlayer(world)
     scrollPos = calculateScrollPos(scrollPos)
     mapWorldToScreen(scrollPos)
+    currentMessage = updateContextMessages(Pos[0], Pos[1], currentMessage)
     DrawMessageBox(window)
     DrawHud(scores, window)
     animCounter = animCountUpdate(animCounter)
