@@ -351,6 +351,9 @@ def HandleEvents(scores):
             if event.key == RIGHT:
                 if not RealMap[Pos[0]+1, Pos[1]].solid:
                     Pos[0] += 1
+            # Prevent loonies from causing an int overflow by travelling millions of tiles
+            Pos[0] = Pos[0] % worldSize[0]
+            Pos[1] = Pos[1] % worldSize[1]
             if event.key == BLAST and ExplosionValid(Pos[0], Pos[1], scores["dynamite"]):
                 scores["dynamite"] = Explosion(scores["dynamite"], Pos[0], Pos[1])
             if scores["chocolate"] >= 0:
@@ -473,6 +476,5 @@ while not quitting:
     DrawHud(scores, window)
     animCounter = animCountUpdate(animCounter)
     pygame.display.update()
-            
 pygame.quit()
 sys.exit()
