@@ -37,6 +37,7 @@ VISIBILITY = 15                     #How far can you see in an approximate circl
 HUDFONTSIZE = 20                    # Score counter etc
 totalCoins = 0                      #How many coins are there in total? (initialise)
 windowSize = (740, 480)
+viewBlocks = (int((windowSize[0]-100)/BLOCKSIZE), int(windowSize[1]/BLOCKSIZE))
 
 scores = {"coins" : 0,
     "chocolate" : 10000, 
@@ -46,7 +47,6 @@ animCounter = 0
 animLength = 36
 
 window = pygame.display.set_mode(windowSize)
-world = pygame.Surface((worldSize[0]*BLOCKSIZE, worldSize[1]*BLOCKSIZE))
 
 # -----------------------------------------------------------------------------
 
@@ -112,11 +112,11 @@ class Cell:
         self.top = top
         self.destructable = destructable
     def draw(self, drawSurface, x, y):
-        drawSurface.blit(self.image, ((x*BLOCKSIZE)-BLOCKSIZE, (y*BLOCKSIZE)-BLOCKSIZE))
+        drawSurface.blit(self.image, (x, y))
         if self.damaged:
-            drawSurface.blit(DamageImage, ((x*BLOCKSIZE)-BLOCKSIZE, (y*BLOCKSIZE)-BLOCKSIZE))
+            drawSurface.blit(DamageImage, (x, y))
         if self.collectableItem != None:
-            drawSurface.blit(collectablesImages[self.collectableItem], ((x*BLOCKSIZE)-BLOCKSIZE, (y*BLOCKSIZE)-BLOCKSIZE))
+            drawSurface.blit(collectablesImages[self.collectableItem], (x, y))
                    
 DEEPWATER = Cell(DeepWaterImage, True, True, 25, True, destructable = False)
 GLASS = Cell(GlassImage, True, True, 3)
@@ -238,8 +238,6 @@ for x in range(1-VISIBILITY, worldSize[0]+1+VISIBILITY):
 # -----------------------------------------------------------------------------
         
 window.fill(GREY)
-world.fill(GREY)
-miniWorld = pygame.transform.scale(world, (90, (world.get_height()/world.get_width())*90))
 
 # -----------------------------------------------------------------------------
 
@@ -380,19 +378,16 @@ def UpdateVisible():
     
     
 def DrawTiles():
-    '''call the draw routine for every cell that might be visible'''
-    for x in range(Pos[0]-VISIBILITY, Pos[0]+VISIBILITY+1):
-        for y in range(Pos[1]-VISIBILITY, Pos[1]+VISIBILITY+1):
-            Map[x, y].draw(world, x, y)
-        
+    tlX = int(Pos[0]-viewBlocks[0]/2)
+    tlY = int(Pos[1]-viewBlocks[1]/2)
+    for x in range(0, viewBlocks[0]):
+        for y in range(0, viewBlocks[1]):
+            Map[tlX+x, tlY+y].draw(window, x*BLOCKSIZE, y*BLOCKSIZE)
 
-def DrawPlayer(drawSurface):
+def DrawPlayer():
     '''draw the player as a blinking circle'''
     if (animCounter%9 != 0) and (Map[Pos[0], Pos[1]].top == False):
-        x = (Pos[0]*BLOCKSIZE)-int(BLOCKSIZE/2)
-        y = (Pos[1]*BLOCKSIZE)-int(BLOCKSIZE/2)
-        radius = int(BLOCKSIZE/2)
-        pygame.draw.circle(drawSurface, PLAYER1, (x, y), radius)
+        pygame.draw.circle(window, PLAYER1, (viewBlocks[0]/2*BLOCKSIZE+BLOCKSIZE/2, viewBlocks[1]/2*BLOCKSIZE+BLOCKSIZE/2), int(BLOCKSIZE/2))
 
 
 def DrawHud(scores, drawSurface):
@@ -445,16 +440,16 @@ def DrawHud(scores, drawSurface):
                       True,
                       [True, windowSize[1]])
     
-    pygame.transform.scale(world, (90, (world.get_height()/world.get_width())*90), miniWorld)
-    drawSurface.blit(miniWorld, (windowSize[0]-90, 302))
-    miniWorldScale = 90.0/(worldSize[0]*BLOCKSIZE)
-    pygame.draw.rect(drawSurface,
-                     PLAYER1,
-                     ((windowSize[0]-90)-(scrollPos[0]*miniWorldScale),
-                      302-               (scrollPos[1]*miniWorldScale),
-                      1+ (windowSize[0]-100)*miniWorldScale,
-                      1+ windowSize[1]*miniWorldScale),
-                     1)
+    #pygame.transform.scale(world, (90, (world.get_height()/world.get_width())*90), miniWorld)
+    #drawSurface.blit(miniWorld, (windowSize[0]-90, 302))
+    #miniWorldScale = 90.0/(worldSize[0]*BLOCKSIZE)
+    #pygame.draw.rect(drawSurface,
+                     #PLAYER1,
+                     #((windowSize[0]-90)-(scrollPos[0]*miniWorldScale),
+                      #302-               (scrollPos[1]*miniWorldScale),
+                      #1+ (windowSize[0]-100)*miniWorldScale,
+                      #1+ windowSize[1]*miniWorldScale),
+                     #1)
 
 
 def animCountUpdate(animCounter):
@@ -472,36 +467,6 @@ def setup():
 def loop():
     '''to be used repeatedly'''
     pass
-
-def mapWorldToScreen(scrollPos):
-    '''show part of the world on screen'''
-    window.blit(world, scrollPos)
-
-def calculateScrollPos(scrollPos):
-    '''scroll towards the correct position'''
-    playerx = (Pos[0]*BLOCKSIZE)+scrollPos[0]
-    playery = (Pos[1]*BLOCKSIZE)+scrollPos[1]
-    if playerx+(VISIBILITY*BLOCKSIZE) > windowSize[0]-100:         #too far right
-        scrollStep = (abs((playerx+(VISIBILITY*BLOCKSIZE)) - (windowSize[0]-100)) / 2) +1
-        scrollPos = (scrollPos[0]-scrollStep, scrollPos[1])
-        DebugPrint("Scrolled Left" + str(scrollPos))
-    if playerx-(VISIBILITY*BLOCKSIZE) < 0:                         #too far left
-        scrollStep = (abs((playerx-(VISIBILITY*BLOCKSIZE))) / 2) +1
-        scrollPos = (scrollPos[0]+scrollStep, scrollPos[1])
-        DebugPrint("Scrolled right" + str(scrollPos))
-    if playery+(VISIBILITY*BLOCKSIZE) > windowSize[1]:             #too far down
-        scrollStep = (abs((playery+(VISIBILITY*BLOCKSIZE)) - windowSize[1]) / 2) +1
-        scrollPos = (scrollPos[0], scrollPos[1]-scrollStep)
-        DebugPrint("Scrolled up" + str(scrollPos))
-    if playery-(VISIBILITY*BLOCKSIZE) < 0:                         #too far up
-        scrollStep = (abs((playery-(VISIBILITY*BLOCKSIZE))) / 2) +1
-        scrollPos = (scrollPos[0], scrollPos[1]+scrollStep)
-        DebugPrint("Scrolled down" + str(scrollPos))
-
-    return scrollPos
-    
-scrollPos = ((-BLOCKSIZE*Pos[0])+((windowSize[0]-100)/2), (-BLOCKSIZE*Pos[1])+(windowSize[1]/2))
-DebugPrint("Initial scrollPos" + str(scrollPos))
   
 quitting = False
 while not quitting:
@@ -509,9 +474,7 @@ while not quitting:
     quitting, scores = HandleEvents(scores)
     UpdateVisible()
     DrawTiles()
-    DrawPlayer(world)
-    scrollPos = calculateScrollPos(scrollPos)
-    mapWorldToScreen(scrollPos)
+    DrawPlayer()
     DrawHud(scores, window)
     animCounter = animCountUpdate(animCounter)
     pygame.display.update()
