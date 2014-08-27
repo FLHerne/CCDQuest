@@ -239,7 +239,8 @@ miniWorld = pygame.transform.scale(world, (90, (world.get_height()/world.get_wid
 
 # -----------------------------------------------------------------------------
 
-def DiagonalCheck():                                # Test visibility along diagronals away from player
+def DiagonalCheck():
+    '''Test visibility along (offset) diagronals away from player'''
     x = Pos[0]
     y = Pos[1]
     Map[x, y] = RealMap[x, y]                       # make the currently occupied cell visible
@@ -274,13 +275,13 @@ def DiagonalCheck():                                # Test visibility along diag
 
 def CrossCheck():
     '''Check visibility straight up, down, left and right'''
-    for i in (-1, 1):				#Horizontal
-        X = 0
-        while RealMap[(X*i)+Pos[0], Pos[1]].transparent and X < VISIBILITY:
-            Map[(X*i)+Pos[0], Pos[1]] = RealMap[(X*i)+Pos[0], Pos[1]]
-            X += 1
-        Map[(X*i)+Pos[0], Pos[1]] = RealMap[(X*i)+Pos[0], Pos[1]]
-    for i in (-1, 1):				#Vertical
+    for i in (-1, 1):                                                           # Horizontally left and right
+        X = 0                                                                   # start at the player      
+        while RealMap[(X*i)+Pos[0], Pos[1]].transparent and X < VISIBILITY:     # if transparent and within bounding range
+            Map[(X*i)+Pos[0], Pos[1]] = RealMap[(X*i)+Pos[0], Pos[1]]           # make visible
+            X += 1                                                              # move away from player
+        Map[(X*i)+Pos[0], Pos[1]] = RealMap[(X*i)+Pos[0], Pos[1]]               # make final cell visible
+    for i in (-1, 1):                                                           # Repeat as above, but vertically
         Y = 0
         while RealMap[Pos[0], (Y*i)+Pos[1]].transparent and Y < VISIBILITY:
             Map[Pos[0], (Y*i)+Pos[1]] = RealMap[Pos[0], (Y*i)+Pos[1]]
