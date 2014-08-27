@@ -439,7 +439,17 @@ def DrawHud(scores, drawSurface):
                       "You ran out of chocolate!",
                       True,
                       [True, windowSize[1]])
-    
+    if scores["coins"] >= totalCoins:
+        TextBox.Print(drawSurface,
+                      False,
+                      0, 0,
+                      windowSize[0],
+                      BLACK,
+                      WHITE,
+                      'Arial', HUDFONTSIZE*2,
+                      "You found all the coins!",
+                      True,
+                      [True, windowSize[1]])
     pygame.transform.scale(world, (90, (world.get_height()/world.get_width())*90), miniWorld)
     drawSurface.blit(miniWorld, (windowSize[0]-90, 302))
     miniWorldScale = 90.0/(worldSize[0]*BLOCKSIZE)
