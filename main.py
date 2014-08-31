@@ -316,7 +316,7 @@ def Explosion(Dynamite, Centrex, Centrey):
             RealMap[Centrex, Centrey].collectableItem = None
             if RealMap[Centrex+x, Centrey+y].collectableItem == Cell.DYNAMITE:
                 Explosion(1, Centrex+x, Centrey+y)                              # dynamite sets off neighbouring dynamite
-                currentMessage = "The dynamite sets of a chain reaction"
+                currentMessage = "The dynamite sets off a chain reaction"
             if RealMap[Centrex+x, Centrey+y].destructable:
                 RealMap[Centrex+x, Centrey+y] = Cell(RealMap[Centrex+x, Centrey+y].image, True, False, 4)
                 RealMap[Centrex+x, Centrey+y].damaged = True
