@@ -3,6 +3,7 @@
 import pygame
 import sys
 import time
+import copy
 import TextBox
 
 from colours import *
@@ -198,18 +199,9 @@ collectablesMap = pygame.PixelArray(collectables)
 for x in range(1, worldSize[0]+1):
     for y in range(1, worldSize[1]+1):
         groundColour = ground.unmap_rgb(groundMap[x-1,y-1])
-        RealMap[x, y] = UnMapGroundColour(groundColour)
+        RealMap[x, y] = copy.copy(UnMapGroundColour(groundColour))
         collectableColour = collectables.unmap_rgb(collectablesMap[x-1,y-1])
-        RealMap[x, y] = Cell(RealMap[x, y].image,
-                             RealMap[x, y].transparent,
-                             RealMap[x, y].solid,
-                             RealMap[x, y].difficulty,
-                             RealMap[x, y].alwaysRedraw,
-                             UnMapCollectablesColour(collectableColour),
-                             RealMap[x, y].top,
-                             RealMap[x, y].destructable
-                             )
-            
+        RealMap[x, y].collectableItem = UnMapCollectablesColour(collectableColour)
         if RealMap[x, y].collectableItem == Cell.COIN:
             totalCoins += 1
         if collectableColour == START:
