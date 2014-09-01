@@ -328,7 +328,10 @@ def TestArea(centrex, centrey, cellType):
 def updateContextMessages(x, y, currentMessage):
     if TestArea(x, y, GLASS) >= 1:
         currentMessage = "You peer through the window"
-
+    if RealMap[x, y].top == True:
+        currentMessage = "You stumble blindly through the darkness"
+    if RealMap[x, y].destructable == False:
+        currentMessage = "Explosives won't work in this"
     return currentMessage
     
     
