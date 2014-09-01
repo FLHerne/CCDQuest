@@ -328,15 +328,17 @@ def TestArea(centrex, centrey, cellType):
     
     
 def updateContextMessages(x, y, currentMessage):
-    
     if TestArea(x, y, GLASS) >= 1:
         currentMessage = "You peer through the window"
     if RealMap[x, y].top:
         currentMessage = "You stumble blindly through the darkness"
     if RealMap[x, y].damaged and moved:
         currentMessage = "The debris is unstable underfoot"
-    if random.randint(0, 500) < RealMap[x, y].difficulty:
-        currentMessage = "Is this " + str(RealMap[x, y].name) + " safe?"
+    if newTerrain:
+        if (random.randint(0, 50) < RealMap[x, y].difficulty):
+            currentMessage = "Is this " + str(RealMap[x, y].name) + " safe?"
+        else:
+            currentMessage = "You reach some " + str(RealMap[x, y].name)
     return currentMessage
     
     
@@ -363,6 +365,9 @@ def CollectItems(scores):
         
 def HandleEvents(scores, moved):
     '''respond to user input'''
+    global oldTerrainName
+    global newTerrain
+    newTerrain = False
     quitting = False
     moved = False
     for event in pygame.event.get():
@@ -391,6 +396,11 @@ def HandleEvents(scores, moved):
                 scores["chocolate"] -= Map[Pos[0], Pos[1]].difficulty
             else:
                 quitting = True
+    newTerrainName = RealMap[Pos[0], Pos[1]].name
+    if newTerrainName != oldTerrainName:
+        newTerrain = True
+        DebugPrint("Terrain type change")
+    oldTerrainName = newTerrainName
     scores = CollectItems(scores)
     return quitting, scores, moved
     
@@ -547,6 +557,9 @@ scrollPos = ((-BLOCKSIZE*Pos[0])+((windowSize[0]-100)/2), (-BLOCKSIZE*Pos[1])+(w
 DebugPrint("Initial scrollPos" + str(scrollPos))
 currentMessage = "You find yourself in the middle of a strange and unknown landscape"
 moved = False
+newTerrain = False
+oldTerrainName = "paving"
+
   
 quitting = False
 while not quitting:
