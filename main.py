@@ -103,7 +103,7 @@ class Cell:
     COIN = 1
     CHOCOLATE = 2
     DYNAMITE = 3
-    def __init__(self, image, trans, solid, difficulty, name = "place", collectableItem = None, top = False, destructable = True):
+    def __init__(self, image, trans, solid, difficulty, name = "UNNAMED TERRAIN", collectableItem = None, top = False, destructable = True):
         self.image = image
         self.transparent = trans
         self.solid = solid
