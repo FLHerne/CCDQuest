@@ -335,6 +335,14 @@ def TestArea(centrex, centrey, name):
 def updateContextMessages(x, y, currentMessage):
     if TestArea(x, y, "window") > 1:
         currentMessage = "You peer through the window"
+    elif TestArea(x, y, "snow") > 3:
+        currentMessage = "The snow looks cold"
+    elif TestArea(x, y, "water") > 3:
+        currentMessage = "The water looks wet"
+    elif TestArea(x, y, "forrest") > 2:
+        currentMessage = "The trees look foreboding"
+    elif TestArea(x, y, "forrest") > 4:
+        currentMessage = "You are surrounded by trees"
     if RealMap[x, y].top:
         currentMessage = "You stumble blindly through the darkness"
     if RealMap[x, y].temperature < 15:
