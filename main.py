@@ -3,6 +3,7 @@
 import pygame
 import sys
 import time
+import copy
 import TextBox
 
 from colours import *
@@ -22,10 +23,10 @@ def ErrorPrint(Message):            # Messages which indicate that something has
 
 # -----------------------------------------------------------------------------
         
-#groundFile = 'World7-ground.png'				#Image to use as map
-#collectablesFile = 'World7-collectables.png'
-groundFile = 'map/latestRandomGen.png'                #Image to use as map
-collectablesFile = 'map/blank.png'
+groundFile = 'map/World7-ground.png'				#Image to use as map
+collectablesFile = 'map/World7-collectables.png'
+#groundFile = 'map/latestRandomGen.png'                #Image to use as map
+#collectablesFile = 'map/blank.png'
 
 ground = pygame.image.load(groundFile)
 collectables = pygame.image.load(collectablesFile)
@@ -203,22 +204,13 @@ class ModDict(dict):
 groundMap = pygame.PixelArray(ground)
 collectablesMap = pygame.PixelArray(collectables)
 
-RealMap = ModDict()
-for x in range(0, worldSize[0]):
-    for y in range(0, worldSize[1]):
-        groundColour = ground.unmap_rgb(groundMap[x,y])
-        RealMap[x, y] = UnMapGroundColour(groundColour)
-        collectableColour = collectables.unmap_rgb(collectablesMap[x,y])
-        RealMap[x, y] = Cell(RealMap[x, y].image,
-                             RealMap[x, y].transparent,
-                             RealMap[x, y].solid,
-                             RealMap[x, y].difficulty,
-                             RealMap[x, y].alwaysRedraw,
-                             UnMapCollectablesColour(collectableColour),
-                             RealMap[x, y].top,
-                             RealMap[x, y].destructable
-                             )
-            
+
+for x in range(1, worldSize[0]+1):
+    for y in range(1, worldSize[1]+1):
+        groundColour = ground.unmap_rgb(groundMap[x-1,y-1])
+        RealMap[x, y] = copy.copy(UnMapGroundColour(groundColour))
+        collectableColour = collectables.unmap_rgb(collectablesMap[x-1,y-1])
+        RealMap[x, y].collectableItem = UnMapCollectablesColour(collectableColour)
         if RealMap[x, y].collectableItem == Cell.COIN:
             totalCoins += 1
         if collectableColour == START:
@@ -248,7 +240,7 @@ def DiagonalCheck():
                 while (abs(Base) < VISIBILITY and
                     RealMap[Pos[0]+(Base if horizontal else 0),
                         Pos[1]+(0 if horizontal else Base)].transparent):   # repeatedly test if a cell is transparent and within a bounding square
-                    Base += Dir1
+                    Base += Dir1       #FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
                     if horizontal:
                         x = Pos[0] + Base
                         y = Pos[1]
@@ -263,10 +255,10 @@ def DiagonalCheck():
                         else:
                             x += Dir2
                             y += Dir1
-                        RealMap[x, y].explored = True                                                           # make visible
-                    RealMap[x, y].explored = True                                                               # make the first opaque cell visible too
-                    #Base += Dir1		#FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
-                RealMap[x, y].explored = True
+                        Map[x, y] = RealMap[x, y]                                                           # make visible
+                    Map[x, y] = RealMap[x, y]                                                               # make the first opaque cell visible too
+                    #Base += Dir1       FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
+                Map[x, y] = RealMap[x, y]
                 
 # -----------------------------------------------------------------------------
 
@@ -288,6 +280,10 @@ def DiagonalCheck():
         
 def ExplosionValid(x, y, Dynamite):
     '''test if an explosion is currently possible'''
+    if (Dynamite <=0):
+        DebugPrint("No Dynamite:")
+    if not RealMap[x, y].destructable:
+        DebugPrint("Current cell cannot be destroyed")
     if (Dynamite > 0 and RealMap[x, y].destructable):
         DebugPrint("Explosion possible")
     else:
@@ -297,38 +293,57 @@ def ExplosionValid(x, y, Dynamite):
         
 def Explosion(Dynamite, Centrex, Centrey):
     '''Clear a 3x3 square using a stick of dynamite'''
-    #RealMap[Centrex, Centrey] = SPACE
+    global currentMessage
     DebugPrint("Explosion at " + str(Centrex) + ", " + str(Centrey))
+    currentMessage = "BANG!"
     for x in (-1, 0, 1):                                                        # explosion forms a 3x3 square
         for y in (-1, 0, 1):
+            RealMap[Centrex, Centrey].collectableItem = None
             if RealMap[Centrex+x, Centrey+y].collectableItem == Cell.DYNAMITE:
                 Explosion(1, Centrex+x, Centrey+y)                              # dynamite sets off neighbouring dynamite
+                currentMessage = "The dynamite sets of a chain reaction"
             if RealMap[Centrex+x, Centrey+y].destructable:
                 RealMap[Centrex+x, Centrey+y] = Cell(RealMap[Centrex+x, Centrey+y].image, True, False, 4)
                 RealMap[Centrex+x, Centrey+y].damaged = True
-                RealMap[Centrex+x, Centrey+y].collectableItem = None
                 if RealMap[Centrex+x, Centrey+y].image == WoodImage:
                     RealMap[Centrex+x, Centrey+y].image = WaterImage
-
-            
     Dynamite -= 1
     return Dynamite
+    
+def TestArea(centrex, centrey, cellType):
+    count = 0
+    for x in (-1, 0, 1):
+        for y in (-1, 0, 1):
+            if RealMap[centrex+x, centrey+y] == cellType:
+                count +=1
+    return count
+    
+    
+def updateContextMessages(x, y, currentMessage):
+    if TestArea(x, y, GLASS) >= 1:
+        currentMessage = "You peer through the window"
+
+    return currentMessage
     
     
 def CollectItems(scores):
     '''deal with any colllectables found on the current cell'''
+    global currentMessage
     if RealMap[Pos[0], Pos[1]].collectableItem == Cell.COIN:    #Have we just walked into a coin
         scores["coins"] += 1                                    #Increment score counter
         RealMap[Pos[0], Pos[1]].collectableItem = None	        #Remove coin
         DebugPrint("Collected a coin")
+        currentMessage = "You find a gold coin"
     if RealMap[Pos[0], Pos[1]].collectableItem == Cell.DYNAMITE:
         scores["dynamite"] += 1
         RealMap[Pos[0], Pos[1]].collectableItem = None
         DebugPrint("Collected a stick of dynamite")
+        currentMessage = "You collect some dynamite"
     if RealMap[Pos[0], Pos[1]].collectableItem == Cell.CHOCOLATE:
         scores["chocolate"] += 50
         RealMap[Pos[0], Pos[1]].collectableItem = None
         DebugPrint("Collected a bar of chocolate")
+        currentMessage = "You pick up the bar of chocolate"
     return scores
 
         
@@ -368,11 +383,6 @@ def UpdateVisible():
     '''copy parts of of RealMap into map, as appropriate'''
     #CrossCheck()
     DiagonalCheck()
-
-    
-#def TestNeighbours(x, y, centreTileType):
-#	if (RealMap[x, y+1] != centreTileType) and RealMap[x+1, y] != centreTileType:
-#		return 
     
     
 def DrawTiles():
@@ -387,10 +397,20 @@ def DrawPlayer():
     if (animCounter%9 != 0) and (RealMap[Pos[0], Pos[1]].top == False):
         pygame.draw.circle(window, PLAYER1, (viewBlocks[0]/2*BLOCKSIZE+BLOCKSIZE/2, viewBlocks[1]/2*BLOCKSIZE+BLOCKSIZE/2), int(BLOCKSIZE/2))
 
-
+def DrawMessageBox(drawSurface):
+    TextBox.Print(drawSurface,
+                    False,
+                    0, windowSize[1]-20,
+                    windowSize[0]-95,
+                    BLACK,
+                    WHITE,
+                    'Arial', HUDFONTSIZE/2,
+                    currentMessage,
+                    True,
+                    [True, 20])    
+        
 def DrawHud(scores, drawSurface):
     '''Draw the heads-up display, with current information'''
-    #pygame.draw.rect(drawSurface, BLACK, (windowSize[0]-100, 0, 100, windowSize[1]))
     drawSurface.blit(HudImage, (windowSize[0]-100, 0, 100, windowSize[1]))
     TextBox.Print(drawSurface,
                   False,
@@ -426,6 +446,17 @@ def DrawHud(scores, drawSurface):
                   ChocAmountString,
                   True,
                   [False, windowSize[1]])
+
+    pygame.transform.scale(world, (90, (world.get_height()/world.get_width())*90), miniWorld)
+    drawSurface.blit(miniWorld, (windowSize[0]-90, 302))
+    miniWorldScale = 90.0/(worldSize[0]*BLOCKSIZE)
+    pygame.draw.rect(drawSurface,
+                     PLAYER1,
+                     ((windowSize[0]-90)-(scrollPos[0]*miniWorldScale),
+                      302-               (scrollPos[1]*miniWorldScale),
+                      1+ (windowSize[0]-100)*miniWorldScale,
+                      1+ windowSize[1]*miniWorldScale),
+                     1)
     if scores["chocolate"] <= 0:
         TextBox.Print(drawSurface,
                       False,
@@ -437,17 +468,17 @@ def DrawHud(scores, drawSurface):
                       "You ran out of chocolate!",
                       True,
                       [True, windowSize[1]])
-    
-    #pygame.transform.scale(world, (90, (world.get_height()/world.get_width())*90), miniWorld)
-    #drawSurface.blit(miniWorld, (windowSize[0]-90, 302))
-    #miniWorldScale = 90.0/(worldSize[0]*BLOCKSIZE)
-    #pygame.draw.rect(drawSurface,
-                     #PLAYER1,
-                     #((windowSize[0]-90)-(scrollPos[0]*miniWorldScale),
-                      #302-               (scrollPos[1]*miniWorldScale),
-                      #1+ (windowSize[0]-100)*miniWorldScale,
-                      #1+ windowSize[1]*miniWorldScale),
-                     #1)
+    if scores["coins"] >= totalCoins:
+        TextBox.Print(drawSurface,
+                      False,
+                      0, 0,
+                      windowSize[0],
+                      BLACK,
+                      WHITE,
+                      'Arial', HUDFONTSIZE*2,
+                      "You found all the coins!",
+                      True,
+                      [True, windowSize[1]])
 
 
 def animCountUpdate(animCounter):
@@ -465,6 +496,37 @@ def setup():
 def loop():
     '''to be used repeatedly'''
     pass
+
+def mapWorldToScreen(scrollPos):
+    '''show part of the world on screen'''
+    window.blit(world, scrollPos)
+
+def calculateScrollPos(scrollPos):
+    '''scroll towards the correct position'''
+    playerx = (Pos[0]*BLOCKSIZE)+scrollPos[0]
+    playery = (Pos[1]*BLOCKSIZE)+scrollPos[1]
+    if playerx+(VISIBILITY*BLOCKSIZE) > windowSize[0]-100:         #too far right
+        scrollStep = (abs((playerx+(VISIBILITY*BLOCKSIZE)) - (windowSize[0]-100)) / 2) +1
+        scrollPos = (scrollPos[0]-scrollStep, scrollPos[1])
+        DebugPrint("Scrolled Left" + str(scrollPos))
+    if playerx-(VISIBILITY*BLOCKSIZE) < 0:                         #too far left
+        scrollStep = (abs((playerx-(VISIBILITY*BLOCKSIZE))) / 2) +1
+        scrollPos = (scrollPos[0]+scrollStep, scrollPos[1])
+        DebugPrint("Scrolled right" + str(scrollPos))
+    if playery+(VISIBILITY*BLOCKSIZE) > windowSize[1]:             #too far down
+        scrollStep = (abs((playery+(VISIBILITY*BLOCKSIZE)) - windowSize[1]) / 2) +1
+        scrollPos = (scrollPos[0], scrollPos[1]-scrollStep)
+        DebugPrint("Scrolled up" + str(scrollPos))
+    if playery-(VISIBILITY*BLOCKSIZE) < 0:                         #too far up
+        scrollStep = (abs((playery-(VISIBILITY*BLOCKSIZE))) / 2) +1
+        scrollPos = (scrollPos[0], scrollPos[1]+scrollStep)
+        DebugPrint("Scrolled down" + str(scrollPos))
+
+    return scrollPos
+    
+scrollPos = ((-BLOCKSIZE*Pos[0])+((windowSize[0]-100)/2), (-BLOCKSIZE*Pos[1])+(windowSize[1]/2))
+DebugPrint("Initial scrollPos" + str(scrollPos))
+currentMessage = "You find yourself in the middle of a strange and unknown landscape"
   
 quitting = False
 while not quitting:
@@ -472,7 +534,11 @@ while not quitting:
     quitting, scores = HandleEvents(scores)
     UpdateVisible()
     DrawTiles()
-    DrawPlayer()
+    DrawPlayer(world)
+    scrollPos = calculateScrollPos(scrollPos)
+    mapWorldToScreen(scrollPos)
+    currentMessage = updateContextMessages(Pos[0], Pos[1], currentMessage)
+    DrawMessageBox(window)
     DrawHud(scores, window)
     animCounter = animCountUpdate(animCounter)
     pygame.display.update()
