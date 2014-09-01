@@ -335,7 +335,7 @@ def updateContextMessages(x, y, currentMessage):
         currentMessage = "You stumble blindly through the darkness"
     if RealMap[x, y].damaged and moved:
         currentMessage = "The debris is unstable underfoot"
-    if random.randint(0, 200) < RealMap[x, y].difficulty:
+    if random.randint(0, 500) < RealMap[x, y].difficulty:
         currentMessage = "Is this " + str(RealMap[x, y].name) + " safe?"
     return currentMessage
     
