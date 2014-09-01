@@ -5,6 +5,7 @@ import sys
 import time
 import copy
 import TextBox
+import random
 
 from colours import *
 
@@ -327,6 +328,7 @@ def TestArea(centrex, centrey, cellType):
     
     
 def updateContextMessages(x, y, currentMessage):
+    
     if TestArea(x, y, GLASS) >= 1:
         currentMessage = "You peer through the window"
     if RealMap[x, y].top:
@@ -335,6 +337,8 @@ def updateContextMessages(x, y, currentMessage):
         currentMessage = "Explosives won't work in this"
     if RealMap[x, y].damaged and moved:
         currentMessage = "The debris is unstable underfoot"
+    if random.randint(0, 100) > 99:
+        currentMessage = "Is this " + str(RealMap[x, y].name) + " safe?"
     return currentMessage
     
     
