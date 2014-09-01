@@ -31,8 +31,7 @@ collectablesFile = 'map/World7-collectables.png'
 
 ground = pygame.image.load(groundFile)
 collectables = pygame.image.load(collectablesFile)
-#worldSize = ground.get_rect().size
-worldSize = [100, 100]
+worldSize = ground.get_rect().size
 
 worldSize = [worldSize[0], worldSize[1]]               #Size of image - FIXME
 BLOCKSIZE = 8                       #Size of each square in the grid
@@ -42,7 +41,7 @@ totalCoins = 0                      #How many coins are there in total? (initial
 windowSize = (740, 480)
 
 scores = {"coins" : 0,
-    "chocolate" : 100000, 
+    "chocolate" : 10000, 
     "dynamite" : 15}
 
 animCounter = 0
@@ -374,19 +373,19 @@ def HandleEvents(scores, moved):
             quitting = True
         if event.type == pygame.KEYDOWN:
             if event.key == UP:
-                if True:#not RealMap[Pos[0], Pos[1]-1].solid: #We haven't collided with anthing
+                if not RealMap[Pos[0], Pos[1]-1].solid: #We haven't collided with anthing
                     Pos[1] -= 1
                     moved = True
             if event.key == DOWN:
-                if True:#not RealMap[Pos[0], Pos[1]+1].solid:
+                if not RealMap[Pos[0], Pos[1]+1].solid:
                     Pos[1] += 1
                     moved = True
             if event.key == LEFT:
-                if True:#not RealMap[Pos[0]-1, Pos[1]].solid:
+                if not RealMap[Pos[0]-1, Pos[1]].solid:
                     Pos[0] -= 1
                     moved = True
             if event.key == RIGHT:
-                if True:#not RealMap[Pos[0]+1, Pos[1]].solid:
+                if not RealMap[Pos[0]+1, Pos[1]].solid:
                     Pos[0] += 1
                     moved = True
             if event.key == BLAST and ExplosionValid(Pos[0], Pos[1], scores["dynamite"]):
