@@ -333,11 +333,9 @@ def updateContextMessages(x, y, currentMessage):
         currentMessage = "You peer through the window"
     if RealMap[x, y].top:
         currentMessage = "You stumble blindly through the darkness"
-    if not RealMap[x, y].destructable:
-        currentMessage = "Explosives won't work in this"
     if RealMap[x, y].damaged and moved:
         currentMessage = "The debris is unstable underfoot"
-    if random.randint(0, 100) > 99:
+    if random.randint(0, 200) < RealMap[x, y].difficulty:
         currentMessage = "Is this " + str(RealMap[x, y].name) + " safe?"
     return currentMessage
     
