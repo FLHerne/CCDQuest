@@ -311,8 +311,10 @@ def Explosion(Dynamite, Centrex, Centrey):
                 Explosion(1, Centrex+x, Centrey+y)                              # dynamite sets off neighbouring dynamite
                 currentMessage = "The dynamite sets off a chain reaction"
             if RealMap[Centrex+x, Centrey+y].destructable:
-                RealMap[Centrex+x, Centrey+y] = Cell(RealMap[Centrex+x, Centrey+y].image, True, False, 4)
+                RealMap[Centrex+x, Centrey+y].solid = False
+                RealMap[Centrex+x, Centrey+y].transparent = True
                 RealMap[Centrex+x, Centrey+y].damaged = True
+                RealMap[Centrex+x, Centrey+y].difficulty += 5
                 if RealMap[Centrex+x, Centrey+y].image == WoodImage:
                     RealMap[Centrex+x, Centrey+y].image = WaterImage
     Dynamite -= 1
