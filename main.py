@@ -127,7 +127,7 @@ class Cell:
             drawSurface.blit(collectablesImages[self.collectableItem], DrawPos)
                    
 DEEPWATER = Cell(DeepWaterImage, True, True, 25, "deep water", destructable = False, temperature=8)
-GLASS = Cell(GlassImage, True, True, 3)
+GLASS = Cell(GlassImage, True, True, 3, "window")
 GRASS = Cell(GrassImage, True, False, 2, "turf")
 ROCK = Cell(RockImage, True, False, 5, "rocky ground")
 SAND = Cell(SandImage, True, False, 3, "sand")
@@ -323,17 +323,17 @@ def Explosion(Dynamite, Centrex, Centrey):
     Dynamite -= 1
     return Dynamite
     
-def TestArea(centrex, centrey, cellType):
+def TestArea(centrex, centrey, name):
     count = 0
     for x in (-1, 0, 1):
         for y in (-1, 0, 1):
-            if RealMap[centrex+x, centrey+y] == cellType:
+            if RealMap[centrex+x, centrey+y].name == name:
                 count +=1
     return count
     
     
 def updateContextMessages(x, y, currentMessage):
-    if TestArea(x, y, GLASS) >= 1:
+    if TestArea(x, y, "window") > 1:
         currentMessage = "You peer through the window"
     if RealMap[x, y].top:
         currentMessage = "You stumble blindly through the darkness"
