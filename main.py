@@ -23,7 +23,7 @@ def ErrorPrint(Message):            # Messages which indicate that something has
 
 # -----------------------------------------------------------------------------
         
-groundFile = 'map/World7-ground.png'				#Image to use as map
+groundFile = 'map/World7-ground.png'                #Image to use as map
 collectablesFile = 'map/World7-collectables.png'
 #groundFile = 'map/latestRandomGen.png'                #Image to use as map
 #collectablesFile = 'map/blank.png'
@@ -38,7 +38,6 @@ VISIBILITY = 15                     #How far can you see in an approximate circl
 HUDFONTSIZE = 20                    # Score counter etc
 totalCoins = 0                      #How many coins are there in total? (initialise)
 windowSize = (740, 480)
-viewBlocks = (int((windowSize[0]-100)/BLOCKSIZE), int(windowSize[1]/BLOCKSIZE))
 
 scores = {"coins" : 0,
     "chocolate" : 10000, 
@@ -48,6 +47,7 @@ animCounter = 0
 animLength = 36
 
 window = pygame.display.set_mode(windowSize)
+world = pygame.Surface((worldSize[0]*BLOCKSIZE, worldSize[1]*BLOCKSIZE))
 
 # -----------------------------------------------------------------------------
 
@@ -108,20 +108,16 @@ class Cell:
         self.solid = solid
         self.difficulty = difficulty
         self.damaged = False
-        self.explored = False
         self.alwaysRedraw = reDraw
         self.collectableItem = collectableItem
         self.top = top
         self.destructable = destructable
     def draw(self, drawSurface, x, y):
-        if not self.explored:
-            pygame.draw.rect(drawSurface, GREY, (x, y, BLOCKSIZE, BLOCKSIZE))
-            return
-        drawSurface.blit(self.image, (x, y))
+        drawSurface.blit(self.image, ((x*BLOCKSIZE)-BLOCKSIZE, (y*BLOCKSIZE)-BLOCKSIZE))
         if self.damaged:
-            drawSurface.blit(DamageImage, (x, y))
+            drawSurface.blit(DamageImage, ((x*BLOCKSIZE)-BLOCKSIZE, (y*BLOCKSIZE)-BLOCKSIZE))
         if self.collectableItem != None:
-            drawSurface.blit(collectablesImages[self.collectableItem], (x, y))
+            drawSurface.blit(collectablesImages[self.collectableItem], ((x*BLOCKSIZE)-BLOCKSIZE, (y*BLOCKSIZE)-BLOCKSIZE))
                    
 DEEPWATER = Cell(DeepWaterImage, True, True, 25, True, destructable = False)
 GLASS = Cell(GlassImage, True, True, 3)
@@ -161,7 +157,7 @@ def UnMapGroundColour(colour):
     elif colour == LIGHTBLUE:
         return WATER
     elif colour == BLUE:
-        return DEEPWATER	
+        return DEEPWATER    
     elif colour == GREEN:
         return GRASS
     elif colour == BLUEGREY:
@@ -191,19 +187,14 @@ class StartPosUndefined(Exception):
 
 # -----------------------------------------------------------------------------
 
-class ModDict(dict):
-    def __init__(self, *args):
-        dict.__init__(self, args)
+RealMap = {}
+for x in range(1-VISIBILITY, worldSize[0]+1+VISIBILITY):    #Make the edge of the world a wall
+    for y in range(1-VISIBILITY, worldSize[1]+1+VISIBILITY):
+        RealMap[x, y] = WALL
 
-    def __getitem__(self, key):
-        return dict.__getitem__(self, (key[0] % worldSize[0], key[1] % worldSize[1]))
-
-    def __setitem__(self, key, val):
-        dict.__setitem__(self, (key[0] % worldSize[0], key[1] % worldSize[1]), val)
 
 groundMap = pygame.PixelArray(ground)
 collectablesMap = pygame.PixelArray(collectables)
-
 
 for x in range(1, worldSize[0]+1):
     for y in range(1, worldSize[1]+1):
@@ -218,13 +209,29 @@ for x in range(1, worldSize[0]+1):
             Pos = [x, y]
 if Pos is None:
     raise StartPosUndefined()
+
+for x in (1, worldSize[0]+1):
+    for y in range(1, worldSize[1]+1):
+        RealMap[x, y] = UKWALL
+for x in range(1, worldSize[0]+1):
+    for y in (1, worldSize[1]+1):
+        RealMap[x, y] = UKWALL
     
 del groundMap
 del collectablesMap
 
 # -----------------------------------------------------------------------------
+
+Map = {}                        #Initialise visible map with unknowness
+for x in range(1-VISIBILITY, worldSize[0]+1+VISIBILITY):
+    for y in range(1-VISIBILITY, worldSize[1]+1+VISIBILITY):
+        Map[x, y] = UNKNOWN
+        
+# -----------------------------------------------------------------------------
         
 window.fill(GREY)
+world.fill(GREY)
+miniWorld = pygame.transform.scale(world, (90, (world.get_height()/world.get_width())*90))
 
 # -----------------------------------------------------------------------------
 
@@ -232,7 +239,7 @@ def DiagonalCheck():
     '''Test visibility along (offset) diagronals away from player'''
     x = Pos[0]
     y = Pos[1]
-    RealMap[x, y].explored = True                       # make the currently occupied cell visible
+    Map[x, y] = RealMap[x, y]                       # make the currently occupied cell visible
     for horizontal in (True, False):                # horizontal and vertical
         for Dir1 in (-1, 1):                        # left/right or up/down
             for Dir2 in (-1, 1):                    # final division into octants
@@ -247,7 +254,7 @@ def DiagonalCheck():
                     else:
                         x = Pos[0]
                         y = Pos[1] + Base
-                    RealMap[x, y].explored = True
+                    Map[x, y] = RealMap[x, y]
                     while RealMap[x, y].transparent and ((Pos[1]-y)**2) + ((Pos[0]-x)**2) <= VISIBILITY**2: # test in bounding circle
                         if horizontal:                                                                      # move diagonally
                             x += Dir1
@@ -262,20 +269,20 @@ def DiagonalCheck():
                 
 # -----------------------------------------------------------------------------
 
-#def CrossCheck():
-    #'''Check visibility straight up, down, left and right'''
-    #for i in (-1, 1):                                                           # Horizontally left and right
-        #X = 0                                                                   # start at the player      
-        #while RealMap[(X*i)+Pos[0], Pos[1]].transparent and X < VISIBILITY:     # if transparent and within bounding range
-            #Map[(X*i)+Pos[0], Pos[1]] = RealMap[(X*i)+Pos[0], Pos[1]]           # make visible
-            #X += 1                                                              # move away from player
-        #Map[(X*i)+Pos[0], Pos[1]] = RealMap[(X*i)+Pos[0], Pos[1]]               # make final cell visible
-    #for i in (-1, 1):                                                           # Repeat as above, but vertically
-        #Y = 0
-        #while RealMap[Pos[0], (Y*i)+Pos[1]].transparent and Y < VISIBILITY:
-            #Map[Pos[0], (Y*i)+Pos[1]] = RealMap[Pos[0], (Y*i)+Pos[1]]
-            #Y += 1
-        #Map[Pos[0], (Y*i)+Pos[1]] = RealMap[Pos[0], (Y*i)+Pos[1]]
+def CrossCheck():
+    '''Check visibility straight up, down, left and right'''
+    for i in (-1, 1):                                                           # Horizontally left and right
+        X = 0                                                                   # start at the player      
+        while RealMap[(X*i)+Pos[0], Pos[1]].transparent and X < VISIBILITY:     # if transparent and within bounding range
+            Map[(X*i)+Pos[0], Pos[1]] = RealMap[(X*i)+Pos[0], Pos[1]]           # make visible
+            X += 1                                                              # move away from player
+        Map[(X*i)+Pos[0], Pos[1]] = RealMap[(X*i)+Pos[0], Pos[1]]               # make final cell visible
+    for i in (-1, 1):                                                           # Repeat as above, but vertically
+        Y = 0
+        while RealMap[Pos[0], (Y*i)+Pos[1]].transparent and Y < VISIBILITY:
+            Map[Pos[0], (Y*i)+Pos[1]] = RealMap[Pos[0], (Y*i)+Pos[1]]
+            Y += 1
+        Map[Pos[0], (Y*i)+Pos[1]] = RealMap[Pos[0], (Y*i)+Pos[1]]
 
         
 def ExplosionValid(x, y, Dynamite):
@@ -331,7 +338,7 @@ def CollectItems(scores):
     global currentMessage
     if RealMap[Pos[0], Pos[1]].collectableItem == Cell.COIN:    #Have we just walked into a coin
         scores["coins"] += 1                                    #Increment score counter
-        RealMap[Pos[0], Pos[1]].collectableItem = None	        #Remove coin
+        RealMap[Pos[0], Pos[1]].collectableItem = None          #Remove coin
         DebugPrint("Collected a coin")
         currentMessage = "You find a gold coin"
     if RealMap[Pos[0], Pos[1]].collectableItem == Cell.DYNAMITE:
@@ -355,7 +362,7 @@ def HandleEvents(scores):
             quitting = True
         if event.type == pygame.KEYDOWN:
             if event.key == UP:
-                if not RealMap[Pos[0], Pos[1]-1].solid:	#We haven't collided with anthing
+                if not RealMap[Pos[0], Pos[1]-1].solid: #We haven't collided with anthing
                     Pos[1] -= 1
             if event.key == DOWN:
                 if not RealMap[Pos[0], Pos[1]+1].solid:
@@ -366,13 +373,10 @@ def HandleEvents(scores):
             if event.key == RIGHT:
                 if not RealMap[Pos[0]+1, Pos[1]].solid:
                     Pos[0] += 1
-            # Prevent loonies from causing an int overflow by travelling millions of tiles
-            Pos[0] = Pos[0] % worldSize[0]
-            Pos[1] = Pos[1] % worldSize[1]
             if event.key == BLAST and ExplosionValid(Pos[0], Pos[1], scores["dynamite"]):
                 scores["dynamite"] = Explosion(scores["dynamite"], Pos[0], Pos[1])
             if scores["chocolate"] >= 0:
-                scores["chocolate"] -= RealMap[Pos[0], Pos[1]].difficulty
+                scores["chocolate"] -= Map[Pos[0], Pos[1]].difficulty
             else:
                 quitting = True
     scores = CollectItems(scores)
@@ -386,16 +390,19 @@ def UpdateVisible():
     
     
 def DrawTiles():
-    tlX = int(Pos[0]-viewBlocks[0]/2)
-    tlY = int(Pos[1]-viewBlocks[1]/2)
-    for x in range(0, viewBlocks[0]):
-        for y in range(0, viewBlocks[1]):
-            RealMap[tlX+x, tlY+y].draw(window, x*BLOCKSIZE, y*BLOCKSIZE)
+    '''call the draw routine for every cell that might be visible'''
+    for x in range(Pos[0]-VISIBILITY, Pos[0]+VISIBILITY+1):
+        for y in range(Pos[1]-VISIBILITY, Pos[1]+VISIBILITY+1):
+            Map[x, y].draw(world, x, y)
+        
 
-def DrawPlayer():
+def DrawPlayer(drawSurface):
     '''draw the player as a blinking circle'''
-    if (animCounter%9 != 0) and (RealMap[Pos[0], Pos[1]].top == False):
-        pygame.draw.circle(window, PLAYER1, (viewBlocks[0]/2*BLOCKSIZE+BLOCKSIZE/2, viewBlocks[1]/2*BLOCKSIZE+BLOCKSIZE/2), int(BLOCKSIZE/2))
+    if (animCounter%9 != 0) and (Map[Pos[0], Pos[1]].top == False):
+        x = (Pos[0]*BLOCKSIZE)-int(BLOCKSIZE/2)
+        y = (Pos[1]*BLOCKSIZE)-int(BLOCKSIZE/2)
+        radius = int(BLOCKSIZE/2)
+        pygame.draw.circle(drawSurface, PLAYER1, (x, y), radius)
 
 def DrawMessageBox(drawSurface):
     TextBox.Print(drawSurface,
@@ -542,5 +549,6 @@ while not quitting:
     DrawHud(scores, window)
     animCounter = animCountUpdate(animCounter)
     pygame.display.update()
+            
 pygame.quit()
 sys.exit()
