@@ -31,7 +31,8 @@ collectablesFile = 'map/World7-collectables.png'
 
 ground = pygame.image.load(groundFile)
 collectables = pygame.image.load(collectablesFile)
-worldSize = ground.get_rect().size
+#worldSize = ground.get_rect().size
+worldSize = [100, 100]
 
 worldSize = [worldSize[0], worldSize[1]]               #Size of image - FIXME
 BLOCKSIZE = 8                       #Size of each square in the grid
@@ -41,7 +42,7 @@ totalCoins = 0                      #How many coins are there in total? (initial
 windowSize = (740, 480)
 
 scores = {"coins" : 0,
-    "chocolate" : 10000, 
+    "chocolate" : 100000, 
     "dynamite" : 15}
 
 animCounter = 0
@@ -115,7 +116,7 @@ class Cell:
         self.destructable = destructable
         self.name = name
     def draw(self, drawSurface, x, y):
-        DrawPos = ((x*BLOCKSIZE)-BLOCKSIZE, (y*BLOCKSIZE)-BLOCKSIZE)
+        DrawPos = (x*BLOCKSIZE, y*BLOCKSIZE)
         if not self.explored:
             drawSurface.blit(UnknownImage, DrawPos)
             return
@@ -192,20 +193,24 @@ class StartPosUndefined(Exception):
 
 # -----------------------------------------------------------------------------
 
-RealMap = {}
-for x in range(1-VISIBILITY, worldSize[0]+1+VISIBILITY):    #Make the edge of the world a wall
-    for y in range(1-VISIBILITY, worldSize[1]+1+VISIBILITY):
-        RealMap[x, y] = WALL
+class ModDict(dict):
+    def __init__(self, *args):
+        dict.__init__(self, args)
+    def __getitem__(self, key):
+        return dict.__getitem__(self, (key[0] % worldSize[0], key[1] % worldSize[1]))
+    def __setitem__(self, key, val):
+        dict.__setitem__(self, (key[0] % worldSize[0], key[1] % worldSize[1]), val)
 
+RealMap = ModDict()
 
 groundMap = pygame.PixelArray(ground)
 collectablesMap = pygame.PixelArray(collectables)
 
-for x in range(1, worldSize[0]+1):
-    for y in range(1, worldSize[1]+1):
-        groundColour = ground.unmap_rgb(groundMap[x-1,y-1])
+for x in range(0, worldSize[0]):
+    for y in range(0, worldSize[1]):
+        groundColour = ground.unmap_rgb(groundMap[x, y])
         RealMap[x, y] = copy.copy(UnMapGroundColour(groundColour))
-        collectableColour = collectables.unmap_rgb(collectablesMap[x-1,y-1])
+        collectableColour = collectables.unmap_rgb(collectablesMap[x, y])
         RealMap[x, y].collectableItem = UnMapCollectablesColour(collectableColour)
         if RealMap[x, y].collectableItem == Cell.COIN:
             totalCoins += 1
@@ -215,13 +220,6 @@ for x in range(1, worldSize[0]+1):
 if Pos is None:
     raise StartPosUndefined()
 
-for x in (1, worldSize[0]+1):
-    for y in range(1, worldSize[1]+1):
-        RealMap[x, y] = UKWALL
-for x in range(1, worldSize[0]+1):
-    for y in (1, worldSize[1]+1):
-        RealMap[x, y] = UKWALL
-    
 del groundMap
 del collectablesMap
 
@@ -376,19 +374,19 @@ def HandleEvents(scores, moved):
             quitting = True
         if event.type == pygame.KEYDOWN:
             if event.key == UP:
-                if not RealMap[Pos[0], Pos[1]-1].solid: #We haven't collided with anthing
+                if True:#not RealMap[Pos[0], Pos[1]-1].solid: #We haven't collided with anthing
                     Pos[1] -= 1
                     moved = True
             if event.key == DOWN:
-                if not RealMap[Pos[0], Pos[1]+1].solid:
+                if True:#not RealMap[Pos[0], Pos[1]+1].solid:
                     Pos[1] += 1
                     moved = True
             if event.key == LEFT:
-                if not RealMap[Pos[0]-1, Pos[1]].solid:
+                if True:#not RealMap[Pos[0]-1, Pos[1]].solid:
                     Pos[0] -= 1
                     moved = True
             if event.key == RIGHT:
-                if not RealMap[Pos[0]+1, Pos[1]].solid:
+                if True:#not RealMap[Pos[0]+1, Pos[1]].solid:
                     Pos[0] += 1
                     moved = True
             if event.key == BLAST and ExplosionValid(Pos[0], Pos[1], scores["dynamite"]):
@@ -416,16 +414,16 @@ def DrawTiles():
     '''call the draw routine for every cell that might be visible'''
     for x in range(Pos[0]-VISIBILITY, Pos[0]+VISIBILITY+1):
         for y in range(Pos[1]-VISIBILITY, Pos[1]+VISIBILITY+1):
-            RealMap[x, y].draw(world, x, y)
+            RealMap[x, y].draw(world, x%worldSize[0], y%worldSize[1])
         
 
 def DrawPlayer(drawSurface):
     '''draw the player as a blinking circle'''
     if (animCounter%9 != 0) and (RealMap[Pos[0], Pos[1]].top == False):
-        x = (Pos[0]*BLOCKSIZE)-int(BLOCKSIZE/2)
-        y = (Pos[1]*BLOCKSIZE)-int(BLOCKSIZE/2)
+        x = ((Pos[0]*BLOCKSIZE)+int(BLOCKSIZE/2))#%world.get_width()
+        y = ((Pos[1]*BLOCKSIZE)+int(BLOCKSIZE/2))#%world.get_height()
         radius = int(BLOCKSIZE/2)
-        pygame.draw.circle(drawSurface, PLAYER1, (x, y), radius)
+        pygame.draw.circle(drawSurface, PLAYER1, (x%world.get_width(), y%world.get_height()), radius)
 
 def DrawMessageBox(drawSurface):
     TextBox.Print(drawSurface,
@@ -518,6 +516,16 @@ def animCountUpdate(animCounter):
     else:
         animCounter += 1
     return animCounter
+
+def wrapCoords():
+    if Pos[0] % worldSize[0] == int(worldSize[0]/2):
+        Pos[0] %= worldSize[0]
+        print "Cut x", scrollPos[0], scrollPos[0] % world.get_width()
+        scrollPos[0] %= world.get_width()
+    if Pos[1] % worldSize[1] == int(worldSize[1]/2):
+        Pos[1] %= worldSize[1]
+        print "Cut y", scrollPos[1], scrollPos[1] % world.get_height()
+        scrollPos[1] %= world.get_height()
     
 def setup():
     '''to be used at the beginning of the programme'''
@@ -530,6 +538,23 @@ def loop():
 def mapWorldToScreen(scrollPos):
     '''show part of the world on screen'''
     window.blit(world, scrollPos)
+    if scrollPos[0] > 0:
+        window.blit(world, (scrollPos[0]-world.get_width(), scrollPos[1]))
+    if scrollPos[1] > 0:
+        window.blit(world, (scrollPos[0], scrollPos[1]-world.get_height()))
+    if scrollPos[0] > 0 and scrollPos[1] > 0:
+        window.blit(world, (scrollPos[0]-world.get_width(), scrollPos[1]-world.get_height()))
+    if scrollPos[0] <= -world.get_width()+window.get_width():
+        window.blit(world, (scrollPos[0]+world.get_width(), scrollPos[1]))
+    if scrollPos[1] <= -world.get_height()+window.get_height():
+        window.blit(world, (scrollPos[0], scrollPos[1]+world.get_height()))
+    if scrollPos[0] <= -world.get_width()+window.get_width() and scrollPos[1] <= -world.get_height()+window.get_height():
+        window.blit(world, (scrollPos[0]+world.get_width(), scrollPos[1]+world.get_height()))
+    if scrollPos[0] > 0 and scrollPos[1] <= -world.get_height()+window.get_height():
+        window.blit(world, (scrollPos[0]-world.get_width(), scrollPos[1]+world.get_height()))
+    if scrollPos[0] <= -world.get_width()+window.get_width() and scrollPos[1] > 0:
+        window.blit(world, (scrollPos[0]+world.get_width(), scrollPos[1]-world.get_height()))
+    
 
 def calculateScrollPos(scrollPos):
     '''scroll towards the correct position'''
@@ -537,24 +562,24 @@ def calculateScrollPos(scrollPos):
     playery = (Pos[1]*BLOCKSIZE)+scrollPos[1]
     if playerx+(VISIBILITY*BLOCKSIZE) > windowSize[0]-100:         #too far right
         scrollStep = (abs((playerx+(VISIBILITY*BLOCKSIZE)) - (windowSize[0]-100)) / 2) +1
-        scrollPos = (scrollPos[0]-scrollStep, scrollPos[1])
+        scrollPos = [scrollPos[0]-scrollStep, scrollPos[1]]
         DebugPrint("Scrolled Left" + str(scrollPos))
     if playerx-(VISIBILITY*BLOCKSIZE) < 0:                         #too far left
         scrollStep = (abs((playerx-(VISIBILITY*BLOCKSIZE))) / 2) +1
-        scrollPos = (scrollPos[0]+scrollStep, scrollPos[1])
+        scrollPos = [scrollPos[0]+scrollStep, scrollPos[1]]
         DebugPrint("Scrolled right" + str(scrollPos))
     if playery+(VISIBILITY*BLOCKSIZE) > windowSize[1]:             #too far down
         scrollStep = (abs((playery+(VISIBILITY*BLOCKSIZE)) - windowSize[1]) / 2) +1
-        scrollPos = (scrollPos[0], scrollPos[1]-scrollStep)
+        scrollPos = [scrollPos[0], scrollPos[1]-scrollStep]
         DebugPrint("Scrolled up" + str(scrollPos))
     if playery-(VISIBILITY*BLOCKSIZE) < 0:                         #too far up
         scrollStep = (abs((playery-(VISIBILITY*BLOCKSIZE))) / 2) +1
-        scrollPos = (scrollPos[0], scrollPos[1]+scrollStep)
+        scrollPos = [scrollPos[0], scrollPos[1]+scrollStep]
         DebugPrint("Scrolled down" + str(scrollPos))
 
     return scrollPos
     
-scrollPos = ((-BLOCKSIZE*Pos[0])+((windowSize[0]-100)/2), (-BLOCKSIZE*Pos[1])+(windowSize[1]/2))
+scrollPos = [(-BLOCKSIZE*Pos[0])+((windowSize[0]-100)/2), (-BLOCKSIZE*Pos[1])+(windowSize[1]/2)]
 DebugPrint("Initial scrollPos" + str(scrollPos))
 currentMessage = "You find yourself in the middle of a strange and unknown landscape"
 moved = False
@@ -571,6 +596,7 @@ while not quitting:
     DrawPlayer(world)
     scrollPos = calculateScrollPos(scrollPos)
     mapWorldToScreen(scrollPos)
+    wrapCoords()
     currentMessage = updateContextMessages(Pos[0], Pos[1], currentMessage)
     DrawMessageBox(window)
     DrawHud(scores, window)
