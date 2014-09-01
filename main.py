@@ -312,6 +312,8 @@ def Explosion(Dynamite, Centrex, Centrey):
                 RealMap[Centrex+x, Centrey+y].transparent = True
                 RealMap[Centrex+x, Centrey+y].damaged = True
                 RealMap[Centrex+x, Centrey+y].difficulty += 5
+                if not ((x, y) == (0, 0)):
+                    RealMap[Centrex+x, Centrey+y].name = "debris from an explosion"
                 if RealMap[Centrex+x, Centrey+y].image == WoodImage:
                     RealMap[Centrex+x, Centrey+y].image = WaterImage
     Dynamite -= 1
