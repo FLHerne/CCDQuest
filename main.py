@@ -118,6 +118,7 @@ class Cell:
         DrawPos = ((x*BLOCKSIZE)-BLOCKSIZE, (y*BLOCKSIZE)-BLOCKSIZE)
         if not self.explored:
             drawSurface.blit(UnknownImage, DrawPos)
+            return
         drawSurface.blit(self.image, DrawPos)
         if self.damaged:
             drawSurface.blit(DamageImage, DrawPos)
