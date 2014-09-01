@@ -341,7 +341,7 @@ def updateContextMessages(x, y, currentMessage):
         currentMessage = "The water looks wet"
     elif TestArea(x, y, "forrest") > 2:
         currentMessage = "The trees look foreboding"
-    elif TestArea(x, y, "forrest") > 4:
+    elif TestArea(x, y, "forrest") > 6:
         currentMessage = "You are surrounded by trees"
     if RealMap[x, y].top:
         currentMessage = "You stumble blindly through the darkness"
