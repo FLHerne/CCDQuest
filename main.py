@@ -479,70 +479,17 @@ def DrawHud(scores, drawSurface):
     pygame.transform.scale(world, (90, (world.get_height()/world.get_width())*90), miniWorld)
     drawSurface.blit(miniWorld, (windowSize[0]-90, 302))
     miniWorldScale = 90.0/(worldSize[0]*BLOCKSIZE)
-    pygame.draw.rect(drawSurface,
-                     PLAYER1,
-                     ((windowSize[0]-90)-(scrollPos[0]*miniWorldScale), # Top x corner of minimap, plus scroll offset
-                      302-               (scrollPos[1]*miniWorldScale), # Top y ''
-                      1+ (windowSize[0]-100)*miniWorldScale,            # X width (window size, blah)
-                      1+ windowSize[1]*miniWorldScale),                 # Y width ''
-                     1)                                                 # Border width
-    pygame.draw.rect(drawSurface,
-                     PLAYER1,
-                     ((windowSize[0]-90)-((scrollPos[0]+world.get_width())*miniWorldScale),
-                      302-               ((scrollPos[1]+world.get_height())*miniWorldScale),
-                      1+ (windowSize[0]-100)*miniWorldScale,
-                      1+ windowSize[1]*miniWorldScale),
-                     1)
-    pygame.draw.rect(drawSurface,
-                     PLAYER1,
-                     ((windowSize[0]-90)-((scrollPos[0]-world.get_width())*miniWorldScale),
-                      302-               ((scrollPos[1]-world.get_height())*miniWorldScale),
-                      1+ (windowSize[0]-100)*miniWorldScale,
-                      1+ windowSize[1]*miniWorldScale),
-                     1)
-    pygame.draw.rect(drawSurface,
-                     PLAYER1,
-                     ((windowSize[0]-90)-((scrollPos[0]+world.get_width())*miniWorldScale),
-                      302-               ((scrollPos[1]-world.get_height())*miniWorldScale),
-                      1+ (windowSize[0]-100)*miniWorldScale,
-                      1+ windowSize[1]*miniWorldScale),
-                     1)
-    pygame.draw.rect(drawSurface,
-                     PLAYER1,
-                     ((windowSize[0]-90)-((scrollPos[0]-world.get_width())*miniWorldScale),
-                      302-               ((scrollPos[1]+world.get_height())*miniWorldScale),
-                      1+ (windowSize[0]-100)*miniWorldScale,
-                      1+ windowSize[1]*miniWorldScale),
-                     1)
-    pygame.draw.rect(drawSurface,
-                     PLAYER1,
-                     ((windowSize[0]-90)-((scrollPos[0]+world.get_width())*miniWorldScale),
-                      302-               (scrollPos[1]*miniWorldScale),
-                      1+ (windowSize[0]-100)*miniWorldScale,
-                      1+ windowSize[1]*miniWorldScale),
-                     1)
-    pygame.draw.rect(drawSurface,
-                     PLAYER1,
-                     ((windowSize[0]-90)-((scrollPos[0]-world.get_width())*miniWorldScale),
-                      302-               (scrollPos[1]*miniWorldScale),
-                      1+ (windowSize[0]-100)*miniWorldScale,
-                      1+ windowSize[1]*miniWorldScale),
-                     1)
-    pygame.draw.rect(drawSurface,
-                     PLAYER1,
-                     ((windowSize[0]-90)-(scrollPos[0]*miniWorldScale),
-                      302-               ((scrollPos[1]+world.get_height())*miniWorldScale),
-                      1+ (windowSize[0]-100)*miniWorldScale,
-                      1+ windowSize[1]*miniWorldScale),
-                     1)
-    pygame.draw.rect(drawSurface,
-                     PLAYER1,
-                     ((windowSize[0]-90)-(scrollPos[0]*miniWorldScale),
-                      302-               ((scrollPos[1]-world.get_height())*miniWorldScale),
-                      1+ (windowSize[0]-100)*miniWorldScale,
-                      1+ windowSize[1]*miniWorldScale),
-                     1)
+    for tx in [scrollPos[0]-world.get_width(), scrollPos[0], scrollPos[0]+world.get_width()]:
+        for ty in [scrollPos[1]-world.get_height(), scrollPos[1], scrollPos[1]+world.get_height()]:
+            pygame.draw.rect(drawSurface,
+                PLAYER1,
+                ((windowSize[0]-90)-(tx*miniWorldScale), # Top x corner of minimap, plus scroll offset
+                302-                (ty*miniWorldScale), # Top y ''
+                1+ (windowSize[0]-100)*miniWorldScale,
+                1+ windowSize[1]*miniWorldScale),
+                1)
     window.set_clip(old_clip)
+    
     if scores["chocolate"] <= 0:
         TextBox.Print(drawSurface,
                       False,
@@ -580,10 +527,8 @@ def wrapCoords(scrollPos):
     playery = (Pos[1]*BLOCKSIZE)+scrollPos[1]
     if Pos[0] % worldSize[0] == int(worldSize[0]/2):
         Pos[0] %= worldSize[0]
-        print "Cut x", scrollPos[0], scrollPos[0] % world.get_width()
     if Pos[1] % worldSize[1] == int(worldSize[1]/2):
         Pos[1] %= worldSize[1]
-        print "Cut y", scrollPos[1], scrollPos[1] % world.get_height()
     return [(-BLOCKSIZE*Pos[0])+playerx, (-BLOCKSIZE*Pos[1])+playery]
     
 def setup():
@@ -596,24 +541,14 @@ def loop():
 
 def mapWorldToScreen(scrollPos):
     '''show part of the world on screen'''
-    window.blit(world, scrollPos)
-    if scrollPos[0] > 0:
-        window.blit(world, (scrollPos[0]-world.get_width(), scrollPos[1]))
-    if scrollPos[1] > 0:
-        window.blit(world, (scrollPos[0], scrollPos[1]-world.get_height()))
-    if scrollPos[0] > 0 and scrollPos[1] > 0:
-        window.blit(world, (scrollPos[0]-world.get_width(), scrollPos[1]-world.get_height()))
-    if scrollPos[0] <= -world.get_width()+window.get_width():
-        window.blit(world, (scrollPos[0]+world.get_width(), scrollPos[1]))
-    if scrollPos[1] <= -world.get_height()+window.get_height():
-        window.blit(world, (scrollPos[0], scrollPos[1]+world.get_height()))
-    if scrollPos[0] <= -world.get_width()+window.get_width() and scrollPos[1] <= -world.get_height()+window.get_height():
-        window.blit(world, (scrollPos[0]+world.get_width(), scrollPos[1]+world.get_height()))
-    if scrollPos[0] > 0 and scrollPos[1] <= -world.get_height()+window.get_height():
-        window.blit(world, (scrollPos[0]-world.get_width(), scrollPos[1]+world.get_height()))
-    if scrollPos[0] <= -world.get_width()+window.get_width() and scrollPos[1] > 0:
-        window.blit(world, (scrollPos[0]+world.get_width(), scrollPos[1]-world.get_height()))
-    
+    old_clip = window.get_clip()
+    worldRegion = pygame.Rect(0, 0, windowSize[0]-90, windowSize[1]-20)
+    window.set_clip(worldRegion)
+    for tx in [scrollPos[0]-world.get_width(), scrollPos[0], scrollPos[0]+world.get_width()]:
+        for ty in [scrollPos[1]-world.get_height(), scrollPos[1], scrollPos[1]+world.get_height()]:
+            if world.get_rect(topleft=(tx,ty)).colliderect(worldRegion):
+                window.blit(world, (tx, ty))
+    window.set_clip(old_clip)
 
 def calculateScrollPos(scrollPos):
     '''scroll towards the correct position'''
