@@ -119,20 +119,20 @@ class Cell:
         if self.collectableItem != None:
             drawSurface.blit(collectablesImages[self.collectableItem], ((x*BLOCKSIZE)-BLOCKSIZE, (y*BLOCKSIZE)-BLOCKSIZE))
                    
-DEEPWATER = Cell(DeepWaterImage, True, True, 25, destructable = False)
+DEEPWATER = Cell(DeepWaterImage, True, True, 25, "deep water", destructable = False)
 GLASS = Cell(GlassImage, True, True, 3)
-GRASS = Cell(GrassImage, True, False, 2)
-ROCK = Cell(RockImage, True, False, 5)
-SAND = Cell(SandImage, True, False, 3)
-SNOW = Cell(SnowImage, True, False, 4)
+GRASS = Cell(GrassImage, True, False, 2, "turf")
+ROCK = Cell(RockImage, True, False, 5, "rocky ground")
+SAND = Cell(SandImage, True, False, 3, "sand")
+SNOW = Cell(SnowImage, True, False, 4, "snow")
 SPACE = Cell(SpaceImage, True, False, 1)
-TREES = Cell(TreesImage, False, False, 8, top=True)
+TREES = Cell(TreesImage, False, False, 8, "forrest", top=True)
 UNKNOWN = Cell(UnknownImage, True, True, 3)
 WALL = Cell(WallImage, False, True, 3)
 UKWALL = Cell(UnknownImage, False, True, 3)
-WATER = Cell(WaterImage, True, False, 25, destructable=False)
-MARSH = Cell(MarshImage, True, False, 20)
-WOOD = Cell(WoodImage, True, False, 2)
+WATER = Cell(WaterImage, True, False, 25, "water", destructable=False)
+MARSH = Cell(MarshImage, True, False, 20, "marshland")
+WOOD = Cell(WoodImage, True, False, 2, "wooden planking")
 
 # -----------------------------------------------------------------------------
   
