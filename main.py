@@ -109,11 +109,14 @@ class Cell:
         self.solid = solid
         self.difficulty = difficulty
         self.damaged = False
+        self.explored = False
         self.collectableItem = collectableItem
         self.top = top
         self.destructable = destructable
         self.name = name
     def draw(self, drawSurface, x, y):
+        if not self.explored:
+            return
         drawSurface.blit(self.image, ((x*BLOCKSIZE)-BLOCKSIZE, (y*BLOCKSIZE)-BLOCKSIZE))
         if self.damaged:
             drawSurface.blit(DamageImage, ((x*BLOCKSIZE)-BLOCKSIZE, (y*BLOCKSIZE)-BLOCKSIZE))
@@ -222,13 +225,6 @@ del groundMap
 del collectablesMap
 
 # -----------------------------------------------------------------------------
-
-Map = {}                        #Initialise visible map with unknowness
-for x in range(1-VISIBILITY, worldSize[0]+1+VISIBILITY):
-    for y in range(1-VISIBILITY, worldSize[1]+1+VISIBILITY):
-        Map[x, y] = UNKNOWN
-        
-# -----------------------------------------------------------------------------
         
 window.fill(GREY)
 world.fill(GREY)
@@ -240,7 +236,7 @@ def DiagonalCheck():
     '''Test visibility along (offset) diagronals away from player'''
     x = Pos[0]
     y = Pos[1]
-    Map[x, y] = RealMap[x, y]                       # make the currently occupied cell visible
+    RealMap[x, y].explored = True                       # make the currently occupied cell visible
     for horizontal in (True, False):                # horizontal and vertical
         for Dir1 in (-1, 1):                        # left/right or up/down
             for Dir2 in (-1, 1):                    # final division into octants
@@ -255,7 +251,7 @@ def DiagonalCheck():
                     else:
                         x = Pos[0]
                         y = Pos[1] + Base
-                    Map[x, y] = RealMap[x, y]
+                    RealMap[x, y].explored = True
                     while RealMap[x, y].transparent and ((Pos[1]-y)**2) + ((Pos[0]-x)**2) <= VISIBILITY**2: # test in bounding circle
                         if horizontal:                                                                      # move diagonally
                             x += Dir1
@@ -263,10 +259,10 @@ def DiagonalCheck():
                         else:
                             x += Dir2
                             y += Dir1
-                        Map[x, y] = RealMap[x, y]                                                           # make visible
-                    Map[x, y] = RealMap[x, y]                                                               # make the first opaque cell visible too
+                        RealMap[x, y].explored = True                                                           # make visible
+                    RealMap[x, y].explored = True                                                               # make the first opaque cell visible too
                     #Base += Dir1       FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
-                Map[x, y] = RealMap[x, y]
+                RealMap[x, y].explored = True
                 
 # -----------------------------------------------------------------------------
 
@@ -275,15 +271,15 @@ def CrossCheck():
     for i in (-1, 1):                                                           # Horizontally left and right
         X = 0                                                                   # start at the player      
         while RealMap[(X*i)+Pos[0], Pos[1]].transparent and X < VISIBILITY:     # if transparent and within bounding range
-            Map[(X*i)+Pos[0], Pos[1]] = RealMap[(X*i)+Pos[0], Pos[1]]           # make visible
+            RealMap[(X*i)+Pos[0], Pos[1]].explored = True           # make visible
             X += 1                                                              # move away from player
-        Map[(X*i)+Pos[0], Pos[1]] = RealMap[(X*i)+Pos[0], Pos[1]]               # make final cell visible
+        RealMap[(X*i)+Pos[0], Pos[1]].explore = True               # make final cell visible
     for i in (-1, 1):                                                           # Repeat as above, but vertically
         Y = 0
         while RealMap[Pos[0], (Y*i)+Pos[1]].transparent and Y < VISIBILITY:
-            Map[Pos[0], (Y*i)+Pos[1]] = RealMap[Pos[0], (Y*i)+Pos[1]]
+            RealMap[Pos[0], (Y*i)+Pos[1]].explored = True
             Y += 1
-        Map[Pos[0], (Y*i)+Pos[1]] = RealMap[Pos[0], (Y*i)+Pos[1]]
+        RealMap[Pos[0], (Y*i)+Pos[1]].explored = True
 
         
 def ExplosionValid(x, y, Dynamite):
@@ -393,7 +389,7 @@ def HandleEvents(scores, moved):
             if event.key == BLAST and ExplosionValid(Pos[0], Pos[1], scores["dynamite"]):
                 scores["dynamite"] = Explosion(scores["dynamite"], Pos[0], Pos[1])
             if scores["chocolate"] >= 0:
-                scores["chocolate"] -= Map[Pos[0], Pos[1]].difficulty
+                scores["chocolate"] -= RealMap[Pos[0], Pos[1]].difficulty
             else:
                 quitting = True
     newTerrainName = RealMap[Pos[0], Pos[1]].name
@@ -415,7 +411,7 @@ def DrawTiles():
     '''call the draw routine for every cell that might be visible'''
     for x in range(Pos[0]-VISIBILITY, Pos[0]+VISIBILITY+1):
         for y in range(Pos[1]-VISIBILITY, Pos[1]+VISIBILITY+1):
-            Map[x, y].draw(world, x, y)
+            RealMap[x, y].draw(world, x, y)
         
 
 def DrawPlayer(drawSurface):
