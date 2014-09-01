@@ -115,13 +115,14 @@ class Cell:
         self.destructable = destructable
         self.name = name
     def draw(self, drawSurface, x, y):
+        DrawPos = ((x*BLOCKSIZE)-BLOCKSIZE, (y*BLOCKSIZE)-BLOCKSIZE)
         if not self.explored:
-            return
-        drawSurface.blit(self.image, ((x*BLOCKSIZE)-BLOCKSIZE, (y*BLOCKSIZE)-BLOCKSIZE))
+            drawSurface.blit(UnknownImage, DrawPos)
+        drawSurface.blit(self.image, DrawPos)
         if self.damaged:
-            drawSurface.blit(DamageImage, ((x*BLOCKSIZE)-BLOCKSIZE, (y*BLOCKSIZE)-BLOCKSIZE))
+            drawSurface.blit(DamageImage, DrawPos)
         if self.collectableItem != None:
-            drawSurface.blit(collectablesImages[self.collectableItem], ((x*BLOCKSIZE)-BLOCKSIZE, (y*BLOCKSIZE)-BLOCKSIZE))
+            drawSurface.blit(collectablesImages[self.collectableItem], DrawPos)
                    
 DEEPWATER = Cell(DeepWaterImage, True, True, 25, "deep water", destructable = False)
 GLASS = Cell(GlassImage, True, True, 3)
@@ -131,7 +132,6 @@ SAND = Cell(SandImage, True, False, 3, "sand")
 SNOW = Cell(SnowImage, True, False, 4, "snow")
 SPACE = Cell(SpaceImage, True, False, 1, "paving")
 TREES = Cell(TreesImage, False, False, 8, "forrest", top=True)
-UNKNOWN = Cell(UnknownImage, True, True, 3)
 WALL = Cell(WallImage, False, True, 3)
 UKWALL = Cell(UnknownImage, False, True, 3)
 WATER = Cell(WaterImage, True, False, 25, "water", destructable=False)
