@@ -474,17 +474,75 @@ def DrawHud(scores, drawSurface):
                   ChocAmountString,
                   True,
                   [False, windowSize[1]])
-
+    old_clip = window.get_clip()
+    window.set_clip((windowSize[0]-90, 302, 90, 90))
     pygame.transform.scale(world, (90, (world.get_height()/world.get_width())*90), miniWorld)
     drawSurface.blit(miniWorld, (windowSize[0]-90, 302))
     miniWorldScale = 90.0/(worldSize[0]*BLOCKSIZE)
     pygame.draw.rect(drawSurface,
                      PLAYER1,
-                     ((windowSize[0]-90)-(scrollPos[0]*miniWorldScale),
+                     ((windowSize[0]-90)-(scrollPos[0]*miniWorldScale), # Top x corner of minimap, plus scroll offset
+                      302-               (scrollPos[1]*miniWorldScale), # Top y ''
+                      1+ (windowSize[0]-100)*miniWorldScale,            # X width (window size, blah)
+                      1+ windowSize[1]*miniWorldScale),                 # Y width ''
+                     1)                                                 # Border width
+    pygame.draw.rect(drawSurface,
+                     PLAYER1,
+                     ((windowSize[0]-90)-((scrollPos[0]+world.get_width())*miniWorldScale),
+                      302-               ((scrollPos[1]+world.get_height())*miniWorldScale),
+                      1+ (windowSize[0]-100)*miniWorldScale,
+                      1+ windowSize[1]*miniWorldScale),
+                     1)
+    pygame.draw.rect(drawSurface,
+                     PLAYER1,
+                     ((windowSize[0]-90)-((scrollPos[0]-world.get_width())*miniWorldScale),
+                      302-               ((scrollPos[1]-world.get_height())*miniWorldScale),
+                      1+ (windowSize[0]-100)*miniWorldScale,
+                      1+ windowSize[1]*miniWorldScale),
+                     1)
+    pygame.draw.rect(drawSurface,
+                     PLAYER1,
+                     ((windowSize[0]-90)-((scrollPos[0]+world.get_width())*miniWorldScale),
+                      302-               ((scrollPos[1]-world.get_height())*miniWorldScale),
+                      1+ (windowSize[0]-100)*miniWorldScale,
+                      1+ windowSize[1]*miniWorldScale),
+                     1)
+    pygame.draw.rect(drawSurface,
+                     PLAYER1,
+                     ((windowSize[0]-90)-((scrollPos[0]-world.get_width())*miniWorldScale),
+                      302-               ((scrollPos[1]+world.get_height())*miniWorldScale),
+                      1+ (windowSize[0]-100)*miniWorldScale,
+                      1+ windowSize[1]*miniWorldScale),
+                     1)
+    pygame.draw.rect(drawSurface,
+                     PLAYER1,
+                     ((windowSize[0]-90)-((scrollPos[0]+world.get_width())*miniWorldScale),
                       302-               (scrollPos[1]*miniWorldScale),
                       1+ (windowSize[0]-100)*miniWorldScale,
                       1+ windowSize[1]*miniWorldScale),
                      1)
+    pygame.draw.rect(drawSurface,
+                     PLAYER1,
+                     ((windowSize[0]-90)-((scrollPos[0]-world.get_width())*miniWorldScale),
+                      302-               (scrollPos[1]*miniWorldScale),
+                      1+ (windowSize[0]-100)*miniWorldScale,
+                      1+ windowSize[1]*miniWorldScale),
+                     1)
+    pygame.draw.rect(drawSurface,
+                     PLAYER1,
+                     ((windowSize[0]-90)-(scrollPos[0]*miniWorldScale),
+                      302-               ((scrollPos[1]+world.get_height())*miniWorldScale),
+                      1+ (windowSize[0]-100)*miniWorldScale,
+                      1+ windowSize[1]*miniWorldScale),
+                     1)
+    pygame.draw.rect(drawSurface,
+                     PLAYER1,
+                     ((windowSize[0]-90)-(scrollPos[0]*miniWorldScale),
+                      302-               ((scrollPos[1]-world.get_height())*miniWorldScale),
+                      1+ (windowSize[0]-100)*miniWorldScale,
+                      1+ windowSize[1]*miniWorldScale),
+                     1)
+    window.set_clip(old_clip)
     if scores["chocolate"] <= 0:
         TextBox.Print(drawSurface,
                       False,
@@ -563,10 +621,12 @@ def calculateScrollPos(scrollPos):
     if playerx+(VISIBILITY*BLOCKSIZE) > windowSize[0]-100:         #too far right
         scrollStep = (abs((playerx+(VISIBILITY*BLOCKSIZE)) - (windowSize[0]-100)) / 2) +1
         scrollPos = [scrollPos[0]-scrollStep, scrollPos[1]]
+        DebugPrint(str(Pos))
         DebugPrint("Scrolled Left" + str(scrollPos))
     if playerx-(VISIBILITY*BLOCKSIZE) < 0:                         #too far left
         scrollStep = (abs((playerx-(VISIBILITY*BLOCKSIZE))) / 2) +1
         scrollPos = [scrollPos[0]+scrollStep, scrollPos[1]]
+        DebugPrint(str(Pos))
         DebugPrint("Scrolled right" + str(scrollPos))
     if playery+(VISIBILITY*BLOCKSIZE) > windowSize[1]:             #too far down
         scrollStep = (abs((playery+(VISIBILITY*BLOCKSIZE)) - windowSize[1]) / 2) +1
