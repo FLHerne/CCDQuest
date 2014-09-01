@@ -341,6 +341,8 @@ def updateContextMessages(x, y, currentMessage):
             currentMessage = "Is this " + str(RealMap[x, y].name) + " safe?"
         else:
             currentMessage = "You reach some " + str(RealMap[x, y].name)
+    if (random.randint(0, 200) < RealMap[x, y].difficulty):
+        currentMessage = "Is this " + str(RealMap[x, y].name) + " really safe?"
     return currentMessage
     
     
