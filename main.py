@@ -103,7 +103,7 @@ class Cell:
     COIN = 1
     CHOCOLATE = 2
     DYNAMITE = 3
-    def __init__(self, image, trans, solid, difficulty, name = "UNNAMED TERRAIN", collectableItem = None, top = False, destructable = True):
+    def __init__(self, image, trans, solid, difficulty, name = "UNNAMED TERRAIN", collectableItem = None, top = False, destructable = True, temperature = 20):
         self.image = image
         self.transparent = trans
         self.solid = solid
@@ -114,6 +114,7 @@ class Cell:
         self.top = top
         self.destructable = destructable
         self.name = name
+        self.temperature = temperature
     def draw(self, drawSurface, x, y):
         DrawPos = ((x*BLOCKSIZE)-BLOCKSIZE, (y*BLOCKSIZE)-BLOCKSIZE)
         if not self.explored:
@@ -125,17 +126,17 @@ class Cell:
         if self.collectableItem != None:
             drawSurface.blit(collectablesImages[self.collectableItem], DrawPos)
                    
-DEEPWATER = Cell(DeepWaterImage, True, True, 25, "deep water", destructable = False)
+DEEPWATER = Cell(DeepWaterImage, True, True, 25, "deep water", destructable = False, temperature=8)
 GLASS = Cell(GlassImage, True, True, 3)
 GRASS = Cell(GrassImage, True, False, 2, "turf")
 ROCK = Cell(RockImage, True, False, 5, "rocky ground")
 SAND = Cell(SandImage, True, False, 3, "sand")
-SNOW = Cell(SnowImage, True, False, 4, "snow")
+SNOW = Cell(SnowImage, True, False, 4, "snow", temperature= -5)
 SPACE = Cell(SpaceImage, True, False, 1, "paving")
 TREES = Cell(TreesImage, False, False, 8, "forrest", top=True)
 WALL = Cell(WallImage, False, True, 3)
 UKWALL = Cell(UnknownImage, False, True, 3)
-WATER = Cell(WaterImage, True, False, 25, "water", destructable=False)
+WATER = Cell(WaterImage, True, False, 25, "water", destructable=False, temperature=12)
 MARSH = Cell(MarshImage, True, False, 20, "marshland")
 WOOD = Cell(WoodImage, True, False, 2, "wooden planking")
 
@@ -336,6 +337,11 @@ def updateContextMessages(x, y, currentMessage):
         currentMessage = "You peer through the window"
     if RealMap[x, y].top:
         currentMessage = "You stumble blindly through the darkness"
+    if RealMap[x, y].temperature < 15:
+        if RealMap[x, y].temperature < 0:
+            currentMessage = "The icy air makes you thankful that you packed a wooley jumper"
+        else:
+            currentMessage = "Its a bit chilly here"
     if RealMap[x, y].damaged and moved:
         currentMessage = "The debris is unstable underfoot"
     if newTerrain:
