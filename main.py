@@ -3,6 +3,7 @@
 import pygame
 import sys
 import time
+import copy
 import TextBox
 
 from colours import *
@@ -22,7 +23,7 @@ def ErrorPrint(Message):            # Messages which indicate that something has
 
 # -----------------------------------------------------------------------------
         
-groundFile = 'map/World7-ground.png'				#Image to use as map
+groundFile = 'map/World7-ground.png'                #Image to use as map
 collectablesFile = 'map/World7-collectables.png'
 #groundFile = 'map/latestRandomGen.png'                #Image to use as map
 #collectablesFile = 'map/blank.png'
@@ -155,7 +156,7 @@ def UnMapGroundColour(colour):
     elif colour == LIGHTBLUE:
         return WATER
     elif colour == BLUE:
-        return DEEPWATER	
+        return DEEPWATER    
     elif colour == GREEN:
         return GRASS
     elif colour == BLUEGREY:
@@ -186,7 +187,7 @@ class StartPosUndefined(Exception):
 # -----------------------------------------------------------------------------
 
 RealMap = {}
-for x in range(1-VISIBILITY, worldSize[0]+1+VISIBILITY):	#Make the edge of the world a wall
+for x in range(1-VISIBILITY, worldSize[0]+1+VISIBILITY):    #Make the edge of the world a wall
     for y in range(1-VISIBILITY, worldSize[1]+1+VISIBILITY):
         RealMap[x, y] = WALL
 
@@ -197,17 +198,9 @@ collectablesMap = pygame.PixelArray(collectables)
 for x in range(1, worldSize[0]+1):
     for y in range(1, worldSize[1]+1):
         groundColour = ground.unmap_rgb(groundMap[x-1,y-1])
-        RealMap[x, y] = UnMapGroundColour(groundColour)
+        RealMap[x, y] = copy.copy(UnMapGroundColour(groundColour))
         collectableColour = collectables.unmap_rgb(collectablesMap[x-1,y-1])
-        RealMap[x, y] = Cell(RealMap[x, y].image,
-                             RealMap[x, y].transparent,
-                             RealMap[x, y].solid,
-                             RealMap[x, y].difficulty,
-                             UnMapCollectablesColour(collectableColour),
-                             RealMap[x, y].top,
-                             RealMap[x, y].destructable
-                             )
-            
+        RealMap[x, y].collectableItem = UnMapCollectablesColour(collectableColour)
         if RealMap[x, y].collectableItem == Cell.COIN:
             totalCoins += 1
         if collectableColour == START:
@@ -228,7 +221,7 @@ del collectablesMap
 
 # -----------------------------------------------------------------------------
 
-Map = {}						#Initialise visible map with unknowness
+Map = {}                        #Initialise visible map with unknowness
 for x in range(1-VISIBILITY, worldSize[0]+1+VISIBILITY):
     for y in range(1-VISIBILITY, worldSize[1]+1+VISIBILITY):
         Map[x, y] = UNKNOWN
@@ -344,7 +337,7 @@ def CollectItems(scores):
     global currentMessage
     if RealMap[Pos[0], Pos[1]].collectableItem == Cell.COIN:    #Have we just walked into a coin
         scores["coins"] += 1                                    #Increment score counter
-        RealMap[Pos[0], Pos[1]].collectableItem = None	        #Remove coin
+        RealMap[Pos[0], Pos[1]].collectableItem = None          #Remove coin
         DebugPrint("Collected a coin")
         currentMessage = "You find a gold coin"
     if RealMap[Pos[0], Pos[1]].collectableItem == Cell.DYNAMITE:
@@ -368,7 +361,7 @@ def HandleEvents(scores):
             quitting = True
         if event.type == pygame.KEYDOWN:
             if event.key == UP:
-                if not RealMap[Pos[0], Pos[1]-1].solid:	#We haven't collided with anthing
+                if not RealMap[Pos[0], Pos[1]-1].solid: #We haven't collided with anthing
                     Pos[1] -= 1
             if event.key == DOWN:
                 if not RealMap[Pos[0], Pos[1]+1].solid:
