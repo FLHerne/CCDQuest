@@ -102,7 +102,7 @@ class Cell:
     COIN = 1
     CHOCOLATE = 2
     DYNAMITE = 3
-    def __init__(self, image, trans, solid, difficulty, collectableItem = None, top = False, destructable = True):
+    def __init__(self, image, trans, solid, difficulty, collectableItem = None, top = False, destructable = True, name = "place"):
         self.image = image
         self.transparent = trans
         self.solid = solid
@@ -111,6 +111,7 @@ class Cell:
         self.collectableItem = collectableItem
         self.top = top
         self.destructable = destructable
+        self.name = name
     def draw(self, drawSurface, x, y):
         drawSurface.blit(self.image, ((x*BLOCKSIZE)-BLOCKSIZE, (y*BLOCKSIZE)-BLOCKSIZE))
         if self.damaged:

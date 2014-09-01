@@ -1,0 +1,5 @@
+*.pyc
+.directory
+*.py~
+*.md~
+.gitignore~
