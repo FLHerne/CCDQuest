@@ -575,15 +575,16 @@ def animCountUpdate(animCounter):
         animCounter += 1
     return animCounter
 
-def wrapCoords():
+def wrapCoords(scrollPos):
+    playerx = (Pos[0]*BLOCKSIZE)+scrollPos[0]
+    playery = (Pos[1]*BLOCKSIZE)+scrollPos[1]
     if Pos[0] % worldSize[0] == int(worldSize[0]/2):
         Pos[0] %= worldSize[0]
         print "Cut x", scrollPos[0], scrollPos[0] % world.get_width()
-        scrollPos[0] %= world.get_width()
     if Pos[1] % worldSize[1] == int(worldSize[1]/2):
         Pos[1] %= worldSize[1]
         print "Cut y", scrollPos[1], scrollPos[1] % world.get_height()
-        scrollPos[1] %= world.get_height()
+    return [(-BLOCKSIZE*Pos[0])+playerx, (-BLOCKSIZE*Pos[1])+playery]
     
 def setup():
     '''to be used at the beginning of the programme'''
@@ -646,7 +647,7 @@ moved = False
 newTerrain = False
 oldTerrainName = "paving"
 
-  
+
 quitting = False
 while not quitting:
     time.sleep(0.04)
@@ -656,7 +657,7 @@ while not quitting:
     DrawPlayer(world)
     scrollPos = calculateScrollPos(scrollPos)
     mapWorldToScreen(scrollPos)
-    wrapCoords()
+    scrollPos = wrapCoords(scrollPos)
     currentMessage = updateContextMessages(Pos[0], Pos[1], currentMessage)
     DrawMessageBox(window)
     DrawHud(scores, window)
