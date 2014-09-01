@@ -416,7 +416,7 @@ def DrawTiles():
 
 def DrawPlayer(drawSurface):
     '''draw the player as a blinking circle'''
-    if (animCounter%9 != 0) and (Map[Pos[0], Pos[1]].top == False):
+    if (animCounter%9 != 0) and (RealMap[Pos[0], Pos[1]].top == False):
         x = (Pos[0]*BLOCKSIZE)-int(BLOCKSIZE/2)
         y = (Pos[1]*BLOCKSIZE)-int(BLOCKSIZE/2)
         radius = int(BLOCKSIZE/2)
