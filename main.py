@@ -356,9 +356,10 @@ def CollectItems(scores):
     return scores
 
         
-def HandleEvents(scores):
+def HandleEvents(scores, moved):
     '''respond to user input'''
     quitting = False
+    moved = False
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             quitting = True
@@ -366,15 +367,19 @@ def HandleEvents(scores):
             if event.key == UP:
                 if not RealMap[Pos[0], Pos[1]-1].solid: #We haven't collided with anthing
                     Pos[1] -= 1
+                    moved = True
             if event.key == DOWN:
                 if not RealMap[Pos[0], Pos[1]+1].solid:
                     Pos[1] += 1
+                    moved = True
             if event.key == LEFT:
                 if not RealMap[Pos[0]-1, Pos[1]].solid:
                     Pos[0] -= 1
+                    moved = True
             if event.key == RIGHT:
                 if not RealMap[Pos[0]+1, Pos[1]].solid:
                     Pos[0] += 1
+                    moved = True
             if event.key == BLAST and ExplosionValid(Pos[0], Pos[1], scores["dynamite"]):
                 scores["dynamite"] = Explosion(scores["dynamite"], Pos[0], Pos[1])
             if scores["chocolate"] >= 0:
@@ -382,7 +387,7 @@ def HandleEvents(scores):
             else:
                 quitting = True
     scores = CollectItems(scores)
-    return quitting, scores
+    return quitting, scores, moved
     
     
 def UpdateVisible():
@@ -536,11 +541,12 @@ def calculateScrollPos(scrollPos):
 scrollPos = ((-BLOCKSIZE*Pos[0])+((windowSize[0]-100)/2), (-BLOCKSIZE*Pos[1])+(windowSize[1]/2))
 DebugPrint("Initial scrollPos" + str(scrollPos))
 currentMessage = "You find yourself in the middle of a strange and unknown landscape"
+moved = False
   
 quitting = False
 while not quitting:
     time.sleep(0.04)
-    quitting, scores = HandleEvents(scores)
+    quitting, scores, moved = HandleEvents(scores, moved)
     UpdateVisible()
     DrawTiles()
     DrawPlayer(world)
