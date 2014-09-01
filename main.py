@@ -529,7 +529,7 @@ def wrapCoords(scrollPos):
         Pos[0] %= worldSize[0]
     if Pos[1] % worldSize[1] == int(worldSize[1]/2):
         Pos[1] %= worldSize[1]
-    return [(-BLOCKSIZE*Pos[0])+playerx, (-BLOCKSIZE*Pos[1])+playery]
+    return ((-BLOCKSIZE*Pos[0])+playerx, (-BLOCKSIZE*Pos[1])+playery)
     
 def setup():
     '''to be used at the beginning of the programme'''
@@ -556,26 +556,26 @@ def calculateScrollPos(scrollPos):
     playery = (Pos[1]*BLOCKSIZE)+scrollPos[1]
     if playerx+(VISIBILITY*BLOCKSIZE) > windowSize[0]-100:         #too far right
         scrollStep = (abs((playerx+(VISIBILITY*BLOCKSIZE)) - (windowSize[0]-100)) / 2) +1
-        scrollPos = [scrollPos[0]-scrollStep, scrollPos[1]]
+        scrollPos = (scrollPos[0]-scrollStep, scrollPos[1])
         DebugPrint(str(Pos))
         DebugPrint("Scrolled Left" + str(scrollPos))
     if playerx-(VISIBILITY*BLOCKSIZE) < 0:                         #too far left
         scrollStep = (abs((playerx-(VISIBILITY*BLOCKSIZE))) / 2) +1
-        scrollPos = [scrollPos[0]+scrollStep, scrollPos[1]]
+        scrollPos = (scrollPos[0]+scrollStep, scrollPos[1])
         DebugPrint(str(Pos))
         DebugPrint("Scrolled right" + str(scrollPos))
     if playery+(VISIBILITY*BLOCKSIZE) > windowSize[1]:             #too far down
         scrollStep = (abs((playery+(VISIBILITY*BLOCKSIZE)) - windowSize[1]) / 2) +1
-        scrollPos = [scrollPos[0], scrollPos[1]-scrollStep]
+        scrollPos = (scrollPos[0], scrollPos[1]-scrollStep)
         DebugPrint("Scrolled up" + str(scrollPos))
     if playery-(VISIBILITY*BLOCKSIZE) < 0:                         #too far up
         scrollStep = (abs((playery-(VISIBILITY*BLOCKSIZE))) / 2) +1
-        scrollPos = [scrollPos[0], scrollPos[1]+scrollStep]
+        scrollPos = (scrollPos[0], scrollPos[1]+scrollStep)
         DebugPrint("Scrolled down" + str(scrollPos))
 
     return scrollPos
     
-scrollPos = [(-BLOCKSIZE*Pos[0])+((windowSize[0]-100)/2), (-BLOCKSIZE*Pos[1])+(windowSize[1]/2)]
+scrollPos = ((-BLOCKSIZE*Pos[0])+((windowSize[0]-100)/2), (-BLOCKSIZE*Pos[1])+(windowSize[1]/2))
 DebugPrint("Initial scrollPos" + str(scrollPos))
 currentMessage = "You find yourself in the middle of a strange and unknown landscape"
 moved = False
