@@ -101,13 +101,12 @@ class Cell:
     COIN = 1
     CHOCOLATE = 2
     DYNAMITE = 3
-    def __init__(self, image, trans, solid, difficulty, reDraw = False, collectableItem = None, top = False, destructable = True):
+    def __init__(self, image, trans, solid, difficulty, collectableItem = None, top = False, destructable = True):
         self.image = image
         self.transparent = trans
         self.solid = solid
         self.difficulty = difficulty
         self.damaged = False
-        self.alwaysRedraw = reDraw
         self.collectableItem = collectableItem
         self.top = top
         self.destructable = destructable
@@ -118,19 +117,19 @@ class Cell:
         if self.collectableItem != None:
             drawSurface.blit(collectablesImages[self.collectableItem], ((x*BLOCKSIZE)-BLOCKSIZE, (y*BLOCKSIZE)-BLOCKSIZE))
                    
-DEEPWATER = Cell(DeepWaterImage, True, True, 25, True, destructable = False)
+DEEPWATER = Cell(DeepWaterImage, True, True, 25, destructable = False)
 GLASS = Cell(GlassImage, True, True, 3)
 GRASS = Cell(GrassImage, True, False, 2)
 ROCK = Cell(RockImage, True, False, 5)
 SAND = Cell(SandImage, True, False, 3)
 SNOW = Cell(SnowImage, True, False, 4)
 SPACE = Cell(SpaceImage, True, False, 1)
-TREES = Cell(TreesImage, False, False, 8, False, None, True)
+TREES = Cell(TreesImage, False, False, 8, top=True)
 UNKNOWN = Cell(UnknownImage, True, True, 3)
 WALL = Cell(WallImage, False, True, 3)
 UKWALL = Cell(UnknownImage, False, True, 3)
-WATER = Cell(WaterImage, True, False, 25, True, None, False, False)
-MARSH = Cell(MarshImage, True, False, 20, True)
+WATER = Cell(WaterImage, True, False, 25, destructable=False)
+MARSH = Cell(MarshImage, True, False, 20)
 WOOD = Cell(WoodImage, True, False, 2)
 
 # -----------------------------------------------------------------------------
@@ -204,7 +203,6 @@ for x in range(1, worldSize[0]+1):
                              RealMap[x, y].transparent,
                              RealMap[x, y].solid,
                              RealMap[x, y].difficulty,
-                             RealMap[x, y].alwaysRedraw,
                              UnMapCollectablesColour(collectableColour),
                              RealMap[x, y].top,
                              RealMap[x, y].destructable
