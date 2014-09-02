@@ -616,6 +616,11 @@ while not quitting:
     DrawMessageBox(window)
     DrawHud(scores, window)
     animCounter = animCountUpdate(animCounter)
+    
+    newTextBox.defaultColour = BLUE
+    newTextBox.defaultSize = 20
+    newTextBox.Draw(window, "Hello, World!", pygame.Rect((30, 30), (200, 50)), YELLOW)
+    
     pygame.display.update()
             
 pygame.quit()
