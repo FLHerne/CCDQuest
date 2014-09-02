@@ -445,16 +445,21 @@ def DrawPlayer(drawSurface):
         pygame.draw.circle(drawSurface, PLAYER1, (x%world.get_width(), y%world.get_height()), radius)
 
 def DrawMessageBox(drawSurface):
-    TextBox.Print(drawSurface,
-                    False,
-                    0, windowSize[1]-20,
-                    windowSize[0]-95,
-                    BLACK,
-                    WHITE,
-                    'Arial', HUDFONTSIZE/2,
-                    currentMessage,
-                    True,
-                    [True, 20])    
+    #TextBox.Print(drawSurface,
+    #                False,
+    #                0, windowSize[1]-20,
+    #               windowSize[0]-95,
+    #                BLACK,
+    #                WHITE,
+    #                'Arial', HUDFONTSIZE/2,
+    #                currentMessage,
+    #                True,
+    #                [True, 20])    
+    messageBoxHeight = 20
+    sidePanelWidth = 95
+    messageBoxRect = pygame.Rect((0,  windowSize[1]-messageBoxHeight), (windowSize[0]-sidePanelWidth, messageBoxHeight))
+    pygame.draw.rect(window, BLACK, messageBoxRect)
+    newTextBox.Draw(window, currentMessage, messageBoxRect)
         
 def DrawHud(scores, drawSurface):
     '''Draw the heads-up display, with current information'''

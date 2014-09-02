@@ -1,8 +1,8 @@
 import pygame
 from colours import *
 
-defaultSize = 30
-defaultColour = RED
+defaultSize = 20
+defaultColour = WHITE
 
 def Draw(drawSurface, textString, rect, colour=defaultColour, centred=True):
     size = defaultSize
