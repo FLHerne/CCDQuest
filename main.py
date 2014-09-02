@@ -95,6 +95,8 @@ TreesImage = pygame.image.load("tiles/Trees.png")
 SandImage = pygame.image.load("tiles/Sand.png")
 SnowImage = pygame.image.load("tiles/Snow.png")
 
+BearImage = pygame.image.load("tiles/bear.png")
+
 collectablesImages = { 1 : CoinImage,                           # semi-enum for referencing collectable images
                        2 : ChocImage,
                        3 : DynamiteImage}
@@ -200,6 +202,8 @@ class ModDict(dict):
         return dict.__getitem__(self, (key[0] % worldSize[0], key[1] % worldSize[1]))
     def __setitem__(self, key, val):
         dict.__setitem__(self, (key[0] % worldSize[0], key[1] % worldSize[1]), val)
+    def __delitem__(self, key):
+        dict.__delitem__(self, (key[0] % worldSize[0], key[1] % worldSize[1]))
 
 RealMap = ModDict()
 
@@ -280,7 +284,61 @@ def CrossCheck():
             Y += 1
         RealMap[Pos[0], (Y*i)+Pos[1]].explored = True
 
+
+class Bear:
+    def __init__(self, position):
+        self.position = position
+    def hunt(self):
+        if abs(Pos[0]-self.position[0]) + abs(Pos[1]-self.position[1]) > 15:
+            return False
+        def worldPos(d_coord):
+            return (self.position[0] + d_coord[0] - 32,
+                    self.position[1] + d_coord[1] - 32)
+        def isTarget(d_coord):
+            return (worldPos(d_coord)[0]%worldSize[0] == Pos[0]%worldSize[0] and
+                    worldPos(d_coord)[1]%worldSize[1] == Pos[1]%worldSize[1])
+
+        #distance, parent
+        foundtarget = False
+        dijkstramap = [[(512, (32, 32)) for x in xrange(64)] for x in xrange(64)]
+        #distance, (x, y)
+        import heapq
+        openlist = []
+        heapq.heappush(openlist, (0, (32, 32)))
+        curp = False
+        while openlist:
+            curn = heapq.heappop(openlist)
+            curd = curn[0]
+            curp = curn[1]
+            print "CurP is", curp
+            if isTarget(curp):
+                foundtarget = True
+                break
+            for nbrpos in [(curp[0]-1,curp[1]), (curp[0],curp[1]-1), (curp[0]+1,curp[1]), (curp[0],curp[1]+1)]:
+                if nbrpos[0] < 0 or nbrpos[1] < 0 or nbrpos[0] >= 64 or nbrpos[1] >= 64:
+                    continue
+                if dijkstramap[nbrpos[0]][nbrpos[1]][0] != 512 or RealMap[worldPos(nbrpos)].solid:
+                    continue
+                dijkstramap[nbrpos[0]][nbrpos[1]] = (curd+1, curp)
+                heapq.heappush(openlist, (curd+1, nbrpos))
+                print "Pushed", nbrpos
+        if not foundtarget:
+            print "Failed"
+            return False
+        print "Success"
+        while dijkstramap[curp[0]][curp[1]][1] != (32, 32):
+            curp = dijkstramap[curp[0]][curp[1]][1]
+        self.position[0] += curp[0]-32
+        self.position[1] += curp[1]-32
         
+        return True
+        
+    
+    def draw(self, drawSurface):
+        x = ((self.position[0]*BLOCKSIZE))
+        y = ((self.position[1]*BLOCKSIZE))
+        drawSurface.blit(BearImage, (x, y))
+
 def ExplosionValid(x, y, Dynamite):
     global currentMessage
     '''test if an explosion is currently possible'''
@@ -391,6 +449,8 @@ def HandleEvents(scores, moved):
         if event.type == pygame.QUIT:
             quitting = True
         if event.type == pygame.KEYDOWN:
+            if random.random() < 0.7:
+                TestBear.hunt()
             if event.key == UP:
                 if not RealMap[Pos[0], Pos[1]-1].solid: #We haven't collided with anthing
                     Pos[1] -= 1
@@ -600,6 +660,7 @@ moved = False
 newTerrain = False
 oldTerrainName = "paving"
 
+TestBear = Bear([64, 64])
 
 quitting = False
 while not quitting:
@@ -608,6 +669,7 @@ while not quitting:
     UpdateVisible()
     DrawTiles()
     DrawPlayer(world)
+    TestBear.draw(world)
     scrollPos = calculateScrollPos(scrollPos)
     mapWorldToScreen(scrollPos)
     scrollPos = wrapCoords(scrollPos)
