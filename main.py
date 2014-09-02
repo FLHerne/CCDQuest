@@ -5,6 +5,7 @@ import sys
 import time
 import copy
 import TextBox
+import newTextBox
 import random
 
 from colours import *
