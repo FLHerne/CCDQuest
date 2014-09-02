@@ -96,7 +96,8 @@ TreesImage = pygame.image.load("tiles/Trees.png")
 SandImage = pygame.image.load("tiles/Sand.png")
 SnowImage = pygame.image.load("tiles/Snow.png")
 
-BearImage = pygame.image.load("tiles/bear.png")
+BearImageLeft = pygame.image.load("tiles/bear.png")
+BearImageRight = pygame.transform.flip(BearImageLeft, True, False)
 
 collectablesImages = { 1 : CoinImage,                           # semi-enum for referencing collectable images
                        2 : ChocImage,
@@ -289,6 +290,7 @@ def CrossCheck():
 class Bear:
     def __init__(self, position):
         self.position = position
+        self.direction = -1 # Left
     def hunt(self):
         if abs(Pos[0]-self.position[0]) + abs(Pos[1]-self.position[1]) > 15:
             return False
@@ -330,15 +332,14 @@ class Bear:
         while dijkstramap[curp[0]][curp[1]][1] != (32, 32):
             curp = dijkstramap[curp[0]][curp[1]][1]
         self.position[0] += curp[0]-32
+        self.direction = curp[0]-32 if abs(curp[0]-32) else self.direction
         self.position[1] += curp[1]-32
-        
         return True
-        
     
     def draw(self, drawSurface):
         x = ((self.position[0]*BLOCKSIZE))
         y = ((self.position[1]*BLOCKSIZE))
-        drawSurface.blit(BearImage, (x, y))
+        drawSurface.blit(BearImageRight if self.direction > 0 else BearImageLeft, (x, y))
 
 def ExplosionValid(x, y, Dynamite):
     global currentMessage
