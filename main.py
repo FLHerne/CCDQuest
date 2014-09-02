@@ -116,7 +116,7 @@ class Cell:
         self.name = name
         self.temperature = temperature
     def draw(self, drawSurface, x, y):
-        DrawPos = ((x*BLOCKSIZE)-BLOCKSIZE, (y*BLOCKSIZE)-BLOCKSIZE)
+        DrawPos = (x*BLOCKSIZE, y*BLOCKSIZE)
         if not self.explored:
             drawSurface.blit(UnknownImage, DrawPos)
             return
@@ -193,20 +193,24 @@ class StartPosUndefined(Exception):
 
 # -----------------------------------------------------------------------------
 
-RealMap = {}
-for x in range(1-VISIBILITY, worldSize[0]+1+VISIBILITY):    #Make the edge of the world a wall
-    for y in range(1-VISIBILITY, worldSize[1]+1+VISIBILITY):
-        RealMap[x, y] = WALL
+class ModDict(dict):
+    def __init__(self, *args):
+        dict.__init__(self, args)
+    def __getitem__(self, key):
+        return dict.__getitem__(self, (key[0] % worldSize[0], key[1] % worldSize[1]))
+    def __setitem__(self, key, val):
+        dict.__setitem__(self, (key[0] % worldSize[0], key[1] % worldSize[1]), val)
 
+RealMap = ModDict()
 
 groundMap = pygame.PixelArray(ground)
 collectablesMap = pygame.PixelArray(collectables)
 
-for x in range(1, worldSize[0]+1):
-    for y in range(1, worldSize[1]+1):
-        groundColour = ground.unmap_rgb(groundMap[x-1,y-1])
+for x in range(0, worldSize[0]):
+    for y in range(0, worldSize[1]):
+        groundColour = ground.unmap_rgb(groundMap[x, y])
         RealMap[x, y] = copy.copy(UnMapGroundColour(groundColour))
-        collectableColour = collectables.unmap_rgb(collectablesMap[x-1,y-1])
+        collectableColour = collectables.unmap_rgb(collectablesMap[x, y])
         RealMap[x, y].collectableItem = UnMapCollectablesColour(collectableColour)
         if RealMap[x, y].collectableItem == Cell.COIN:
             totalCoins += 1
@@ -216,13 +220,6 @@ for x in range(1, worldSize[0]+1):
 if Pos is None:
     raise StartPosUndefined()
 
-for x in (1, worldSize[0]+1):
-    for y in range(1, worldSize[1]+1):
-        RealMap[x, y] = UKWALL
-for x in range(1, worldSize[0]+1):
-    for y in (1, worldSize[1]+1):
-        RealMap[x, y] = UKWALL
-    
 del groundMap
 del collectablesMap
 
@@ -435,16 +432,16 @@ def DrawTiles():
     '''call the draw routine for every cell that might be visible'''
     for x in range(Pos[0]-VISIBILITY, Pos[0]+VISIBILITY+1):
         for y in range(Pos[1]-VISIBILITY, Pos[1]+VISIBILITY+1):
-            RealMap[x, y].draw(world, x, y)
+            RealMap[x, y].draw(world, x%worldSize[0], y%worldSize[1])
         
 
 def DrawPlayer(drawSurface):
     '''draw the player as a blinking circle'''
     if (animCounter%9 != 0) and (RealMap[Pos[0], Pos[1]].top == False):
-        x = (Pos[0]*BLOCKSIZE)-int(BLOCKSIZE/2)
-        y = (Pos[1]*BLOCKSIZE)-int(BLOCKSIZE/2)
+        x = ((Pos[0]*BLOCKSIZE)+int(BLOCKSIZE/2))#%world.get_width()
+        y = ((Pos[1]*BLOCKSIZE)+int(BLOCKSIZE/2))#%world.get_height()
         radius = int(BLOCKSIZE/2)
-        pygame.draw.circle(drawSurface, PLAYER1, (x, y), radius)
+        pygame.draw.circle(drawSurface, PLAYER1, (x%world.get_width(), y%world.get_height()), radius)
 
 def DrawMessageBox(drawSurface):
     TextBox.Print(drawSurface,
@@ -495,17 +492,22 @@ def DrawHud(scores, drawSurface):
                   ChocAmountString,
                   True,
                   [False, windowSize[1]])
-
+    old_clip = window.get_clip()
+    window.set_clip((windowSize[0]-90, 302, 90, 90))
     pygame.transform.scale(world, (90, (world.get_height()/world.get_width())*90), miniWorld)
     drawSurface.blit(miniWorld, (windowSize[0]-90, 302))
     miniWorldScale = 90.0/(worldSize[0]*BLOCKSIZE)
-    pygame.draw.rect(drawSurface,
-                     PLAYER1,
-                     ((windowSize[0]-90)-(scrollPos[0]*miniWorldScale),
-                      302-               (scrollPos[1]*miniWorldScale),
-                      1+ (windowSize[0]-100)*miniWorldScale,
-                      1+ windowSize[1]*miniWorldScale),
-                     1)
+    for tx in [scrollPos[0]-world.get_width(), scrollPos[0], scrollPos[0]+world.get_width()]:
+        for ty in [scrollPos[1]-world.get_height(), scrollPos[1], scrollPos[1]+world.get_height()]:
+            pygame.draw.rect(drawSurface,
+                PLAYER1,
+                ((windowSize[0]-90)-(tx*miniWorldScale), # Top x corner of minimap, plus scroll offset
+                302-                (ty*miniWorldScale), # Top y ''
+                1+ (windowSize[0]-100)*miniWorldScale,
+                1+ windowSize[1]*miniWorldScale),
+                1)
+    window.set_clip(old_clip)
+    
     if scores["chocolate"] <= 0:
         TextBox.Print(drawSurface,
                       False,
@@ -537,6 +539,15 @@ def animCountUpdate(animCounter):
     else:
         animCounter += 1
     return animCounter
+
+def wrapCoords(scrollPos):
+    playerx = (Pos[0]*BLOCKSIZE)+scrollPos[0]
+    playery = (Pos[1]*BLOCKSIZE)+scrollPos[1]
+    if Pos[0] % worldSize[0] == int(worldSize[0]/2):
+        Pos[0] %= worldSize[0]
+    if Pos[1] % worldSize[1] == int(worldSize[1]/2):
+        Pos[1] %= worldSize[1]
+    return ((-BLOCKSIZE*Pos[0])+playerx, (-BLOCKSIZE*Pos[1])+playery)
     
 def setup():
     '''to be used at the beginning of the programme'''
@@ -548,7 +559,14 @@ def loop():
 
 def mapWorldToScreen(scrollPos):
     '''show part of the world on screen'''
-    window.blit(world, scrollPos)
+    old_clip = window.get_clip()
+    worldRegion = pygame.Rect(0, 0, windowSize[0]-90, windowSize[1]-20)
+    window.set_clip(worldRegion)
+    for tx in [scrollPos[0]-world.get_width(), scrollPos[0], scrollPos[0]+world.get_width()]:
+        for ty in [scrollPos[1]-world.get_height(), scrollPos[1], scrollPos[1]+world.get_height()]:
+            if world.get_rect(topleft=(tx,ty)).colliderect(worldRegion):
+                window.blit(world, (tx, ty))
+    window.set_clip(old_clip)
 
 def calculateScrollPos(scrollPos):
     '''scroll towards the correct position'''
@@ -557,10 +575,12 @@ def calculateScrollPos(scrollPos):
     if playerx+(VISIBILITY*BLOCKSIZE) > windowSize[0]-100:         #too far right
         scrollStep = (abs((playerx+(VISIBILITY*BLOCKSIZE)) - (windowSize[0]-100)) / 2) +1
         scrollPos = (scrollPos[0]-scrollStep, scrollPos[1])
+        DebugPrint(str(Pos))
         DebugPrint("Scrolled Left" + str(scrollPos))
     if playerx-(VISIBILITY*BLOCKSIZE) < 0:                         #too far left
         scrollStep = (abs((playerx-(VISIBILITY*BLOCKSIZE))) / 2) +1
         scrollPos = (scrollPos[0]+scrollStep, scrollPos[1])
+        DebugPrint(str(Pos))
         DebugPrint("Scrolled right" + str(scrollPos))
     if playery+(VISIBILITY*BLOCKSIZE) > windowSize[1]:             #too far down
         scrollStep = (abs((playery+(VISIBILITY*BLOCKSIZE)) - windowSize[1]) / 2) +1
@@ -580,7 +600,7 @@ moved = False
 newTerrain = False
 oldTerrainName = "paving"
 
-  
+
 quitting = False
 while not quitting:
     time.sleep(0.04)
@@ -590,6 +610,7 @@ while not quitting:
     DrawPlayer(world)
     scrollPos = calculateScrollPos(scrollPos)
     mapWorldToScreen(scrollPos)
+    scrollPos = wrapCoords(scrollPos)
     currentMessage = updateContextMessages(Pos[0], Pos[1], currentMessage)
     DrawMessageBox(window)
     DrawHud(scores, window)
