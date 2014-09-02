@@ -1,13 +1,12 @@
 import pygame
 from colours import *
 
-defaultSize = 20
+defaultSize = 14
 defaultColour = WHITE
 
 def Draw(drawSurface, textString, rect, colour=defaultColour, centred=True):
     size = defaultSize
-    font = pygame.font.Font(None, size)
-    #printedSize = font.size(textstring)
+    font = pygame.font.SysFont('Monospace', defaultSize)
     textBitmap = font.render(textString, True, colour)
     if centred:
         offset = ((rect.width - textBitmap.get_width())/2, (rect.height - textBitmap.get_height())/2)
