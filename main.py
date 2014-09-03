@@ -24,7 +24,7 @@ def ErrorPrint(Message):            # Messages which indicate that something has
         print(Message)
 
 # -----------------------------------------------------------------------------
-        
+
 groundFile = 'map/World7-ground.png'                #Image to use as map
 collectablesFile = 'map/World7-collectables.png'
 
