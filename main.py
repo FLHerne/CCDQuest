@@ -271,9 +271,9 @@ def CrossCheck():
     for i in (-1, 1):                                                           # Horizontally left and right
         X = 0                                                                   # start at the player      
         while RealMap[(X*i)+Pos[0], Pos[1]].transparent and X < VISIBILITY:     # if transparent and within bounding range
-            RealMap[(X*i)+Pos[0], Pos[1]].explored = True           # make visible
+            RealMap[(X*i)+Pos[0], Pos[1]].explored = True                       # make visible
             X += 1                                                              # move away from player
-        RealMap[(X*i)+Pos[0], Pos[1]].explore = True               # make final cell visible
+        RealMap[(X*i)+Pos[0], Pos[1]].explored = True                           # make final cell visible
     for i in (-1, 1):                                                           # Repeat as above, but vertically
         Y = 0
         while RealMap[Pos[0], (Y*i)+Pos[1]].transparent and Y < VISIBILITY:
