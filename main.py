@@ -100,9 +100,9 @@ TreesImage = pygame.image.load("tiles/Trees.png")
 SandImage = pygame.image.load("tiles/Sand.png")
 SnowImage = pygame.image.load("tiles/Snow.png")
 
-collectablesImages = { 1 : CoinImage,                           # semi-enum for referencing collectable images
-                       2 : ChocImage,
-                       3 : DynamiteImage}
+collectablesImages = { 1 : images.Coin,                           # semi-enum for referencing collectable images
+                       2 : images.Choc,
+                       3 : images.Dynamite}
                         
 class Cell:
     COIN = 1
