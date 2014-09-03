@@ -25,8 +25,8 @@ def ErrorPrint(Message):            # Messages which indicate that something has
 
 # -----------------------------------------------------------------------------
         
-groundFile = 'map/smallMap-ground.png'                #Image to use as map
-collectablesFile = 'map/smallMap-collectables.png'
+groundFile = 'map/World7-ground.png'                #Image to use as map
+collectablesFile = 'map/World7-collectables.png'
 #groundFile = 'map/latestRandomGen.png'                #Image to use as map
 #collectablesFile = 'map/blank.png'
 
