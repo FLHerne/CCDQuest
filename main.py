@@ -106,10 +106,12 @@ collectablesImages = { 1 : images.Coin,                           # semi-enum fo
                        3 : images.Dynamite}
                         
 class Cell:
+    '''A single square in the world grid, with many properties'''
     COIN = 1
     CHOCOLATE = 2
     DYNAMITE = 3
     def __init__(self, image, trans, solid, difficulty, name = "UNNAMED TERRAIN", collectableItem = None, top = False, destructable = True, temperature = 20):
+        '''Set up initial attributes'''
         self.image = image
         self.transparent = trans
         self.solid = solid
@@ -122,6 +124,7 @@ class Cell:
         self.name = name
         self.temperature = temperature
     def draw(self, drawSurface, x, y):
+        '''Blit cell graphics to the specified surface'''
         DrawPos = (x*BLOCKSIZE, y*BLOCKSIZE)
         if not self.explored:
             drawSurface.blit(UnknownImage, DrawPos)
@@ -213,6 +216,7 @@ groundMap = pygame.PixelArray(ground)
 collectablesMap = pygame.PixelArray(collectables)
 
 def PopulateMap(groundMap, collectablesMap):
+    '''create an array of cells from bitmaps'''
     worldSize = ground.get_rect().size
     worldSize = [worldSize[0], worldSize[1]]
 
@@ -234,6 +238,7 @@ def PopulateMap(groundMap, collectablesMap):
     return RealMap, Pos
     
 def CountCoins(RealMap, rect=pygame.Rect((0, 0), (worldSize[0], worldSize[1]))):
+    '''Count the number of cells containing coins in the given region of map'''
     totalCoins = 0
     for x in range(rect.left, rect.right+1):
         for y in range(rect.top, rect.bottom+1):
@@ -466,7 +471,8 @@ def DrawPlayer(drawSurface):
         radius = int(BLOCKSIZE/2)
         pygame.draw.circle(drawSurface, PLAYER1, (x%world.get_width(), y%world.get_height()), radius)
 
-def DrawMessageBox(drawSurface):  
+def DrawMessageBox(drawSurface):
+    '''Draw the box containing the most recent user-facing message'''
     messageBoxHeight = 20
     sidePanelWidth = 95
     messageBoxRect = pygame.Rect((0,  windowSize[1]-messageBoxHeight), (windowSize[0]-sidePanelWidth, messageBoxHeight))
