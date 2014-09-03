@@ -82,13 +82,6 @@ NonVisibleImage = pygame.image.load("tiles/NonVisible.png")     # An overlay for
 DamageImage = pygame.image.load("tiles/Damage.png")             # An overlay for damaged (blown-up) tiles
 DamageImage = DamageImage.convert_alpha()                       # this image is transparent, so the alpha must be used too
 
-
-
-
-
-BearImageLeft = pygame.image.load("tiles/bear.png")
-BearImageRight = pygame.transform.flip(BearImageLeft, True, False)
-
 collectablesImages = { 1 : images.Coin,                           # semi-enum for referencing collectable images
                        2 : images.Choc,
                        3 : images.Dynamite}
@@ -360,7 +353,7 @@ class Bear:
             return
         x = ((self.position[0]*BLOCKSIZE))
         y = ((self.position[1]*BLOCKSIZE))
-        drawSurface.blit(BearImageRight if self.direction > 0 else BearImageLeft, (x, y))
+        drawSurface.blit(images.BearRight if self.direction > 0 else images.BearLeft, (x, y))
 
 def placeBears(number):
     max_attempts = 20*number
