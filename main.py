@@ -201,6 +201,7 @@ def UnMapCollectablesColour(colour):
 # -----------------------------------------------------------------------------
 
 class ModDict(dict):
+    '''a hacked dict that wraps tuples that look like coordinates to the world size'''
     def __init__(self, *args):
         dict.__init__(self, args)
     def __getitem__(self, key):
