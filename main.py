@@ -8,6 +8,7 @@ import TextBox
 import newTextBox
 import random
 
+
 from colours import *
 
 # -----------------------------------------------------------------------------
@@ -51,6 +52,8 @@ animLength = 36
 
 window = pygame.display.set_mode(windowSize)
 world = pygame.Surface((worldSize[0]*BLOCKSIZE, worldSize[1]*BLOCKSIZE))
+
+import images
 
 # -----------------------------------------------------------------------------
 
