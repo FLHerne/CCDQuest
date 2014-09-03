@@ -322,6 +322,7 @@ def Explosion(Dynamite, Centrex, Centrey):
     return Dynamite
     
 def TestArea(centrex, centrey, name):
+    '''test the space around a point for particular cell names'''
     count = 0
     for x in (-1, 0, 1):
         for y in (-1, 0, 1):
@@ -331,6 +332,7 @@ def TestArea(centrex, centrey, name):
     
     
 def updateContextMessages(x, y, currentMessage):
+    '''Generate context-based commentary'''
     if TestArea(x, y, "window") > 1:
         currentMessage = "You peer through the window"
     elif TestArea(x, y, "snow") > 3:
