@@ -23,7 +23,7 @@ def DebugPrint(Message):            # Messages which the end-user need not see, 
         
 def ErrorPrint(Message):            # Messages which indicate that something has gone wrong
     if printError:
-        print(Message)
+        print("Error: " + Message)
 
 # -----------------------------------------------------------------------------
         
@@ -197,8 +197,6 @@ def UnMapCollectablesColour(colour):
     else:
         return None
         
-class StartPosUndefined(Exception):
-    pass
 
 # -----------------------------------------------------------------------------
 
@@ -230,7 +228,7 @@ def PopulateMap(groundMap, collectablesMap):
                 DebugPrint("Found starting position")
                 Pos = [x, y]
     if Pos is None:
-        raise StartPosUndefined()
+        ErrorPrint("No starting position defined")
 
     del groundMap
     del collectablesMap
