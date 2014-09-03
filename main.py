@@ -1,5 +1,7 @@
 #!/usr/bin/env python2.6
 
+'''Game of exploration in a grid-based world'''
+
 import pygame
 import sys
 import time
@@ -345,7 +347,7 @@ def TestArea(centrex, centrey, name):
     for x in (-1, 0, 1):
         for y in (-1, 0, 1):
             if RealMap[centrex+x, centrey+y].name == name:
-                count +=1
+                count += 1
     return count
     
     
@@ -468,8 +470,8 @@ def DrawMessageBox(drawSurface):
     messageBoxHeight = 20
     sidePanelWidth = 95
     messageBoxRect = pygame.Rect((0,  windowSize[1]-messageBoxHeight), (windowSize[0]-sidePanelWidth, messageBoxHeight))
-    pygame.draw.rect(window, BLACK, messageBoxRect)
-    newTextBox.Draw(window, currentMessage, messageBoxRect)
+    pygame.draw.rect(drawSurface, BLACK, messageBoxRect)
+    newTextBox.Draw(drawSurface, currentMessage, messageBoxRect)
         
 def DrawHud(scores, drawSurface):
     '''Draw the heads-up display, with current information'''
@@ -557,6 +559,7 @@ def animCountUpdate(animCounter):
     return animCounter
 
 def wrapCoords(scrollPos):
+    '''allow player to walk around the world in a loop'''
     playerx = (Pos[0]*BLOCKSIZE)+scrollPos[0]
     playery = (Pos[1]*BLOCKSIZE)+scrollPos[1]
     if Pos[0] % worldSize[0] == int(worldSize[0]/2):
@@ -580,7 +583,7 @@ def mapWorldToScreen(scrollPos):
     window.set_clip(worldRegion)
     for tx in [scrollPos[0]-world.get_width(), scrollPos[0], scrollPos[0]+world.get_width()]:
         for ty in [scrollPos[1]-world.get_height(), scrollPos[1], scrollPos[1]+world.get_height()]:
-            if world.get_rect(topleft=(tx,ty)).colliderect(worldRegion):
+            if world.get_rect(topleft=(tx, ty)).colliderect(worldRegion):
                 window.blit(world, (tx, ty))
     window.set_clip(old_clip)
 
