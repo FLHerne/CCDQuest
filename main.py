@@ -297,10 +297,13 @@ def CrossCheck():
         RealMap[Pos[0], (Y*i)+Pos[1]].visible = True
 
 class Bear:
+    '''follows you around when in range'''
     def __init__(self, position):
+        '''setup bear in given position'''
         self.position = list(position)
         self.direction = -1 # Left
     def hunt(self):
+        '''move towards the player'''
         if abs(Pos[0]-self.position[0]) + abs(Pos[1]-self.position[1]) > 15:
             return False
         def worldPos(d_coord):
@@ -324,7 +327,7 @@ class Bear:
             if isTarget(curp):
                 foundtarget = True
                 break
-            for nbrpos in [(curp[0]-1,curp[1]), (curp[0],curp[1]-1), (curp[0]+1,curp[1]), (curp[0],curp[1]+1)]:
+            for nbrpos in [(curp[0]-1, curp[1]), (curp[0], curp[1]-1), (curp[0]+1, curp[1]), (curp[0], curp[1]+1)]:
                 if nbrpos[0] < 0 or nbrpos[1] < 0 or nbrpos[0] >= 64 or nbrpos[1] >= 64:
                     continue
                 if dijkstramap[nbrpos[0]][nbrpos[1]][0] != 512 or RealMap[worldPos(nbrpos)].solid:
@@ -343,6 +346,7 @@ class Bear:
         return True
     
     def draw(self, drawSurface):
+        '''Blit self to specified surface'''
         if RealMap[self.position].top or not RealMap[self.position].visible:
             return
         x = ((self.position[0]*BLOCKSIZE))
@@ -350,6 +354,7 @@ class Bear:
         drawSurface.blit(images.BearRight if self.direction > 0 else images.BearLeft, (x, y))
 
 def placeBears(number):
+    '''randomly add bears to the map'''
     max_attempts = 20*number
     created = []
     for i in xrange(max_attempts):
@@ -362,10 +367,12 @@ def placeBears(number):
     return created
 
 def moveBears(bearlist):
+    '''make each bear move towards the player using a pathfinder'''
     for bear in bearlist:
         bear.hunt()
 
 def drawBears(bearlist, drawSurface):
+    '''call the draw function for each bear'''
     for bear in bearlist:
         bear.draw(drawSurface)
 
