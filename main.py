@@ -25,8 +25,8 @@ def ErrorPrint(Message):            # Messages which indicate that something has
 
 # -----------------------------------------------------------------------------
         
-groundFile = 'map/World7-ground.png'                #Image to use as map
-collectablesFile = 'map/World7-collectables.png'
+groundFile = 'map/smallMap-ground.png'                #Image to use as map
+collectablesFile = 'map/smallMap-collectables.png'
 #groundFile = 'map/latestRandomGen.png'                #Image to use as map
 #collectablesFile = 'map/blank.png'
 
@@ -433,7 +433,7 @@ def HandleEvents(scores, moved):
     newTerrainName = RealMap[Pos[0], Pos[1]].name
     if newTerrainName != oldTerrainName:
         newTerrain = True
-        DebugPrint("Terrain type change")
+        DebugPrint("Terrain type change (" + newTerrainName + " --> " + oldTerrainName + ")")
     oldTerrainName = newTerrainName
     scores = CollectItems(scores)
     return quitting, scores, moved
