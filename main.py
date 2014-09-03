@@ -82,12 +82,7 @@ NonVisibleImage = pygame.image.load("tiles/NonVisible.png")     # An overlay for
 DamageImage = pygame.image.load("tiles/Damage.png")             # An overlay for damaged (blown-up) tiles
 DamageImage = DamageImage.convert_alpha()                       # this image is transparent, so the alpha must be used too
 
-CoinImage = pygame.image.load("tiles/Coin.png")                 # images for collectables
-CoinImage = CoinImage.convert_alpha()                           # collectables have transparent backgrounds
-ChocImage = pygame.image.load("tiles/Chocolate.png")
-ChocImage = ChocImage.convert_alpha()
-DynamiteImage = pygame.image.load("tiles/Dynamite.png")
-DynamiteImage = DynamiteImage.convert_alpha()
+
 
 
 
@@ -423,8 +418,8 @@ def Explosion(Dynamite, Centrex, Centrey):
                 RealMap[Centrex+x, Centrey+y].difficulty += 5
                 if not ((x, y) == (0, 0)):
                     RealMap[Centrex+x, Centrey+y].name = "debris from an explosion"
-                if RealMap[Centrex+x, Centrey+y].image == WoodImage:
-                    RealMap[Centrex+x, Centrey+y].image = WaterImage
+                if RealMap[Centrex+x, Centrey+y].image == images.Wood:
+                    RealMap[Centrex+x, Centrey+y].image = images.Water
     Dynamite -= 1
     return Dynamite
     
