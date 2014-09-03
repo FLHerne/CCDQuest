@@ -8,7 +8,6 @@ import TextBox
 import newTextBox
 import random
 
-
 from colours import *
 
 # -----------------------------------------------------------------------------
@@ -26,21 +25,21 @@ def ErrorPrint(Message):            # Messages which indicate that something has
 
 # -----------------------------------------------------------------------------
         
-#groundFile = 'map/smallMap-ground.png'                #Image to use as map
+#groundFile = 'map/smallMap-ground.png'                # Image to use as map
 #collectablesFile = 'map/smallMap-collectables.png'
-groundFile = 'map/World7-ground.png'                #Image to use as map
+groundFile = 'map/World7-ground.png'                   # Image to use as map
 collectablesFile = 'map/World7-collectables.png'
-#groundFile = 'map/latestRandomGen.png'                #Image to use as map
+#groundFile = 'map/latestRandomGen.png'                # Image to use as map
 #collectablesFile = 'map/blank.png'
 
 ground = pygame.image.load(groundFile)
 collectables = pygame.image.load(collectablesFile)
 worldSize = ground.get_rect().size
 worldSize = [worldSize[0], worldSize[1]]
-BLOCKSIZE = 8                       #Size of each square in the grid
-VISIBILITY = 15                     #How far can you see in an approximate circle
+BLOCKSIZE = 8                       # Size of each square in the grid
+VISIBILITY = 15                     # How far can you see in an approximate circle
 HUDFONTSIZE = 20                    # Score counter etc
-totalCoins = 0                      #How many coins are there in total? (initialise)
+totalCoins = 0                      # How many coins are there in total? (initialise)
 windowSize = (740, 480)
 
 scores = {"coins" : 0,
