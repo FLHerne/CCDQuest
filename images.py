@@ -25,5 +25,5 @@ Trees = pygame.image.load("tiles/Trees.png")
 Sand = pygame.image.load("tiles/Sand.png")
 Snow = pygame.image.load("tiles/Snow.png")
 
-BearImageLeft = pygame.image.load("tiles/bear.png")
-BearImageRight = pygame.transform.flip(BearImageLeft, True, False)
+BearLeft = pygame.image.load("tiles/bear.png")
+BearRight = pygame.transform.flip(BearImageLeft, True, False)
