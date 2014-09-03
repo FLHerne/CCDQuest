@@ -76,12 +76,6 @@ else:                               # mode using WASD
 
 # -----------------------------------------------------------------------------
 
-UnknownImage = pygame.image.load("tiles/Unknown.png")           # Used for tiles that must appear to be empty blank nothingness
-NonVisibleImage = pygame.image.load("tiles/NonVisible.png")     # An overlay for no-longer-visible tiles
-
-DamageImage = pygame.image.load("tiles/Damage.png")             # An overlay for damaged (blown-up) tiles
-DamageImage = DamageImage.convert_alpha()                       # this image is transparent, so the alpha must be used too
-
 collectablesImages = { 1 : images.Coin,                           # semi-enum for referencing collectable images
                        2 : images.Choc,
                        3 : images.Dynamite}
@@ -109,15 +103,15 @@ class Cell:
         '''Blit cell graphics to the specified surface'''
         DrawPos = (x*BLOCKSIZE, y*BLOCKSIZE)
         if not self.explored:
-            drawSurface.blit(UnknownImage, DrawPos)
+            drawSurface.blit(images.Unknown, DrawPos)
             return
         drawSurface.blit(self.image, DrawPos)
         if self.damaged:
-            drawSurface.blit(DamageImage, DrawPos)
+            drawSurface.blit(images.Damage, DrawPos)
         if self.collectableItem != None:
             drawSurface.blit(collectablesImages[self.collectableItem], DrawPos)
         if not self.visible:
-            drawSurface.blit(NonVisibleImage, DrawPos)
+            drawSurface.blit(images.NonVisible, DrawPos)
 
 DEEPWATER = Cell(images.DeepWater, True, True, 25, "deep water", destructable = False, temperature=8)
 GLASS = Cell(images.Glass, True, True, 3, "window")

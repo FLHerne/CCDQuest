@@ -1,6 +1,7 @@
 import pygame
 
 Unknown = pygame.image.load("tiles/Unknown.png")           # Used for tiles that must appear to be empty blank nothingness
+NonVisible = pygame.image.load("tiles/NonVisible.png")     # An overlay for no-longer-visible tiles
 
 Damage = pygame.image.load("tiles/Damage.png")             # An overlay for damaged (blown-up) tiles
 Damage = Damage.convert_alpha()                            # this image is transparent, so the alpha must be used too
