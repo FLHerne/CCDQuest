@@ -59,7 +59,7 @@ import images
 # -----------------------------------------------------------------------------
 
 pygame.key.set_repeat(100, 75)      # press-and hold for faster movement
-USEARROWS = True                    # set the keyboard controlls mode
+USEARROWS = True                    # set the keyboard controls mode
 
 if USEARROWS:                       # mode using arrow keys
     UP = pygame.K_UP
