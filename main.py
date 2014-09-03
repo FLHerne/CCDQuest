@@ -283,8 +283,8 @@ def CrossCheck():
 
         
 def ExplosionValid(x, y, Dynamite):
-    global currentMessage
     '''test if an explosion is currently possible'''
+    global currentMessage
     if (Dynamite <=0):
         DebugPrint("No Dynamite:")
         currentMessage = "You look, but find you have no dynamite left"
