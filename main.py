@@ -33,8 +33,7 @@ collectablesFile = 'map/World7-collectables.png'
 ground = pygame.image.load(groundFile)
 collectables = pygame.image.load(collectablesFile)
 worldSize = ground.get_rect().size
-
-worldSize = [worldSize[0], worldSize[1]]               #Size of image - FIXME
+worldSize = [worldSize[0], worldSize[1]]
 BLOCKSIZE = 8                       #Size of each square in the grid
 VISIBILITY = 15                     #How far can you see in an approximate circle
 HUDFONTSIZE = 20                    # Score counter etc
@@ -207,22 +206,37 @@ RealMap = ModDict()
 groundMap = pygame.PixelArray(ground)
 collectablesMap = pygame.PixelArray(collectables)
 
-for x in range(0, worldSize[0]):
-    for y in range(0, worldSize[1]):
-        groundColour = ground.unmap_rgb(groundMap[x, y])
-        RealMap[x, y] = copy.copy(UnMapGroundColour(groundColour))
-        collectableColour = collectables.unmap_rgb(collectablesMap[x, y])
-        RealMap[x, y].collectableItem = UnMapCollectablesColour(collectableColour)
-        if RealMap[x, y].collectableItem == Cell.COIN:
-            totalCoins += 1
-        if collectableColour == START:
-            DebugPrint("Found starting position")
-            Pos = [x, y]
-if Pos is None:
-    raise StartPosUndefined()
+def PopulateMap(groundMap, collectablesMap):
+    worldSize = ground.get_rect().size
+    worldSize = [worldSize[0], worldSize[1]]
 
-del groundMap
-del collectablesMap
+    for x in range(0, worldSize[0]):
+        for y in range(0, worldSize[1]):
+            groundColour = ground.unmap_rgb(groundMap[x, y])
+            RealMap[x, y] = copy.copy(UnMapGroundColour(groundColour))
+            collectableColour = collectables.unmap_rgb(collectablesMap[x, y])
+            RealMap[x, y].collectableItem = UnMapCollectablesColour(collectableColour)
+            if collectableColour == START:
+                DebugPrint("Found starting position")
+                Pos = [x, y]
+    if Pos is None:
+        raise StartPosUndefined()
+
+    del groundMap
+    del collectablesMap
+    
+    return RealMap, Pos
+    
+def CountCoins(RealMap, rect=pygame.Rect((0, 0), (worldSize[0], worldSize[1]))):
+    totalCoins = 0
+    for x in range(rect.left, rect.right+1):
+        for y in range(rect.top, rect.bottom+1):
+            if RealMap[x, y].collectableItem == Cell.COIN:
+                totalCoins += 1
+    return totalCoins
+   
+RealMap, Pos = PopulateMap(groundMap, collectablesMap)
+totalCoins = CountCoins(RealMap) 
 
 # -----------------------------------------------------------------------------
         
