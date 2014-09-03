@@ -332,6 +332,8 @@ class Bear:
         return True
     
     def draw(self, drawSurface):
+        if RealMap[self.position].top or not RealMap[self.position].explored:
+            return
         x = ((self.position[0]*BLOCKSIZE))
         y = ((self.position[1]*BLOCKSIZE))
         drawSurface.blit(BearImageRight if self.direction > 0 else BearImageLeft, (x, y))
