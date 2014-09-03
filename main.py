@@ -89,18 +89,7 @@ ChocImage = ChocImage.convert_alpha()
 DynamiteImage = pygame.image.load("tiles/Dynamite.png")
 DynamiteImage = DynamiteImage.convert_alpha()
 
-WaterImage = pygame.image.load("tiles/Water.png")               # images for terrain
-DeepWaterImage = pygame.image.load("tiles/DeepWater.png")
-RockImage = pygame.image.load("tiles/Rock.png")
-SpaceImage = pygame.image.load("tiles/Floor.png")
-GrassImage = pygame.image.load("tiles/Grass.png")
-MarshImage = pygame.image.load("tiles/Marsh.png")
-WallImage = pygame.image.load("tiles/Wall.png")
-GlassImage = pygame.image.load("tiles/Glass.png")
-WoodImage = pygame.image.load("tiles/Wood.png")
-TreesImage = pygame.image.load("tiles/Trees.png")
-SandImage = pygame.image.load("tiles/Sand.png")
-SnowImage = pygame.image.load("tiles/Snow.png")
+
 
 BearImageLeft = pygame.image.load("tiles/bear.png")
 BearImageRight = pygame.transform.flip(BearImageLeft, True, False)
@@ -142,19 +131,19 @@ class Cell:
         if not self.visible:
             drawSurface.blit(NonVisibleImage, DrawPos)
 
-DEEPWATER = Cell(DeepWaterImage, True, True, 25, "deep water", destructable = False, temperature=8)
-GLASS = Cell(GlassImage, True, True, 3, "window")
-GRASS = Cell(GrassImage, True, False, 2, "turf")
-ROCK = Cell(RockImage, True, False, 5, "rocky ground")
-SAND = Cell(SandImage, True, False, 3, "sand")
-SNOW = Cell(SnowImage, True, False, 4, "snow", temperature= -5)
-SPACE = Cell(SpaceImage, True, False, 1, "paving")
-TREES = Cell(TreesImage, False, False, 8, "forrest", top=True)
-WALL = Cell(WallImage, False, True, 3)
-UKWALL = Cell(UnknownImage, False, True, 3)
-WATER = Cell(WaterImage, True, False, 25, "water", destructable=False, temperature=12)
-MARSH = Cell(MarshImage, True, False, 20, "marshland")
-WOOD = Cell(WoodImage, True, False, 2, "wooden planking")
+DEEPWATER = Cell(images.DeepWater, True, True, 25, "deep water", destructable = False, temperature=8)
+GLASS = Cell(images.Glass, True, True, 3, "window")
+GRASS = Cell(images.Grass, True, False, 2, "turf")
+ROCK = Cell(images.Rock, True, False, 5, "rocky ground")
+SAND = Cell(images.Sand, True, False, 3, "sand")
+SNOW = Cell(images.Snow, True, False, 4, "snow", temperature= -5)
+SPACE = Cell(images.Space, True, False, 1, "paving")
+TREES = Cell(images.Trees, False, False, 8, "forrest", top=True)
+WALL = Cell(images.Wall, False, True, 3)
+UKWALL = Cell(images.Unknown, False, True, 3)
+WATER = Cell(images.Water, True, False, 25, "water", destructable=False, temperature=12)
+MARSH = Cell(images.Marsh, True, False, 20, "marshland")
+WOOD = Cell(images.Wood, True, False, 2, "wooden planking")
 
 # -----------------------------------------------------------------------------
   
