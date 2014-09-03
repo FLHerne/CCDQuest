@@ -27,8 +27,6 @@ def ErrorPrint(Message):            # Messages which indicate that something has
         
 groundFile = 'map/World7-ground.png'                #Image to use as map
 collectablesFile = 'map/World7-collectables.png'
-#groundFile = 'map/latestRandomGen.png'                #Image to use as map
-#collectablesFile = 'map/blank.png'
 
 ground = pygame.image.load(groundFile)
 collectables = pygame.image.load(collectablesFile)
@@ -289,7 +287,7 @@ def CrossCheck():
 
 class Bear:
     def __init__(self, position):
-        self.position = position
+        self.position = list(position)
         self.direction = -1 # Left
     def hunt(self):
         if abs(Pos[0]-self.position[0]) + abs(Pos[1]-self.position[1]) > 15:
@@ -301,10 +299,8 @@ class Bear:
             return (worldPos(d_coord)[0]%worldSize[0] == Pos[0]%worldSize[0] and
                     worldPos(d_coord)[1]%worldSize[1] == Pos[1]%worldSize[1])
 
-        #distance, parent
         foundtarget = False
         dijkstramap = [[(512, (32, 32)) for x in xrange(64)] for x in xrange(64)]
-        #distance, (x, y)
         import heapq
         openlist = []
         heapq.heappush(openlist, (0, (32, 32)))
@@ -324,7 +320,6 @@ class Bear:
                     continue
                 dijkstramap[nbrpos[0]][nbrpos[1]] = (curd+1, curp)
                 heapq.heappush(openlist, (curd+1, nbrpos))
-                print "Pushed", nbrpos
         if not foundtarget:
             print "Failed"
             return False
@@ -340,6 +335,28 @@ class Bear:
         x = ((self.position[0]*BLOCKSIZE))
         y = ((self.position[1]*BLOCKSIZE))
         drawSurface.blit(BearImageRight if self.direction > 0 else BearImageLeft, (x, y))
+
+def placeBears(number):
+    max_attempts = 20*number
+    created = []
+    for i in xrange(max_attempts):
+        attempt = (random.randint(0,worldSize[0]-1), random.randint(0,worldSize[1]-1))
+        if RealMap[attempt].name not in ['turf', 'forrest', 'rocky ground']:
+            continue
+        created.append(Bear(attempt))
+        if len(created) == number:
+            break
+    return created
+
+def moveBears(bearlist):
+    for bear in bearlist:
+        bear.hunt()
+
+def drawBears(bearlist, drawSurface):
+    for bear in bearlist:
+        bear.draw(drawSurface)
+
+bears = placeBears(int(worldSize[0]*worldSize[1]/5000))
 
 def ExplosionValid(x, y, Dynamite):
     global currentMessage
@@ -452,7 +469,7 @@ def HandleEvents(scores, moved):
             quitting = True
         if event.type == pygame.KEYDOWN:
             if random.random() < 0.7:
-                TestBear.hunt()
+                moveBears(bears)
             if event.key == UP:
                 if not RealMap[Pos[0], Pos[1]-1].solid: #We haven't collided with anthing
                     Pos[1] -= 1
@@ -667,8 +684,6 @@ moved = False
 newTerrain = False
 oldTerrainName = "paving"
 
-TestBear = Bear([64, 64])
-
 quitting = False
 while not quitting:
     time.sleep(0.04)
@@ -676,7 +691,7 @@ while not quitting:
     UpdateVisible()
     DrawTiles()
     DrawPlayer(world)
-    TestBear.draw(world)
+    drawBears(bears, world)
     scrollPos = calculateScrollPos(scrollPos)
     mapWorldToScreen(scrollPos)
     scrollPos = wrapCoords(scrollPos)
