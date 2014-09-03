@@ -20,13 +20,13 @@ printError = True
 def DebugPrint(Message):            # Messages which the end-user need not see, but may be useful to the developer
     if printDebug:
         print(Message)
-        
+ 
 def ErrorPrint(Message):            # Messages which indicate that something has gone wrong
     if printError:
         print("Error: " + Message)
 
 # -----------------------------------------------------------------------------
-        
+  
 #groundFile = 'map/smallMap-ground.png'                # Image to use as map
 #collectablesFile = 'map/smallMap-collectables.png'
 groundFile = 'map/World7-ground.png'                   # Image to use as map
@@ -77,6 +77,7 @@ else:                               # mode using WASD
 # -----------------------------------------------------------------------------
 
 UnknownImage = pygame.image.load("tiles/Unknown.png")           # Used for tiles that must appear to be empty blank nothingness
+NonVisibleImage = pygame.image.load("tiles/NonVisible.png")     # An overlay for no-longer-visible tiles
 
 DamageImage = pygame.image.load("tiles/Damage.png")             # An overlay for damaged (blown-up) tiles
 DamageImage = DamageImage.convert_alpha()                       # this image is transparent, so the alpha must be used too
@@ -104,7 +105,11 @@ SnowImage = pygame.image.load("tiles/Snow.png")
 collectablesImages = { 1 : images.Coin,                           # semi-enum for referencing collectable images
                        2 : images.Choc,
                        3 : images.Dynamite}
-                        
+
+BearImageLeft = pygame.image.load("tiles/bear.png")
+BearImageRight = pygame.transform.flip(BearImageLeft, True, False)
+
+  
 class Cell:
     '''A single square in the world grid, with many properties'''
     COIN = 1
@@ -118,6 +123,7 @@ class Cell:
         self.difficulty = difficulty
         self.damaged = False
         self.explored = False
+        self.visible = False
         self.collectableItem = collectableItem
         self.top = top
         self.destructable = destructable
@@ -134,7 +140,9 @@ class Cell:
             drawSurface.blit(DamageImage, DrawPos)
         if self.collectableItem != None:
             drawSurface.blit(collectablesImages[self.collectableItem], DrawPos)
-                   
+        if not self.visible:
+            drawSurface.blit(NonVisibleImage, DrawPos)
+
 DEEPWATER = Cell(DeepWaterImage, True, True, 25, "deep water", destructable = False, temperature=8)
 GLASS = Cell(GlassImage, True, True, 3, "window")
 GRASS = Cell(GrassImage, True, False, 2, "turf")
@@ -208,6 +216,8 @@ class ModDict(dict):
         return dict.__getitem__(self, (key[0] % worldSize[0], key[1] % worldSize[1]))
     def __setitem__(self, key, val):
         dict.__setitem__(self, (key[0] % worldSize[0], key[1] % worldSize[1]), val)
+    def __delitem__(self, key):
+        dict.__delitem__(self, (key[0] % worldSize[0], key[1] % worldSize[1]))
 
 RealMap = ModDict()
 
@@ -261,6 +271,7 @@ def DiagonalCheck():
     x = Pos[0]
     y = Pos[1]
     RealMap[x, y].explored = True                       # make the currently occupied cell visible
+    RealMap[x, y].visible = True
     for horizontal in (True, False):                # horizontal and vertical
         for Dir1 in (-1, 1):                        # left/right or up/down
             for Dir2 in (-1, 1):                    # final division into octants
@@ -268,7 +279,7 @@ def DiagonalCheck():
                 while (abs(Base) < VISIBILITY and
                     RealMap[Pos[0]+(Base if horizontal else 0),
                         Pos[1]+(0 if horizontal else Base)].transparent):   # repeatedly test if a cell is transparent and within a bounding square
-                    Base += Dir1       #FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
+                    #Base += Dir1       #FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
                     if horizontal:
                         x = Pos[0] + Base
                         y = Pos[1]
@@ -276,6 +287,7 @@ def DiagonalCheck():
                         x = Pos[0]
                         y = Pos[1] + Base
                     RealMap[x, y].explored = True
+                    RealMap[x, y].visible = True
                     while RealMap[x, y].transparent and ((Pos[1]-y)**2) + ((Pos[0]-x)**2) <= VISIBILITY**2: # test in bounding circle
                         if horizontal:                                                                      # move diagonally
                             x += Dir1
@@ -284,9 +296,12 @@ def DiagonalCheck():
                             x += Dir2
                             y += Dir1
                         RealMap[x, y].explored = True                                                           # make visible
+                        RealMap[x, y].visible = True
                     RealMap[x, y].explored = True                                                               # make the first opaque cell visible too
-                    #Base += Dir1       FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
+                    RealMap[x, y].visible = True
+                    Base += Dir1       #FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
                 RealMap[x, y].explored = True
+                RealMap[x, y].visible = True
                 
 # -----------------------------------------------------------------------------
 
@@ -295,17 +310,97 @@ def CrossCheck():
     for i in (-1, 1):                                                           # Horizontally left and right
         X = 0                                                                   # start at the player      
         while RealMap[(X*i)+Pos[0], Pos[1]].transparent and X < VISIBILITY:     # if transparent and within bounding range
-            RealMap[(X*i)+Pos[0], Pos[1]].explored = True                       # make visible
+
+            RealMap[(X*i)+Pos[0], Pos[1]].explored = True           # make visible
+            RealMap[(X*i)+Pos[0], Pos[1]].visible = True
             X += 1                                                              # move away from player
-        RealMap[(X*i)+Pos[0], Pos[1]].explored = True                           # make final cell visible
+        RealMap[(X*i)+Pos[0], Pos[1]].explored = True               # make final cell visible
+        RealMap[(X*i)+Pos[0], Pos[1]].visible = True
+
     for i in (-1, 1):                                                           # Repeat as above, but vertically
         Y = 0
         while RealMap[Pos[0], (Y*i)+Pos[1]].transparent and Y < VISIBILITY:
             RealMap[Pos[0], (Y*i)+Pos[1]].explored = True
+            RealMap[Pos[0], (Y*i)+Pos[1]].visible = True
             Y += 1
         RealMap[Pos[0], (Y*i)+Pos[1]].explored = True
+        RealMap[Pos[0], (Y*i)+Pos[1]].visible = True
 
-        
+class Bear:
+    def __init__(self, position):
+        self.position = list(position)
+        self.direction = -1 # Left
+    def hunt(self):
+        if abs(Pos[0]-self.position[0]) + abs(Pos[1]-self.position[1]) > 15:
+            return False
+        def worldPos(d_coord):
+            return (self.position[0] + d_coord[0] - 32,
+                    self.position[1] + d_coord[1] - 32)
+        def isTarget(d_coord):
+            return (worldPos(d_coord)[0]%worldSize[0] == Pos[0]%worldSize[0] and
+                    worldPos(d_coord)[1]%worldSize[1] == Pos[1]%worldSize[1])
+
+        foundtarget = False
+        dijkstramap = [[(512, (32, 32)) for x in xrange(64)] for x in xrange(64)]
+        import heapq
+        openlist = []
+        heapq.heappush(openlist, (0, (32, 32)))
+        curp = False
+        while openlist:
+            curn = heapq.heappop(openlist)
+            curd = curn[0]
+            curp = curn[1]
+            print "CurP is", curp
+            if isTarget(curp):
+                foundtarget = True
+                break
+            for nbrpos in [(curp[0]-1,curp[1]), (curp[0],curp[1]-1), (curp[0]+1,curp[1]), (curp[0],curp[1]+1)]:
+                if nbrpos[0] < 0 or nbrpos[1] < 0 or nbrpos[0] >= 64 or nbrpos[1] >= 64:
+                    continue
+                if dijkstramap[nbrpos[0]][nbrpos[1]][0] != 512 or RealMap[worldPos(nbrpos)].solid:
+                    continue
+                dijkstramap[nbrpos[0]][nbrpos[1]] = (curd+1, curp)
+                heapq.heappush(openlist, (curd+1, nbrpos))
+        if not foundtarget:
+            print "Failed"
+            return False
+        print "Success"
+        while dijkstramap[curp[0]][curp[1]][1] != (32, 32):
+            curp = dijkstramap[curp[0]][curp[1]][1]
+        self.position[0] += curp[0]-32
+        self.direction = curp[0]-32 if abs(curp[0]-32) else self.direction
+        self.position[1] += curp[1]-32
+        return True
+    
+    def draw(self, drawSurface):
+        if RealMap[self.position].top or not RealMap[self.position].visible:
+            return
+        x = ((self.position[0]*BLOCKSIZE))
+        y = ((self.position[1]*BLOCKSIZE))
+        drawSurface.blit(BearImageRight if self.direction > 0 else BearImageLeft, (x, y))
+
+def placeBears(number):
+    max_attempts = 20*number
+    created = []
+    for i in xrange(max_attempts):
+        attempt = (random.randint(0,worldSize[0]-1), random.randint(0,worldSize[1]-1))
+        if RealMap[attempt].name not in ['turf', 'forrest', 'rocky ground']:
+            continue
+        created.append(Bear(attempt))
+        if len(created) == number:
+            break
+    return created
+
+def moveBears(bearlist):
+    for bear in bearlist:
+        bear.hunt()
+
+def drawBears(bearlist, drawSurface):
+    for bear in bearlist:
+        bear.draw(drawSurface)
+
+bears = placeBears(int(worldSize[0]*worldSize[1]/5000))
+
 def ExplosionValid(x, y, Dynamite):
     '''test if an explosion is currently possible'''
     global currentMessage
@@ -418,6 +513,8 @@ def HandleEvents(scores, moved):
         if event.type == pygame.QUIT:
             quitting = True
         if event.type == pygame.KEYDOWN:
+            if random.random() < 0.7:
+                moveBears(bears)
             if event.key == UP:
                 if not RealMap[Pos[0], Pos[1]-1].solid: #We haven't collided with anthing
                     Pos[1] -= 1
@@ -450,23 +547,26 @@ def HandleEvents(scores, moved):
     
     
 def UpdateVisible():
-    '''copy parts of of RealMap into map, as appropriate'''
-    #CrossCheck()
+    '''update the visibility of cells by the player'''
+    for x in range(Pos[0]-VISIBILITY-1, Pos[0]+VISIBILITY+2):
+        for y in range(Pos[1]-VISIBILITY-1, Pos[1]+VISIBILITY+2):
+            RealMap[x, y].visible = False
+    CrossCheck()
     DiagonalCheck()
     
     
 def DrawTiles():
-    '''call the draw routine for every cell that might be visible'''
-    for x in range(Pos[0]-VISIBILITY, Pos[0]+VISIBILITY+1):
-        for y in range(Pos[1]-VISIBILITY, Pos[1]+VISIBILITY+1):
+    '''redraw every cell that might be visible or have been visible on the previous draw'''
+    for x in range(Pos[0]-VISIBILITY-1, Pos[0]+VISIBILITY+2):
+        for y in range(Pos[1]-VISIBILITY-1, Pos[1]+VISIBILITY+2):
             RealMap[x, y].draw(world, x%worldSize[0], y%worldSize[1])
         
 
 def DrawPlayer(drawSurface):
     '''draw the player as a blinking circle'''
     if (animCounter%9 != 0) and (RealMap[Pos[0], Pos[1]].top == False):
-        x = ((Pos[0]*BLOCKSIZE)+int(BLOCKSIZE/2))#%world.get_width()
-        y = ((Pos[1]*BLOCKSIZE)+int(BLOCKSIZE/2))#%world.get_height()
+        x = ((Pos[0]*BLOCKSIZE)+int(BLOCKSIZE/2))
+        y = ((Pos[1]*BLOCKSIZE)+int(BLOCKSIZE/2))
         radius = int(BLOCKSIZE/2)
         pygame.draw.circle(drawSurface, PLAYER1, (x%world.get_width(), y%world.get_height()), radius)
 
@@ -624,7 +724,6 @@ moved = False
 newTerrain = False
 oldTerrainName = "paving"
 
-
 quitting = False
 while not quitting:
     time.sleep(0.04)
@@ -632,6 +731,7 @@ while not quitting:
     UpdateVisible()
     DrawTiles()
     DrawPlayer(world)
+    drawBears(bears, world)
     scrollPos = calculateScrollPos(scrollPos)
     mapWorldToScreen(scrollPos)
     scrollPos = wrapCoords(scrollPos)
