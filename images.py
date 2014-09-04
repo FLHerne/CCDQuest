@@ -1,6 +1,7 @@
 import pygame
 
 '''this file loads the images needed for CCDQuest, and converts them if necessary'''
+BLOCKSIZE = 8
 
 Unknown = pygame.image.load("tiles/Unknown.png")           # Used for tiles that must appear to be empty blank nothingness
 NonVisible = pygame.image.load("tiles/NonVisible.png")     # An overlay for no-longer-visible tiles
@@ -30,3 +31,7 @@ Snow = pygame.image.load("tiles/Snow.png")
 
 BearLeft = pygame.image.load("tiles/bear.png")
 BearRight = pygame.transform.flip(BearLeft, True, False)
+
+CollectablesImages = { 1 : Coin,                           # semi-enum for referencing collectable images
+                       2 : Choc,
+                       3 : Dynamite}

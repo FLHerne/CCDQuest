@@ -3,12 +3,18 @@
 '''Game of exploration in a grid-based world'''
 
 import pygame
+windowSize = (740, 480)
+window = pygame.display.set_mode(windowSize)
+
 import sys
 import time
 import copy
 import TextBox
 import newTextBox
 import random
+from images import BLOCKSIZE
+from Cell import Cell
+import Map
 
 from colours import *
 
@@ -34,15 +40,8 @@ collectablesFile = 'map/World7-collectables.png'
 #groundFile = 'map/latestRandomGen.png'                # Image to use as map
 #collectablesFile = 'map/blank.png'
 
-ground = pygame.image.load(groundFile)
-collectables = pygame.image.load(collectablesFile)
-worldSize = ground.get_rect().size
-worldSize = [worldSize[0], worldSize[1]]
-BLOCKSIZE = 8                       # Size of each square in the grid
 VISIBILITY = 15                     # How far can you see in an approximate circle
 HUDFONTSIZE = 20                    # Score counter etc
-totalCoins = 0                      # How many coins are there in total? (initialise)
-windowSize = (740, 480)
 
 scores = {"coins" : 0,
           "chocolate" : 10000, 
@@ -50,11 +49,6 @@ scores = {"coins" : 0,
 
 animCounter = 0
 animLength = 36
-
-window = pygame.display.set_mode(windowSize)
-world = pygame.Surface((worldSize[0]*BLOCKSIZE, worldSize[1]*BLOCKSIZE))
-
-import images
 
 # -----------------------------------------------------------------------------
 
@@ -76,155 +70,13 @@ else:                               # mode using WASD
 
 # -----------------------------------------------------------------------------
 
-collectablesImages = { 1 : images.Coin,                           # semi-enum for referencing collectable images
-                       2 : images.Choc,
-                       3 : images.Dynamite}
-  
-class Cell:
-    '''A single square in the world grid, with many properties'''
-    COIN = 1
-    CHOCOLATE = 2
-    DYNAMITE = 3
-    def __init__(self, image, trans, solid, difficulty, name = "UNNAMED TERRAIN", collectableItem = None, top = False, destructable = True, temperature = 20):
-        '''Set up initial attributes'''
-        self.image = image
-        self.transparent = trans
-        self.solid = solid
-        self.difficulty = difficulty
-        self.damaged = False
-        self.explored = False
-        self.visible = False
-        self.collectableItem = collectableItem
-        self.top = top
-        self.destructable = destructable
-        self.name = name
-        self.temperature = temperature
-    def draw(self, drawSurface, x, y):
-        '''Blit cell graphics to the specified surface'''
-        DrawPos = (x*BLOCKSIZE, y*BLOCKSIZE)
-        if not self.explored:
-            drawSurface.blit(images.Unknown, DrawPos)
-            return
-        drawSurface.blit(self.image, DrawPos)
-        if self.damaged:
-            drawSurface.blit(images.Damage, DrawPos)
-        if self.collectableItem != None:
-            drawSurface.blit(collectablesImages[self.collectableItem], DrawPos)
-        if not self.visible:
-            drawSurface.blit(images.NonVisible, DrawPos)
+PLAYER1 = MAGENTA
 
-DEEPWATER = Cell(images.DeepWater, True, True, 25, "deep water", destructable = False, temperature=8)
-GLASS = Cell(images.Glass, True, True, 3, "window")
-GRASS = Cell(images.Grass, True, False, 2, "turf")
-ROCK = Cell(images.Rock, True, False, 5, "rocky ground")
-SAND = Cell(images.Sand, True, False, 3, "sand")
-SNOW = Cell(images.Snow, True, False, 4, "snow", temperature= -5)
-SPACE = Cell(images.Space, True, False, 1, "paving")
-TREES = Cell(images.Trees, False, False, 8, "forrest", top=True)
-WALL = Cell(images.Wall, False, True, 3)
-UKWALL = Cell(images.Unknown, False, True, 3)
-WATER = Cell(images.Water, True, False, 25, "water", destructable=False, temperature=12)
-MARSH = Cell(images.Marsh, True, False, 20, "marshland")
-WOOD = Cell(images.Wood, True, False, 2, "wooden planking")
-
-# -----------------------------------------------------------------------------
-  
-PLAYER1 = MAGENTA 
-START = MAGENTA
-
-
-# -----------------------------------------------------------------------------
-
-def UnMapGroundColour(colour):
-    '''take colours from the ground image, and return the appropriate predefined cell'''
-    if colour == BLACK:
-        return WALL
-    elif colour == GREY:
-        return ROCK
-    elif colour == BROWN:
-        return WOOD
-    elif colour == WHITE:
-        return SNOW
-    elif colour == LIGHTBLUE:
-        return WATER
-    elif colour == BLUE:
-        return DEEPWATER    
-    elif colour == GREEN:
-        return GRASS
-    elif colour == BLUEGREY:
-        return MARSH
-    elif colour == CYAN:
-        return GLASS
-    elif colour == DARKGREEN:
-        return TREES
-    elif colour == DARKYELLOW:
-        return SAND
-    else:
-        return SPACE
-
-def UnMapCollectablesColour(colour):
-    '''take colours from the collectables image, and set cell properties'''
-    if colour == YELLOW:
-        return Cell.COIN
-    elif colour == BROWN:
-        return Cell.CHOCOLATE
-    elif colour == RED:
-        return Cell.DYNAMITE
-    else:
-        return None
-        
-
-# -----------------------------------------------------------------------------
-
-class ModDict(dict):
-    '''A hacked dict that wraps tuples that look like coordinates to the world size - approach with caution!'''
-    def __init__(self, *args):
-        dict.__init__(self, args)
-    def __getitem__(self, key):
-        return dict.__getitem__(self, (key[0] % worldSize[0], key[1] % worldSize[1]))
-    def __setitem__(self, key, val):
-        dict.__setitem__(self, (key[0] % worldSize[0], key[1] % worldSize[1]), val)
-    def __delitem__(self, key):
-        dict.__delitem__(self, (key[0] % worldSize[0], key[1] % worldSize[1]))
-
-RealMap = ModDict()
-
-groundMap = pygame.PixelArray(ground)
-collectablesMap = pygame.PixelArray(collectables)
-
-def PopulateMap(groundMap, collectablesMap):
-    '''create an array of cells from bitmaps'''
-    worldSize = ground.get_rect().size
-    worldSize = [worldSize[0], worldSize[1]]
-
-    for x in range(0, worldSize[0]):
-        for y in range(0, worldSize[1]):
-            groundColour = ground.unmap_rgb(groundMap[x, y])
-            RealMap[x, y] = copy.copy(UnMapGroundColour(groundColour))
-            collectableColour = collectables.unmap_rgb(collectablesMap[x, y])
-            RealMap[x, y].collectableItem = UnMapCollectablesColour(collectableColour)
-            if collectableColour == START:
-                DebugPrint("Found starting position")
-                Pos = [x, y]
-    if Pos is None:
-        ErrorPrint("No starting position defined")
-
-    del groundMap
-    del collectablesMap
-    
-    return RealMap, Pos
-    
-def CountCoins(RealMap, rect=pygame.Rect((0, 0), (worldSize[0], worldSize[1]))):
-    '''Count the number of cells containing coins in the given region of map'''
-    totalCoins = 0
-    for x in range(rect.left, rect.right+1):
-        for y in range(rect.top, rect.bottom+1):
-            if RealMap[x, y].collectableItem == Cell.COIN:
-                totalCoins += 1
-    return totalCoins
-   
-RealMap, Pos = PopulateMap(groundMap, collectablesMap)
-totalCoins = CountCoins(RealMap) 
+cellmap = Map.Map(groundFile, collectablesFile)
+worldSize = cellmap.size
+totalCoins = cellmap.origcoins
+Pos = list(cellmap.startpos)
+world = pygame.Surface((worldSize[0]*BLOCKSIZE, worldSize[1]*BLOCKSIZE))
 
 # -----------------------------------------------------------------------------
         
@@ -238,14 +90,14 @@ def DiagonalCheck():
     '''Test visibility along (offset) diagonals away from player'''
     x = Pos[0]
     y = Pos[1]
-    RealMap[x, y].explored = True                       # make the currently occupied cell visible
-    RealMap[x, y].visible = True
+    cellmap[x, y].explored = True                       # make the currently occupied cell visible
+    cellmap[x, y].visible = True
     for horizontal in (True, False):                # horizontal and vertical
         for Dir1 in (-1, 1):                        # left/right or up/down
             for Dir2 in (-1, 1):                    # final division into octants
                 Base = 0                            # how far horizontally or vertically the test ray is from the player
                 while (abs(Base) < VISIBILITY and
-                    RealMap[Pos[0]+(Base if horizontal else 0),
+                    cellmap[Pos[0]+(Base if horizontal else 0),
                         Pos[1]+(0 if horizontal else Base)].transparent):   # repeatedly test if a cell is transparent and within a bounding square
                     #Base += Dir1       #FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
                     if horizontal:
@@ -254,44 +106,44 @@ def DiagonalCheck():
                     else:
                         x = Pos[0]
                         y = Pos[1] + Base
-                    RealMap[x, y].explored = True
-                    RealMap[x, y].visible = True
-                    while RealMap[x, y].transparent and ((Pos[1]-y)**2) + ((Pos[0]-x)**2) <= VISIBILITY**2: # test in bounding circle
+                    cellmap[x, y].explored = True
+                    cellmap[x, y].visible = True
+                    while cellmap[x, y].transparent and ((Pos[1]-y)**2) + ((Pos[0]-x)**2) <= VISIBILITY**2: # test in bounding circle
                         if horizontal:                                                                      # move diagonally
                             x += Dir1
                             y += Dir2
                         else:
                             x += Dir2
                             y += Dir1
-                        RealMap[x, y].explored = True                                                           # make visible
-                        RealMap[x, y].visible = True
-                    RealMap[x, y].explored = True                                                               # make the first opaque cell visible too
-                    RealMap[x, y].visible = True
+                        cellmap[x, y].explored = True                                                           # make visible
+                        cellmap[x, y].visible = True
+                    cellmap[x, y].explored = True                                                               # make the first opaque cell visible too
+                    cellmap[x, y].visible = True
                     Base += Dir1       #FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
-                RealMap[x, y].explored = True
-                RealMap[x, y].visible = True
+                cellmap[x, y].explored = True
+                cellmap[x, y].visible = True
                 
 
 def CrossCheck():
     '''Check visibility straight up, down, left and right'''
     for i in (-1, 1):                                                           # Horizontally left and right
         X = 0                                                                   # start at the player      
-        while RealMap[(X*i)+Pos[0], Pos[1]].transparent and X < VISIBILITY:     # if transparent and within bounding range
+        while cellmap[(X*i)+Pos[0], Pos[1]].transparent and X < VISIBILITY:     # if transparent and within bounding range
 
-            RealMap[(X*i)+Pos[0], Pos[1]].explored = True           # make visible
-            RealMap[(X*i)+Pos[0], Pos[1]].visible = True
+            cellmap[(X*i)+Pos[0], Pos[1]].explored = True           # make visible
+            cellmap[(X*i)+Pos[0], Pos[1]].visible = True
             X += 1                                                              # move away from player
-        RealMap[(X*i)+Pos[0], Pos[1]].explored = True               # make final cell visible
-        RealMap[(X*i)+Pos[0], Pos[1]].visible = True
+        cellmap[(X*i)+Pos[0], Pos[1]].explored = True               # make final cell visible
+        cellmap[(X*i)+Pos[0], Pos[1]].visible = True
 
     for i in (-1, 1):                                                           # Repeat as above, but vertically
         Y = 0
-        while RealMap[Pos[0], (Y*i)+Pos[1]].transparent and Y < VISIBILITY:
-            RealMap[Pos[0], (Y*i)+Pos[1]].explored = True
-            RealMap[Pos[0], (Y*i)+Pos[1]].visible = True
+        while cellmap[Pos[0], (Y*i)+Pos[1]].transparent and Y < VISIBILITY:
+            cellmap[Pos[0], (Y*i)+Pos[1]].explored = True
+            cellmap[Pos[0], (Y*i)+Pos[1]].visible = True
             Y += 1
-        RealMap[Pos[0], (Y*i)+Pos[1]].explored = True
-        RealMap[Pos[0], (Y*i)+Pos[1]].visible = True
+        cellmap[Pos[0], (Y*i)+Pos[1]].explored = True
+        cellmap[Pos[0], (Y*i)+Pos[1]].visible = True
 
 # -----------------------------------------------------------------------------
         
@@ -329,7 +181,7 @@ class Bear:
             for nbrpos in [(curp[0]-1, curp[1]), (curp[0], curp[1]-1), (curp[0]+1, curp[1]), (curp[0], curp[1]+1)]:
                 if nbrpos[0] < 0 or nbrpos[1] < 0 or nbrpos[0] >= 64 or nbrpos[1] >= 64:
                     continue
-                if dijkstramap[nbrpos[0]][nbrpos[1]][0] != 512 or RealMap[worldPos(nbrpos)].solid:
+                if dijkstramap[nbrpos[0]][nbrpos[1]][0] != 512 or cellmap[worldPos(nbrpos)].solid:
                     continue
                 dijkstramap[nbrpos[0]][nbrpos[1]] = (curd+1, curp)
                 heapq.heappush(openlist, (curd+1, nbrpos))
@@ -346,7 +198,7 @@ class Bear:
     
     def draw(self, drawSurface):
         '''Blit self to specified surface'''
-        if RealMap[self.position].top or not RealMap[self.position].visible:
+        if cellmap[self.position].top or not cellmap[self.position].visible:
             return
         x = ((self.position[0]*BLOCKSIZE))
         y = ((self.position[1]*BLOCKSIZE))
@@ -358,7 +210,7 @@ def placeBears(number):
     created = []
     for i in xrange(max_attempts):
         attempt = (random.randint(0,worldSize[0]-1), random.randint(0,worldSize[1]-1))
-        if RealMap[attempt].name not in ['turf', 'forrest', 'rocky ground']:
+        if cellmap[attempt].name not in ['turf', 'forrest', 'rocky ground']:
             continue
         created.append(Bear(attempt))
         if len(created) == number:
@@ -386,14 +238,14 @@ def ExplosionValid(x, y, Dynamite):
     if (Dynamite <=0):
         DebugPrint("No Dynamite:")
         currentMessage = "You look, but find you have no dynamite left"
-    if not RealMap[x, y].destructable:
+    if not cellmap[x, y].destructable:
         DebugPrint("Current cell cannot be destroyed")
         currentMessage = "Explosives won't work here"
-    if (Dynamite > 0 and RealMap[x, y].destructable):
+    if (Dynamite > 0 and cellmap[x, y].destructable):
         DebugPrint("Explosion possible")
     else:
         DebugPrint("Explosion not possible")
-    return (Dynamite > 0 and RealMap[x, y].destructable)
+    return (Dynamite > 0 and cellmap[x, y].destructable)
         
         
 def Explosion(Dynamite, Centrex, Centrey):
@@ -403,19 +255,19 @@ def Explosion(Dynamite, Centrex, Centrey):
     currentMessage = "BANG!"
     for x in (-1, 0, 1):                                                        # explosion forms a 3x3 square
         for y in (-1, 0, 1):
-            RealMap[Centrex, Centrey].collectableItem = None
-            if RealMap[Centrex+x, Centrey+y].collectableItem == Cell.DYNAMITE:
+            cellmap[Centrex, Centrey].collectableItem = None
+            if cellmap[Centrex+x, Centrey+y].collectableItem == Cell.DYNAMITE:
                 Explosion(1, Centrex+x, Centrey+y)                              # dynamite sets off neighbouring dynamite
                 currentMessage = "The dynamite sets off a chain reaction"
-            if RealMap[Centrex+x, Centrey+y].destructable:
-                RealMap[Centrex+x, Centrey+y].solid = False
-                RealMap[Centrex+x, Centrey+y].transparent = True
-                RealMap[Centrex+x, Centrey+y].damaged = True
-                RealMap[Centrex+x, Centrey+y].difficulty += 5
+            if cellmap[Centrex+x, Centrey+y].destructable:
+                cellmap[Centrex+x, Centrey+y].solid = False
+                cellmap[Centrex+x, Centrey+y].transparent = True
+                cellmap[Centrex+x, Centrey+y].damaged = True
+                cellmap[Centrex+x, Centrey+y].difficulty += 5
                 if not ((x, y) == (0, 0)):
-                    RealMap[Centrex+x, Centrey+y].name = "debris from an explosion"
-                if RealMap[Centrex+x, Centrey+y].image == images.Wood:
-                    RealMap[Centrex+x, Centrey+y].image = images.Water
+                    cellmap[Centrex+x, Centrey+y].name = "debris from an explosion"
+                if cellmap[Centrex+x, Centrey+y].image == images.Wood:
+                    cellmap[Centrex+x, Centrey+y].image = images.Water
     Dynamite -= 1
     return Dynamite
     
@@ -424,7 +276,7 @@ def TestArea(centrex, centrey, name):
     count = 0
     for x in (-1, 0, 1):
         for y in (-1, 0, 1):
-            if RealMap[centrex+x, centrey+y].name == name:
+            if cellmap[centrex+x, centrey+y].name == name:
                 count += 1
     return count
     
@@ -441,41 +293,41 @@ def updateContextMessages(x, y, currentMessage):
         currentMessage = "The trees look foreboding"
     elif TestArea(x, y, "forrest") > 6:
         currentMessage = "You are surrounded by trees"
-    if RealMap[x, y].top:
+    if cellmap[x, y].top:
         currentMessage = "You stumble blindly through the darkness"
-    if RealMap[x, y].temperature < 15:
-        if RealMap[x, y].temperature < 0:
+    if cellmap[x, y].temperature < 15:
+        if cellmap[x, y].temperature < 0:
             currentMessage = "The icy air makes you thankful that you packed a wooley jumper"
         else:
             currentMessage = "Its a bit chilly here"
-    if RealMap[x, y].damaged and moved:
+    if cellmap[x, y].damaged and moved:
         currentMessage = "The debris is unstable underfoot"
     if newTerrain:
-        if (random.randint(0, 50) < RealMap[x, y].difficulty):
-            currentMessage = "Is this " + str(RealMap[x, y].name) + " safe?"
+        if (random.randint(0, 50) < cellmap[x, y].difficulty):
+            currentMessage = "Is this " + str(cellmap[x, y].name) + " safe?"
         else:
-            currentMessage = "You reach some " + str(RealMap[x, y].name)
-    if (random.randint(0, 1000) < RealMap[x, y].difficulty):
-        currentMessage = "Is this " + str(RealMap[x, y].name) + " really safe?"
+            currentMessage = "You reach some " + str(cellmap[x, y].name)
+    if (random.randint(0, 1000) < cellmap[x, y].difficulty):
+        currentMessage = "Is this " + str(cellmap[x, y].name) + " really safe?"
     return currentMessage
     
     
 def CollectItems(scores):
     '''deal with any colllectables found on the current cell'''
     global currentMessage
-    if RealMap[Pos[0], Pos[1]].collectableItem == Cell.COIN:    #Have we just walked into a coin
+    if cellmap[Pos[0], Pos[1]].collectableItem == Cell.COIN:    #Have we just walked into a coin
         scores["coins"] += 1                                    #Increment score counter
-        RealMap[Pos[0], Pos[1]].collectableItem = None          #Remove coin
+        cellmap[Pos[0], Pos[1]].collectableItem = None          #Remove coin
         DebugPrint("Collected a coin")
         currentMessage = "You find a gold coin"
-    if RealMap[Pos[0], Pos[1]].collectableItem == Cell.DYNAMITE:
+    if cellmap[Pos[0], Pos[1]].collectableItem == Cell.DYNAMITE:
         scores["dynamite"] += 1
-        RealMap[Pos[0], Pos[1]].collectableItem = None
+        cellmap[Pos[0], Pos[1]].collectableItem = None
         DebugPrint("Collected a stick of dynamite")
         currentMessage = "You collect some dynamite"
-    if RealMap[Pos[0], Pos[1]].collectableItem == Cell.CHOCOLATE:
+    if cellmap[Pos[0], Pos[1]].collectableItem == Cell.CHOCOLATE:
         scores["chocolate"] += 50
-        RealMap[Pos[0], Pos[1]].collectableItem = None
+        cellmap[Pos[0], Pos[1]].collectableItem = None
         DebugPrint("Collected a bar of chocolate")
         currentMessage = "You pick up the bar of chocolate"
     return scores
@@ -495,28 +347,28 @@ def HandleEvents(scores, moved):
             if random.random() < 0.7:
                 moveBears(bears)
             if event.key == UP:
-                if not RealMap[Pos[0], Pos[1]-1].solid: #We haven't collided with anthing
+                if not cellmap[Pos[0], Pos[1]-1].solid: #We haven't collided with anthing
                     Pos[1] -= 1
                     moved = True
             if event.key == DOWN:
-                if not RealMap[Pos[0], Pos[1]+1].solid:
+                if not cellmap[Pos[0], Pos[1]+1].solid:
                     Pos[1] += 1
                     moved = True
             if event.key == LEFT:
-                if not RealMap[Pos[0]-1, Pos[1]].solid:
+                if not cellmap[Pos[0]-1, Pos[1]].solid:
                     Pos[0] -= 1
                     moved = True
             if event.key == RIGHT:
-                if not RealMap[Pos[0]+1, Pos[1]].solid:
+                if not cellmap[Pos[0]+1, Pos[1]].solid:
                     Pos[0] += 1
                     moved = True
             if event.key == BLAST and ExplosionValid(Pos[0], Pos[1], scores["dynamite"]):
                 scores["dynamite"] = Explosion(scores["dynamite"], Pos[0], Pos[1])
             if scores["chocolate"] >= 0:
-                scores["chocolate"] -= RealMap[Pos[0], Pos[1]].difficulty
+                scores["chocolate"] -= cellmap[Pos[0], Pos[1]].difficulty
             else:
                 quitting = True
-    newTerrainName = RealMap[Pos[0], Pos[1]].name
+    newTerrainName = cellmap[Pos[0], Pos[1]].name
     if newTerrainName != oldTerrainName:
         newTerrain = True
         DebugPrint("Terrain type change (" + newTerrainName + " --> " + oldTerrainName + ")")
@@ -529,7 +381,7 @@ def UpdateVisible():
     '''update the visibility of cells by the player'''
     for x in range(Pos[0]-VISIBILITY-1, Pos[0]+VISIBILITY+2):
         for y in range(Pos[1]-VISIBILITY-1, Pos[1]+VISIBILITY+2):
-            RealMap[x, y].visible = False
+            cellmap[x, y].visible = False
     CrossCheck()
     DiagonalCheck()
     
@@ -538,12 +390,12 @@ def DrawTiles():
     '''redraw every cell that might be visible or have been visible on the previous draw'''
     for x in range(Pos[0]-VISIBILITY-1, Pos[0]+VISIBILITY+2):
         for y in range(Pos[1]-VISIBILITY-1, Pos[1]+VISIBILITY+2):
-            RealMap[x, y].draw(world, x%worldSize[0], y%worldSize[1])
+            cellmap[x, y].draw(world, x%worldSize[0], y%worldSize[1])
         
 
 def DrawPlayer(drawSurface):
     '''draw the player as a blinking circle'''
-    if (animCounter%9 != 0) and (RealMap[Pos[0], Pos[1]].top == False):
+    if (animCounter%9 != 0) and (cellmap[Pos[0], Pos[1]].top == False):
         x = ((Pos[0]*BLOCKSIZE)+int(BLOCKSIZE/2))
         y = ((Pos[1]*BLOCKSIZE)+int(BLOCKSIZE/2))
         radius = int(BLOCKSIZE/2)
