@@ -334,7 +334,7 @@ class Bear:
                 dijkstramap[nbrpos[0]][nbrpos[1]] = (curd+1, curp)
                 heapq.heappush(openlist, (curd+1, nbrpos))
         if not foundtarget:
-            DeBugPrint("Bear pathfinder failed")
+            DebugPrint("Bear pathfinder failed")
             return False
         DeBugPrint("Bear pathfinder succeeded")
         while dijkstramap[curp[0]][curp[1]][1] != (32, 32):
