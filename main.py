@@ -132,8 +132,6 @@ WOOD = Cell(images.Wood, True, False, 2, "wooden planking")
 PLAYER1 = MAGENTA 
 START = MAGENTA
 
-HudImage = pygame.image.load("HudPanel.png")
-HudImage = HudImage.convert_alpha()
 
 # -----------------------------------------------------------------------------
 
@@ -273,7 +271,6 @@ def DiagonalCheck():
                 RealMap[x, y].explored = True
                 RealMap[x, y].visible = True
                 
-# -----------------------------------------------------------------------------
 
 def CrossCheck():
     '''Check visibility straight up, down, left and right'''
@@ -296,6 +293,8 @@ def CrossCheck():
         RealMap[Pos[0], (Y*i)+Pos[1]].explored = True
         RealMap[Pos[0], (Y*i)+Pos[1]].visible = True
 
+# -----------------------------------------------------------------------------
+        
 class Bear:
     '''follows you around when in range'''
     def __init__(self, position):
@@ -377,6 +376,9 @@ def drawBears(bearlist, drawSurface):
         bear.draw(drawSurface)
 
 bears = placeBears(int(worldSize[0]*worldSize[1]/5000))
+
+# -----------------------------------------------------------------------------
+
 
 def ExplosionValid(x, y, Dynamite):
     '''test if an explosion is currently possible'''
@@ -554,6 +556,10 @@ def DrawMessageBox(drawSurface):
     messageBoxRect = pygame.Rect((0,  windowSize[1]-messageBoxHeight), (windowSize[0]-sidePanelWidth, messageBoxHeight))
     pygame.draw.rect(drawSurface, BLACK, messageBoxRect)
     newTextBox.Draw(drawSurface, currentMessage, messageBoxRect)
+        
+
+HudImage = pygame.image.load("HudPanel.png")
+HudImage = HudImage.convert_alpha()
         
 def DrawHud(scores, drawSurface):
     '''Draw the heads-up display, with current information'''
