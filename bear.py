@@ -1,10 +1,11 @@
 include pygame
 
-class Bear():
+class Bear:
     def __init__(self, position):
         '''setup bear in given position'''
         self.position = list(position)
         self.direction = -1                 # Facing left
+        self.chaserange = 15
     def move():
         pass
     def draw(self, drawSurface):
@@ -17,7 +18,7 @@ class Bear():
         
     def hunt(self):
         '''move towards the player'''
-        if abs(Pos[0]-self.position[0]) + abs(Pos[1]-self.position[1]) > 15:
+        if abs(Pos[0]-self.position[0]) + abs(Pos[1]-self.position[1]) > chaserange:
             return False
         def worldPos(d_coord):
             return (self.position[0] + d_coord[0] - 32,
