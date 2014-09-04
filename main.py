@@ -235,7 +235,7 @@ miniWorld = pygame.transform.scale(world, (90, (world.get_height()/world.get_wid
 # -----------------------------------------------------------------------------
 
 def DiagonalCheck():
-    '''Test visibility along (offset) diagronals away from player'''
+    '''Test visibility along (offset) diagonals away from player'''
     x = Pos[0]
     y = Pos[1]
     RealMap[x, y].explored = True                       # make the currently occupied cell visible
@@ -322,7 +322,7 @@ class Bear:
             curn = heapq.heappop(openlist)
             curd = curn[0]
             curp = curn[1]
-            print "CurP is", curp
+            #print "CurP is", curp
             if isTarget(curp):
                 foundtarget = True
                 break
@@ -334,9 +334,9 @@ class Bear:
                 dijkstramap[nbrpos[0]][nbrpos[1]] = (curd+1, curp)
                 heapq.heappush(openlist, (curd+1, nbrpos))
         if not foundtarget:
-            print "Failed"
+            DeBugPrint("Bear pathfinder failed")
             return False
-        print "Success"
+        DeBugPrint("Bear pathfinder succeeded")
         while dijkstramap[curp[0]][curp[1]][1] != (32, 32):
             curp = dijkstramap[curp[0]][curp[1]][1]
         self.position[0] += curp[0]-32
