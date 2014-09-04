@@ -336,7 +336,7 @@ class Bear:
         if not foundtarget:
             DebugPrint("Bear pathfinder failed")
             return False
-        DeBugPrint("Bear pathfinder succeeded")
+        DebugPrint("Bear pathfinder succeeded")
         while dijkstramap[curp[0]][curp[1]][1] != (32, 32):
             curp = dijkstramap[curp[0]][curp[1]][1]
         self.position[0] += curp[0]-32
