@@ -1,0 +1,3 @@
+include pygame
+
+class Map():
