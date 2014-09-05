@@ -88,7 +88,7 @@ class Cell:
             self.difficulty = 3
             self.name = "sand"
         elif groundcolor == LIGHTYELLOW:
-            self.image = images.Space
+            self.image = images.Paving
             self.transparent = True
             self.solid = False
             self.difficulty = 1

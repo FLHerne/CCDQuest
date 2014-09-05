@@ -19,7 +19,7 @@ Dynamite = Dynamite.convert_alpha()
 Water = pygame.image.load("tiles/Water.png")               # images for terrain
 DeepWater = pygame.image.load("tiles/DeepWater.png")
 Rock = pygame.image.load("tiles/Rock.png")
-Space = pygame.image.load("tiles/Floor.png")
+Paving = pygame.image.load("tiles/Paving.png")
 Grass = pygame.image.load("tiles/Grass.png")
 Marsh = pygame.image.load("tiles/Marsh.png")
 Wall = pygame.image.load("tiles/Wall.png")
@@ -29,7 +29,7 @@ Trees = pygame.image.load("tiles/Trees.png")
 Sand = pygame.image.load("tiles/Sand.png")
 Snow = pygame.image.load("tiles/Snow.png")
 
-BearLeft = pygame.image.load("tiles/bear.png")
+BearLeft = pygame.image.load("tiles/Bear.png")
 BearRight = pygame.transform.flip(BearLeft, True, False)
 
 CollectablesImages = { 1 : Coin,                           # semi-enum for referencing collectable images
