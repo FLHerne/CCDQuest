@@ -22,11 +22,12 @@ class Map():
                 groundcolour = ground.unmap_rgb(groundmap[x, y])
                 self.cellarray.append(copy.copy(UnMapGroundColour(groundcolour)))
                 collectablecolour = collectables.unmap_rgb(collectablesmap[x, y])
-                self.cellarray[self.index((x, y))] = collectableItem = UnMapCollectablesColour(collectablecolour)
+                self.cellarray[self.index((x, y))].collectableItem = UnMapCollectablesColour(collectablecolour)
                 if collectablecolour == START:
                     self.startpos = (x, y)
-                elif collectablecolour == Cell.COIN:
+                elif self.cellarray[self.index((x, y))].collectableItem == Cell.COIN:
                     self.origcoins += 1
+        print self.origcoins
 
     def __getitem__(self, coord):
         return self.cellarray[self.index(coord)]
