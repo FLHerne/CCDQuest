@@ -12,7 +12,7 @@ import copy
 import TextBox
 import newTextBox
 import random
-from images import BLOCKSIZE
+import images
 from Cell import Cell
 import Map
 
@@ -76,7 +76,7 @@ cellmap = Map.Map(groundFile, collectablesFile)
 worldSize = cellmap.size
 totalCoins = cellmap.origcoins
 Pos = list(cellmap.startpos)
-world = pygame.Surface((worldSize[0]*BLOCKSIZE, worldSize[1]*BLOCKSIZE))
+world = pygame.Surface((worldSize[0]*images.BLOCKSIZE, worldSize[1]*images.BLOCKSIZE))
 
 # -----------------------------------------------------------------------------
         
@@ -200,8 +200,8 @@ class Bear:
         '''Blit self to specified surface'''
         if cellmap[self.position].top or not cellmap[self.position].visible:
             return
-        x = ((self.position[0]*BLOCKSIZE))
-        y = ((self.position[1]*BLOCKSIZE))
+        x = ((self.position[0]*images.BLOCKSIZE))
+        y = ((self.position[1]*images.BLOCKSIZE))
         drawSurface.blit(images.BearRight if self.direction > 0 else images.BearLeft, (x, y))
 
 def placeBears(number):
@@ -396,9 +396,9 @@ def DrawTiles():
 def DrawPlayer(drawSurface):
     '''draw the player as a blinking circle'''
     if (animCounter%9 != 0) and (cellmap[Pos[0], Pos[1]].top == False):
-        x = ((Pos[0]*BLOCKSIZE)+int(BLOCKSIZE/2))
-        y = ((Pos[1]*BLOCKSIZE)+int(BLOCKSIZE/2))
-        radius = int(BLOCKSIZE/2)
+        x = ((Pos[0]*images.BLOCKSIZE)+int(images.BLOCKSIZE/2))
+        y = ((Pos[1]*images.BLOCKSIZE)+int(images.BLOCKSIZE/2))
+        radius = int(images.BLOCKSIZE/2)
         pygame.draw.circle(drawSurface, PLAYER1, (x%world.get_width(), y%world.get_height()), radius)
 
 def DrawMessageBox(drawSurface):
@@ -454,7 +454,7 @@ def DrawHud(scores, drawSurface):
     window.set_clip((windowSize[0]-90, 302, 90, 90))
     pygame.transform.scale(world, (90, (world.get_height()/world.get_width())*90), miniWorld)
     drawSurface.blit(miniWorld, (windowSize[0]-90, 302))
-    miniWorldScale = 90.0/(worldSize[0]*BLOCKSIZE)
+    miniWorldScale = 90.0/(worldSize[0]*images.BLOCKSIZE)
     for tx in [scrollPos[0]-world.get_width(), scrollPos[0], scrollPos[0]+world.get_width()]:
         for ty in [scrollPos[1]-world.get_height(), scrollPos[1], scrollPos[1]+world.get_height()]:
             pygame.draw.rect(drawSurface,
@@ -500,13 +500,13 @@ def animCountUpdate(animCounter):
 
 def wrapCoords(scrollPos):
     '''allow player to walk around the world in a loop'''
-    playerx = (Pos[0]*BLOCKSIZE)+scrollPos[0]
-    playery = (Pos[1]*BLOCKSIZE)+scrollPos[1]
+    playerx = (Pos[0]*images.BLOCKSIZE)+scrollPos[0]
+    playery = (Pos[1]*images.BLOCKSIZE)+scrollPos[1]
     if Pos[0] % worldSize[0] == int(worldSize[0]/2):
         Pos[0] %= worldSize[0]
     if Pos[1] % worldSize[1] == int(worldSize[1]/2):
         Pos[1] %= worldSize[1]
-    return ((-BLOCKSIZE*Pos[0])+playerx, (-BLOCKSIZE*Pos[1])+playery)
+    return ((-images.BLOCKSIZE*Pos[0])+playerx, (-images.BLOCKSIZE*Pos[1])+playery)
     
 def setup():
     '''to be used at the beginning of the programme'''
@@ -529,30 +529,30 @@ def mapWorldToScreen(scrollPos):
 
 def calculateScrollPos(scrollPos):
     '''scroll towards the correct position'''
-    playerx = (Pos[0]*BLOCKSIZE)+scrollPos[0]
-    playery = (Pos[1]*BLOCKSIZE)+scrollPos[1]
-    if playerx+(VISIBILITY*BLOCKSIZE) > windowSize[0]-100:         #too far right
-        scrollStep = (abs((playerx+(VISIBILITY*BLOCKSIZE)) - (windowSize[0]-100)) / 2) +1
+    playerx = (Pos[0]*images.BLOCKSIZE)+scrollPos[0]
+    playery = (Pos[1]*images.BLOCKSIZE)+scrollPos[1]
+    if playerx+(VISIBILITY*images.BLOCKSIZE) > windowSize[0]-100:         #too far right
+        scrollStep = (abs((playerx+(VISIBILITY*images.BLOCKSIZE)) - (windowSize[0]-100)) / 2) +1
         scrollPos = (scrollPos[0]-scrollStep, scrollPos[1])
         DebugPrint(str(Pos))
         DebugPrint("Scrolled Left" + str(scrollPos))
-    if playerx-(VISIBILITY*BLOCKSIZE) < 0:                         #too far left
-        scrollStep = (abs((playerx-(VISIBILITY*BLOCKSIZE))) / 2) +1
+    if playerx-(VISIBILITY*images.BLOCKSIZE) < 0:                         #too far left
+        scrollStep = (abs((playerx-(VISIBILITY*images.BLOCKSIZE))) / 2) +1
         scrollPos = (scrollPos[0]+scrollStep, scrollPos[1])
         DebugPrint(str(Pos))
         DebugPrint("Scrolled right" + str(scrollPos))
-    if playery+(VISIBILITY*BLOCKSIZE) > windowSize[1]:             #too far down
-        scrollStep = (abs((playery+(VISIBILITY*BLOCKSIZE)) - windowSize[1]) / 2) +1
+    if playery+(VISIBILITY*images.BLOCKSIZE) > windowSize[1]:             #too far down
+        scrollStep = (abs((playery+(VISIBILITY*images.BLOCKSIZE)) - windowSize[1]) / 2) +1
         scrollPos = (scrollPos[0], scrollPos[1]-scrollStep)
         DebugPrint("Scrolled up" + str(scrollPos))
-    if playery-(VISIBILITY*BLOCKSIZE) < 0:                         #too far up
-        scrollStep = (abs((playery-(VISIBILITY*BLOCKSIZE))) / 2) +1
+    if playery-(VISIBILITY*images.BLOCKSIZE) < 0:                         #too far up
+        scrollStep = (abs((playery-(VISIBILITY*images.BLOCKSIZE))) / 2) +1
         scrollPos = (scrollPos[0], scrollPos[1]+scrollStep)
         DebugPrint("Scrolled down" + str(scrollPos))
 
     return scrollPos
     
-scrollPos = ((-BLOCKSIZE*Pos[0])+((windowSize[0]-100)/2), (-BLOCKSIZE*Pos[1])+(windowSize[1]/2))
+scrollPos = ((-images.BLOCKSIZE*Pos[0])+((windowSize[0]-100)/2), (-images.BLOCKSIZE*Pos[1])+(windowSize[1]/2))
 DebugPrint("Initial scrollPos" + str(scrollPos))
 currentMessage = "You find yourself in the middle of a strange and unknown landscape"
 moved = False
