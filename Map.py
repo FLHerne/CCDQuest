@@ -1,6 +1,7 @@
 import copy
 import pygame
 from Cell import *
+from colours import *
 
 class Map():
     def index(self, coord):
@@ -20,12 +21,11 @@ class Map():
         for x in xrange(0, self.size[0]):
             for y in xrange(0, self.size[1]):
                 groundcolour = ground.unmap_rgb(groundmap[x, y])
-                self.cellarray.append(copy.copy(UnMapGroundColour(groundcolour)))
                 collectablecolour = collectables.unmap_rgb(collectablesmap[x, y])
-                self.cellarray[self.index((x, y))].collectableItem = UnMapCollectablesColour(collectablecolour)
-                if collectablecolour == START:
+                self.cellarray.append(Cell(groundcolour, collectablecolour))
+                if collectablecolour == START: 
                     self.startpos = (x, y)
-                elif self.cellarray[self.index((x, y))].collectableItem == Cell.COIN:
+                elif self[x, y].collectableitem == Cell.COIN:
                     self.origcoins += 1
         print self.origcoins
 

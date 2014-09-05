@@ -210,7 +210,7 @@ def placeBears(number):
     created = []
     for i in xrange(max_attempts):
         attempt = (random.randint(0,worldSize[0]-1), random.randint(0,worldSize[1]-1))
-        if cellmap[attempt].name not in ['turf', 'forrest', 'rocky ground']:
+        if cellmap[attempt].name not in ['grass', 'forest', 'rocky ground']:
             continue
         created.append(Bear(attempt))
         if len(created) == number:
@@ -255,8 +255,8 @@ def Explosion(Dynamite, Centrex, Centrey):
     currentMessage = "BANG!"
     for x in (-1, 0, 1):                                                        # explosion forms a 3x3 square
         for y in (-1, 0, 1):
-            cellmap[Centrex, Centrey].collectableItem = None
-            if cellmap[Centrex+x, Centrey+y].collectableItem == Cell.DYNAMITE:
+            cellmap[Centrex, Centrey].collectableitem = None
+            if cellmap[Centrex+x, Centrey+y].collectableitem == Cell.DYNAMITE:
                 Explosion(1, Centrex+x, Centrey+y)                              # dynamite sets off neighbouring dynamite
                 currentMessage = "The dynamite sets off a chain reaction"
             if cellmap[Centrex+x, Centrey+y].destructable:
@@ -289,9 +289,9 @@ def updateContextMessages(x, y, currentMessage):
         currentMessage = "The snow looks cold"
     elif TestArea(x, y, "water") > 3:
         currentMessage = "The water looks wet"
-    elif TestArea(x, y, "forrest") > 2:
+    elif TestArea(x, y, "forest") > 2:
         currentMessage = "The trees look foreboding"
-    elif TestArea(x, y, "forrest") > 6:
+    elif TestArea(x, y, "forest") > 6:
         currentMessage = "You are surrounded by trees"
     if cellmap[x, y].top:
         currentMessage = "You stumble blindly through the darkness"
@@ -315,19 +315,19 @@ def updateContextMessages(x, y, currentMessage):
 def CollectItems(scores):
     '''deal with any colllectables found on the current cell'''
     global currentMessage
-    if cellmap[Pos[0], Pos[1]].collectableItem == Cell.COIN:    #Have we just walked into a coin
+    if cellmap[Pos[0], Pos[1]].collectableitem == Cell.COIN:    #Have we just walked into a coin
         scores["coins"] += 1                                    #Increment score counter
-        cellmap[Pos[0], Pos[1]].collectableItem = None          #Remove coin
+        cellmap[Pos[0], Pos[1]].collectableitem = None          #Remove coin
         DebugPrint("Collected a coin")
         currentMessage = "You find a gold coin"
-    if cellmap[Pos[0], Pos[1]].collectableItem == Cell.DYNAMITE:
+    if cellmap[Pos[0], Pos[1]].collectableitem == Cell.DYNAMITE:
         scores["dynamite"] += 1
-        cellmap[Pos[0], Pos[1]].collectableItem = None
+        cellmap[Pos[0], Pos[1]].collectableitem = None
         DebugPrint("Collected a stick of dynamite")
         currentMessage = "You collect some dynamite"
-    if cellmap[Pos[0], Pos[1]].collectableItem == Cell.CHOCOLATE:
+    if cellmap[Pos[0], Pos[1]].collectableitem == Cell.CHOCOLATE:
         scores["chocolate"] += 50
-        cellmap[Pos[0], Pos[1]].collectableItem = None
+        cellmap[Pos[0], Pos[1]].collectableitem = None
         DebugPrint("Collected a bar of chocolate")
         currentMessage = "You pick up the bar of chocolate"
     return scores
