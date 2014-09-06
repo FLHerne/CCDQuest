@@ -17,6 +17,7 @@ class Player:
         }
         print BLOCKSIZE
         self.circle = pygame.Surface((BLOCKSIZE, BLOCKSIZE))
+        self.circle.set_colorkey((0,0,0))
         radius = int(BLOCKSIZE/2)
         pygame.draw.circle(self.circle, self.color, (radius, radius), radius)
     

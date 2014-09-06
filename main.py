@@ -167,17 +167,9 @@ def DrawTiles():
         for y in range(player.position[1]-player.visibility-1, player.position[1]+player.visibility+2):
             cellmap[x, y].draw(world, x%cellmap.size[0], y%cellmap.size[1])
 
-def DrawMessageBox(drawSurface):
-    '''Draw the box containing the most recent user-facing message'''
-    messageBoxHeight = 20
-    sidePanelWidth = 95
-    messageBoxRect = pygame.Rect((0,  windowSize[1]-messageBoxHeight), (windowSize[0]-sidePanelWidth, messageBoxHeight))
-    pygame.draw.rect(drawSurface, BLACK, messageBoxRect)
-        
-
 HudImage = pygame.image.load("HudPanel.png")
 HudImage = HudImage.convert_alpha()
-        
+
 def DrawHud(drawSurface):
     '''Draw the heads-up display, with current information'''
     drawSurface.blit(HudImage, (windowSize[0]-100, 0, 100, windowSize[1]))
@@ -326,7 +318,6 @@ while not quitting:
     scrollpos = calculateScrollPos(scrollpos)
     mapWorldToScreen(scrollpos)
     scrollpos = wrapCoords(scrollpos)
-    DrawMessageBox(window)
     DrawHud(window)
     
     #newTextBox.Draw(window, "Hello, World!", pygame.Rect((30, 30), (200, 50)))
