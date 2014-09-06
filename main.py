@@ -64,16 +64,6 @@ window.fill(GREY)
 
 # -----------------------------------------------------------------------------
 
-#def moveBears(bearlist):
-    #'''make each bear move towards the player using a pathfinder'''
-    #for bear in bearlist:
-        #bear.huntplayer(player.position, cellmap)
-
-#def drawBears(bearlist, drawSurface):
-    #'''call the draw function for each bear'''
-    #for bear in bearlist:
-        #drawSurface.blit(bear.sprite(), (bear.position[0]*images.BLOCKSIZE, bear.position[1]*images.BLOCKSIZE))
-
 # -----------------------------------------------------------------------------
 
 world = World()
