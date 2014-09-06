@@ -176,6 +176,8 @@ def calculateScrollPos(scrollpos):
 scrollpos = ((-images.BLOCKSIZE*world.player.position[0])+((windowSize[0]-100)/2), (-images.BLOCKSIZE*world.player.position[1])+(windowSize[1]/2))
 DebugPrint("Initial scrollpos" + str(scrollpos))
 
+hud = HUD(world, (windowSize[0]-100, 0, 100, windowSize[1]), window)
+
 quitting = False
 while not quitting:
     time.sleep(0.04)
@@ -184,10 +186,8 @@ while not quitting:
     scrollpos = calculateScrollPos(scrollpos)
     mapWorldToScreen(scrollpos)
     scrollpos = wrapCoords(scrollpos)
-    #DrawHud(window)
-    
-    #newTextBox.Draw(window, "Hello, World!", pygame.Rect((30, 30), (200, 50)))
-    
+    hud.draw(world, window, scrollpos)
+
     pygame.display.update()
             
 pygame.quit()
