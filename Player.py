@@ -23,13 +23,16 @@ class Player:
     
     def move(self, x, y, cellmap):
         assert abs(x) + abs(y) <= 1
-        if not cellmap[self.position[0]+x, self.position[1]+y].solid:
-            self.position = [self.position[0]+x, self.position[1]+y]
+        if cellmap[self.position[0]+x, self.position[1]+y].solid:
+            self.score[collectables.CHOCOLATE] -= 50
+            return False
+        self.position = [self.position[0]+x, self.position[1]+y]
         collectable = cellmap[self.position].collectableitem
         if collectable != None:
             self.score[collectable] += collectables.value[collectable]
         cellmap[self.position].collectableitem = None
         self.score[collectables.CHOCOLATE] -= cellmap[self.position].difficulty
+        return True
     
     def sprite(self):
         self.animcounter = (self.animcounter+1) % 9

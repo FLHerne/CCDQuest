@@ -18,6 +18,7 @@ from Cell import Cell
 from HUD import HUD
 from Map import Map
 from Player import Player
+from World import World
 
 from colours import *
 import collectables
@@ -36,11 +37,6 @@ def ErrorPrint(Message):            # Messages which indicate that something has
         print("Error: " + Message)
 
 # -----------------------------------------------------------------------------
-
-groundFile = 'map/World7-ground.png'                   # Image to use as map
-collectablesFile = 'map/World7-collectables.png'
-
-HUDFONTSIZE = 20                    # Score counter etc
 
 # -----------------------------------------------------------------------------
 
@@ -62,56 +58,37 @@ else:                               # mode using WASD
 
 # -----------------------------------------------------------------------------
 
-cellmap = Map(groundFile, collectablesFile)
-world = pygame.Surface((cellmap.size[0]*images.BLOCKSIZE, cellmap.size[1]*images.BLOCKSIZE))
-player = Player(cellmap.startpos)
-
 # -----------------------------------------------------------------------------
 
 window.fill(GREY)
 
 # -----------------------------------------------------------------------------
 
+#def moveBears(bearlist):
+    #'''make each bear move towards the player using a pathfinder'''
+    #for bear in bearlist:
+        #bear.huntplayer(player.position, cellmap)
 
-def placeBears(number):
-    '''randomly add bears to the map'''
-    max_attempts = 20*number
-    created = []
-    for i in xrange(max_attempts):
-        attempt = (random.randint(0,cellmap.size[0]-1), random.randint(0,cellmap.size[1]-1))
-        if cellmap[attempt].name not in ['grass', 'forest', 'rocky ground']:
-            continue
-        created.append(Bear(attempt))
-        if len(created) == number:
-            break
-    return created
-
-def moveBears(bearlist):
-    '''make each bear move towards the player using a pathfinder'''
-    for bear in bearlist:
-        bear.huntplayer(player.position, cellmap)
-
-def drawBears(bearlist, drawSurface):
-    '''call the draw function for each bear'''
-    for bear in bearlist:
-        drawSurface.blit(bear.sprite(), (bear.position[0]*images.BLOCKSIZE, bear.position[1]*images.BLOCKSIZE))
-
-bears = placeBears(int(cellmap.size[0]*cellmap.size[1]/5000))
+#def drawBears(bearlist, drawSurface):
+    #'''call the draw function for each bear'''
+    #for bear in bearlist:
+        #drawSurface.blit(bear.sprite(), (bear.position[0]*images.BLOCKSIZE, bear.position[1]*images.BLOCKSIZE))
 
 # -----------------------------------------------------------------------------
 
+world = World()
 
 def ExplosionValid(x, y, Dynamite):
     '''test if an explosion is currently possible'''
     if (Dynamite <=0):
         DebugPrint("No Dynamite:")
-    if not cellmap[x, y].destructable:
+    if not world.cellmap[x, y].destructable:
         DebugPrint("Current cell cannot be destroyed")
-    if (Dynamite > 0 and cellmap[x, y].destructable):
+    if (Dynamite > 0 and world.cellmap[x, y].destructable):
         DebugPrint("Explosion possible")
     else:
         DebugPrint("Explosion not possible")
-    return (Dynamite > 0 and cellmap[x, y].destructable)
+    return (Dynamite > 0 and world.cellmap[x, y].destructable)
         
         
 def Explosion(Dynamite, Centrex, Centrey):
@@ -141,8 +118,8 @@ def HandleEvents():
         if event.type == pygame.QUIT:
             quitting = True
         if event.type == pygame.KEYDOWN:
-            if random.random() < 0.7:
-                moveBears(bears)
+            #if random.random() < 0.7:
+                #moveBears(bears)
             move_x = 0
             move_y = 0
             if event.key == UP:
@@ -153,18 +130,12 @@ def HandleEvents():
                 move_x -= 1
             if event.key == RIGHT:
                 move_x += 1
-            player.move(move_x, move_y, cellmap)
-            if event.key == BLAST and ExplosionValid(player.position[0], player.position[1], player.score[collectables.DYNAMITE]):
-                player.score[collectables.DYNAMITE] = Explosion(player.score[collectables.DYNAMITE], player.position[0], player.position[1])
-            if player.score[collectables.CHOCOLATE] <= 0:
+            world.moveplayer(move_x, move_y)
+            if event.key == BLAST and ExplosionValid(world.player.position[0], world.player.position[1], world.player.score[collectables.DYNAMITE]):
+                world.player.score[collectables.DYNAMITE] = Explosion(world.player.score[collectables.DYNAMITE], world.player.position[0], world.player.position[1])
+            if world.player.score[collectables.CHOCOLATE] <= 0:
                 quitting = True
     return quitting
-    
-def DrawTiles():
-    '''redraw every cell that might be visible or have been visible on the previous draw'''
-    for x in range(player.position[0]-player.visibility-1, player.position[0]+player.visibility+2):
-        for y in range(player.position[1]-player.visibility-1, player.position[1]+player.visibility+2):
-            cellmap[x, y].draw(world, x%cellmap.size[0], y%cellmap.size[1])
 
 #Endgame screens
     #if player.score[collectables.CHOCOLATE] <= 0:
@@ -191,14 +162,14 @@ def DrawTiles():
                       #[True, windowSize[1]])
 
 def wrapCoords(scrollpos):
-    '''allow player to walk around the world in a loop'''
-    playerx = (player.position[0]*images.BLOCKSIZE)+scrollpos[0]
-    playery = (player.position[1]*images.BLOCKSIZE)+scrollpos[1]
-    if player.position[0] % cellmap.size[0] == int(cellmap.size[0]/2):
-        player.position[0] %= cellmap.size[0]
-    if player.position[1] % cellmap.size[1] == int(cellmap.size[1]/2):
-        player.position[1] %= cellmap.size[1]
-    return ((-images.BLOCKSIZE*player.position[0])+playerx, (-images.BLOCKSIZE*player.position[1])+playery)
+    '''allow world.player to walk around the world in a loop'''
+    world.playerx = (world.player.position[0]*images.BLOCKSIZE)+scrollpos[0]
+    world.playery = (world.player.position[1]*images.BLOCKSIZE)+scrollpos[1]
+    if world.player.position[0] % world.cellmap.size[0] == int(world.cellmap.size[0]/2):
+        world.player.position[0] %= world.cellmap.size[0]
+    if world.player.position[1] % world.cellmap.size[1] == int(world.cellmap.size[1]/2):
+        world.player.position[1] %= world.cellmap.size[1]
+    return ((-images.BLOCKSIZE*world.player.position[0])+world.playerx, (-images.BLOCKSIZE*world.player.position[1])+world.playery)
     
 def setup():
     '''to be used at the beginning of the programme'''
@@ -213,52 +184,45 @@ def mapWorldToScreen(scrollpos):
     old_clip = window.get_clip()
     worldRegion = pygame.Rect(0, 0, windowSize[0]-90, windowSize[1]-20)
     window.set_clip(worldRegion)
-    for tx in [scrollpos[0]-world.get_width(), scrollpos[0], scrollpos[0]+world.get_width()]:
-        for ty in [scrollpos[1]-world.get_height(), scrollpos[1], scrollpos[1]+world.get_height()]:
-            if world.get_rect(topleft=(tx, ty)).colliderect(worldRegion):
-                window.blit(world, (tx, ty))
+    for tx in [scrollpos[0]-world.surface.get_width(), scrollpos[0], scrollpos[0]+world.surface.get_width()]:
+        for ty in [scrollpos[1]-world.surface.get_height(), scrollpos[1], scrollpos[1]+world.surface.get_height()]:
+            if world.surface.get_rect(topleft=(tx, ty)).colliderect(worldRegion):
+                window.blit(world.surface, (tx, ty))
     window.set_clip(old_clip)
 
 def calculateScrollPos(scrollpos):
     '''scroll towards the correct position'''
-    playerx = (player.position[0]*images.BLOCKSIZE)+scrollpos[0]
-    playery = (player.position[1]*images.BLOCKSIZE)+scrollpos[1]
-    if playerx+(player.visibility*images.BLOCKSIZE) > windowSize[0]-100:         #too far right
-        scrollStep = (abs((playerx+(player.visibility*images.BLOCKSIZE)) - (windowSize[0]-100)) / 2) +1
+    world.playerx = (world.player.position[0]*images.BLOCKSIZE)+scrollpos[0]
+    world.playery = (world.player.position[1]*images.BLOCKSIZE)+scrollpos[1]
+    if world.playerx+(world.player.visibility*images.BLOCKSIZE) > windowSize[0]-100:         #too far right
+        scrollStep = (abs((world.playerx+(world.player.visibility*images.BLOCKSIZE)) - (windowSize[0]-100)) / 2) +1
         scrollpos = (scrollpos[0]-scrollStep, scrollpos[1])
-        DebugPrint(str(player.position))
+        DebugPrint(str(world.player.position))
         DebugPrint("Scrolled Left" + str(scrollpos))
-    if playerx-(player.visibility*images.BLOCKSIZE) < 0:                         #too far left
-        scrollStep = (abs((playerx-(player.visibility*images.BLOCKSIZE))) / 2) +1
+    if world.playerx-(world.player.visibility*images.BLOCKSIZE) < 0:                         #too far left
+        scrollStep = (abs((world.playerx-(world.player.visibility*images.BLOCKSIZE))) / 2) +1
         scrollpos = (scrollpos[0]+scrollStep, scrollpos[1])
-        DebugPrint(str(player.position))
+        DebugPrint(str(world.player.position))
         DebugPrint("Scrolled right" + str(scrollpos))
-    if playery+(player.visibility*images.BLOCKSIZE) > windowSize[1]:             #too far down
-        scrollStep = (abs((playery+(player.visibility*images.BLOCKSIZE)) - windowSize[1]) / 2) +1
+    if world.playery+(world.player.visibility*images.BLOCKSIZE) > windowSize[1]:             #too far down
+        scrollStep = (abs((world.playery+(world.player.visibility*images.BLOCKSIZE)) - windowSize[1]) / 2) +1
         scrollpos = (scrollpos[0], scrollpos[1]-scrollStep)
         DebugPrint("Scrolled up" + str(scrollpos))
-    if playery-(player.visibility*images.BLOCKSIZE) < 0:                         #too far up
-        scrollStep = (abs((playery-(player.visibility*images.BLOCKSIZE))) / 2) +1
+    if world.playery-(world.player.visibility*images.BLOCKSIZE) < 0:                         #too far up
+        scrollStep = (abs((world.playery-(world.player.visibility*images.BLOCKSIZE))) / 2) +1
         scrollpos = (scrollpos[0], scrollpos[1]+scrollStep)
         DebugPrint("Scrolled down" + str(scrollpos))
 
     return scrollpos
     
-scrollpos = ((-images.BLOCKSIZE*player.position[0])+((windowSize[0]-100)/2), (-images.BLOCKSIZE*player.position[1])+(windowSize[1]/2))
+scrollpos = ((-images.BLOCKSIZE*world.player.position[0])+((windowSize[0]-100)/2), (-images.BLOCKSIZE*world.player.position[1])+(windowSize[1]/2))
 DebugPrint("Initial scrollpos" + str(scrollpos))
 
 quitting = False
 while not quitting:
     time.sleep(0.04)
     quitting = HandleEvents()
-    visible_tiles = player.visible_tiles(cellmap)
-    for tile in visible_tiles:
-        cellmap[tile].explored = True
-        cellmap[tile].visible = True
-    DrawTiles()
-    drawBears(bears, world)
-    playerblit = player.position[0]%cellmap.size[0]*images.BLOCKSIZE, player.position[1]%cellmap.size[0]*images.BLOCKSIZE
-    world.blit(player.sprite(), playerblit)
+
     scrollpos = calculateScrollPos(scrollpos)
     mapWorldToScreen(scrollpos)
     scrollpos = wrapCoords(scrollpos)
