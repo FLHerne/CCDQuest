@@ -38,3 +38,5 @@ CollectablesImages = {
     collectables.CHOCOLATE: Choc,
     collectables.DYNAMITE: Dynamite
 }
+
+HudImage = pygame.image.load("HudPanel.png")

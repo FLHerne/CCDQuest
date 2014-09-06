@@ -15,6 +15,7 @@ import random
 import images
 from Bear import Bear
 from Cell import Cell
+from HUD import HUD
 from Map import Map
 from Player import Player
 
@@ -68,8 +69,6 @@ player = Player(cellmap.startpos)
 # -----------------------------------------------------------------------------
 
 window.fill(GREY)
-world.fill(GREY)
-miniWorld = pygame.transform.scale(world, (90, (world.get_height()/world.get_width())*90))
 
 # -----------------------------------------------------------------------------
 
@@ -167,84 +166,29 @@ def DrawTiles():
         for y in range(player.position[1]-player.visibility-1, player.position[1]+player.visibility+2):
             cellmap[x, y].draw(world, x%cellmap.size[0], y%cellmap.size[1])
 
-HudImage = pygame.image.load("HudPanel.png")
-HudImage = HudImage.convert_alpha()
-
-def DrawHud(drawSurface):
-    '''Draw the heads-up display, with current information'''
-    drawSurface.blit(HudImage, (windowSize[0]-100, 0, 100, windowSize[1]))
-    TextBox.Print(drawSurface,
-                  False,
-                  windowSize[0]-95, 75,
-                  100,
-                  None,
-                  BLACK,
-                  'Arial', HUDFONTSIZE,
-                  str(player.score[collectables.COIN]) + "/" + str(cellmap.origcoins),
-                  True,
-                  [False, windowSize[1]])
-    TextBox.Print(drawSurface,
-                  False,
-                  windowSize[0]-95, 275,
-                  100,
-                  None,
-                  BLACK,
-                  'Arial', HUDFONTSIZE,
-                  str(player.score[collectables.DYNAMITE]),
-                  True,
-                  [False, windowSize[1]])
-    if player.score[collectables.CHOCOLATE] >= 1000:
-        ChocAmountString = str(round(player.score[collectables.CHOCOLATE] / 1000.0, 2)) + "kg"
-    else:
-        ChocAmountString = str(player.score[collectables.CHOCOLATE])+"g"
-    TextBox.Print(drawSurface,
-                  False,
-                  windowSize[0]-95, 175,
-                  100,
-                  None,
-                  BLACK,
-                  'Arial', HUDFONTSIZE,
-                  ChocAmountString,
-                  True,
-                  [False, windowSize[1]])
-    old_clip = window.get_clip()
-    window.set_clip((windowSize[0]-90, 302, 90, 90))
-    pygame.transform.scale(world, (90, (world.get_height()/world.get_width())*90), miniWorld)
-    drawSurface.blit(miniWorld, (windowSize[0]-90, 302))
-    miniWorldScale = 90.0/(cellmap.size[0]*images.BLOCKSIZE)
-    for tx in [scrollpos[0]-world.get_width(), scrollpos[0], scrollpos[0]+world.get_width()]:
-        for ty in [scrollpos[1]-world.get_height(), scrollpos[1], scrollpos[1]+world.get_height()]:
-            pygame.draw.rect(drawSurface,
-                player.color,
-                ((windowSize[0]-90)-(tx*miniWorldScale), # Top x corner of minimap, plus scroll offset
-                302-                (ty*miniWorldScale), # Top y ''
-                1+ (windowSize[0]-100)*miniWorldScale,
-                1+ windowSize[1]*miniWorldScale),
-                1)
-    window.set_clip(old_clip)
-    
-    if player.score[collectables.CHOCOLATE] <= 0:
-        TextBox.Print(drawSurface,
-                      False,
-                      0, 0,
-                      windowSize[0],
-                      BLACK,
-                      WHITE,
-                      'Arial', HUDFONTSIZE*2,
-                      "You ran out of chocolate!",
-                      True,
-                      [True, windowSize[1]])
-    if player.score[collectables.COIN] >= cellmap.origcoins:
-        TextBox.Print(drawSurface,
-                      False,
-                      0, 0,
-                      windowSize[0],
-                      BLACK,
-                      WHITE,
-                      'Arial', HUDFONTSIZE*2,
-                      "You found all the coins!",
-                      True,
-                      [True, windowSize[1]])
+#Endgame screens
+    #if player.score[collectables.CHOCOLATE] <= 0:
+        #TextBox.Print(drawSurface,
+                      #False,
+                      #0, 0,
+                      #windowSize[0],
+                      #BLACK,
+                      #WHITE,
+                      #'Arial', HUDFONTSIZE*2,
+                      #"You ran out of chocolate!",
+                      #True,
+                      #[True, windowSize[1]])
+    #if player.score[collectables.COIN] >= cellmap.origcoins:
+        #TextBox.Print(drawSurface,
+                      #False,
+                      #0, 0,
+                      #windowSize[0],
+                      #BLACK,
+                      #WHITE,
+                      #'Arial', HUDFONTSIZE*2,
+                      #"You found all the coins!",
+                      #True,
+                      #[True, windowSize[1]])
 
 def wrapCoords(scrollpos):
     '''allow player to walk around the world in a loop'''
@@ -318,7 +262,7 @@ while not quitting:
     scrollpos = calculateScrollPos(scrollpos)
     mapWorldToScreen(scrollpos)
     scrollpos = wrapCoords(scrollpos)
-    DrawHud(window)
+    #DrawHud(window)
     
     #newTextBox.Draw(window, "Hello, World!", pygame.Rect((30, 30), (200, 50)))
     
