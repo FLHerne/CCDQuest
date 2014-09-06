@@ -1,5 +1,5 @@
 import pygame
-from colours import *
+from colors import *
 
 defaultSize = 12
 defaultColour = WHITE

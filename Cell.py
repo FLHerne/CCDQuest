@@ -1,4 +1,4 @@
-from colours import *
+from colors import *
 import collectables
 import images
 

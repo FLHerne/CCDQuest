@@ -1,6 +1,6 @@
 import pygame
 from Cell import *
-from colours import *
+from colors import *
 import collectables
 
 class Map():

@@ -4,7 +4,7 @@ from images import BLOCKSIZE
 from Bear import Bear
 from Map import Map
 from Player import Player
-from colours import *
+from colors import *
 
 class World:
     def __init__(self):

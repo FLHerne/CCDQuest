@@ -2,7 +2,7 @@ import pygame
 import images
 import TextBox
 import collectables
-from colours import *
+from colors import *
 
 class HUD:
     def __init__(self, world, area, window):

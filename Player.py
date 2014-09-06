@@ -1,5 +1,5 @@
 import pygame
-from colours import *
+from colors import *
 from images import BLOCKSIZE
 import collectables
 
