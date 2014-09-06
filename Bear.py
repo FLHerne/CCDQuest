@@ -10,6 +10,8 @@ class Bear:
 
     def huntplayer(self, playerpos, cellmap):
         '''move towards the player'''
+        if random.random() > 0.7:
+            return False
         if abs(playerpos[0]-self.position[0]) + abs(playerpos[1]-self.position[1]) > 15:
             return False
         def mapcoord(d_coord):
@@ -41,9 +43,7 @@ class Bear:
                 dijkstramap[nbrpos[0]][nbrpos[1]] = (curd+1, curp)
                 heapq.heappush(openlist, (curd+1, nbrpos))
         if not foundtarget:
-            print "Bear pathfinder failed"
             return False
-        print "Bear pathfinder succeeded"
         while dijkstramap[curp[0]][curp[1]][1] != (32, 32):
             curp = dijkstramap[curp[0]][curp[1]][1]
         self.position[0] += curp[0]-32
