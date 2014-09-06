@@ -40,7 +40,7 @@ def handleevents():
     quitting = False
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            quitting = True
+            pygame.quit()
         if event.type == pygame.KEYDOWN:
             move_x = 0
             move_y = 0
