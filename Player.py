@@ -8,7 +8,6 @@ class Player:
         self.animcounter = 0
         self.color = MAGENTA
         self.visibility = 15
-
         self.position = list(position)
         self.score = {
             collectables.COIN: 0,
@@ -40,6 +39,7 @@ class Player:
 
     def visible_tiles(self, cellmap):
         visible = set()
+
         def diagonalcheck():
             '''Test visibility along (offset) diagonals away from player'''
             x = self.position[0]
@@ -81,7 +81,6 @@ class Player:
                     visible.add(((X*i)+self.position[0], self.position[1]))
                     X += 1                                                              # move away from player
                 visible.add(((X*i)+self.position[0], self.position[1])) # make final cell visible
-
             for i in (-1, 1):                                                           # Repeat as above, but vertically
                 Y = 0
                 while cellmap[self.position[0], (Y*i)+self.position[1]].transparent and Y < self.visibility:
@@ -92,3 +91,29 @@ class Player:
         diagonalcheck()
         crosscheck()
         return visible
+
+    def detonate(self, cellmap):
+        exploded = set()
+        if self.score[collectables.DYNAMITE] <= 0:
+            return exploded
+        if not cellmap[self.position].destructable:
+            return exploded
+        def blam(epicentre):
+            cellmap[epicentre].collectableitem = None
+            for dx in (-1, 0, 1):
+                for dy in (-1, 0, 1):
+                    cell = cellmap[epicentre[0]+dx, epicentre[1]+dy]
+                    if not cell.destructable:
+                        continue
+                    exploded.add((epicentre[0]+dx, epicentre[1]+dy))
+                    cell.transparent = True
+                    cell.solid = False
+                    cell.name = "debris from an explosion"
+                    cell.difficulty += 5
+                    cell.damaged = True
+                    if cell.collectableitem == collectables.DYNAMITE:
+                        blam((epicentre[0]+dx, epicentre[1]+dy))
+                    cell.collectableitem = None
+        blam(self.position)
+        self.score[collectables.DYNAMITE] -= 1
+        return exploded

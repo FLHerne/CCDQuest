@@ -45,3 +45,7 @@ class World:
         for bear in self.bears:
             bear.huntplayer(self.player.position, self.cellmap)
             self.surface.blit(bear.sprite(), (bear.position[0]*BLOCKSIZE, bear.position[1]*BLOCKSIZE))
+
+    def update(self, tiles):
+        for tile in tiles:
+            self.cellmap[tile].draw(self.surface, tile[0], tile[1])

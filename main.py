@@ -67,39 +67,7 @@ window.fill(GREY)
 # -----------------------------------------------------------------------------
 
 world = World()
-
-def ExplosionValid(x, y, Dynamite):
-    '''test if an explosion is currently possible'''
-    if (Dynamite <=0):
-        DebugPrint("No Dynamite:")
-    if not world.cellmap[x, y].destructable:
-        DebugPrint("Current cell cannot be destroyed")
-    if (Dynamite > 0 and world.cellmap[x, y].destructable):
-        DebugPrint("Explosion possible")
-    else:
-        DebugPrint("Explosion not possible")
-    return (Dynamite > 0 and world.cellmap[x, y].destructable)
-        
-        
-def Explosion(Dynamite, Centrex, Centrey):
-    '''Clear a 3x3 square using a stick of dynamite'''
-    DebugPrint("Explosion at " + str(Centrex) + ", " + str(Centrey))
-    for x in (-1, 0, 1):                                                        # explosion forms a 3x3 square
-        for y in (-1, 0, 1):
-            cellmap[Centrex, Centrey].collectableitem = None
-            if cellmap[Centrex+x, Centrey+y].collectableitem == Cell.DYNAMITE:
-                Explosion(1, Centrex+x, Centrey+y)                              # dynamite sets off neighbouring dynamite
-            if cellmap[Centrex+x, Centrey+y].destructable:
-                cellmap[Centrex+x, Centrey+y].solid = False
-                cellmap[Centrex+x, Centrey+y].transparent = True
-                cellmap[Centrex+x, Centrey+y].damaged = True
-                cellmap[Centrex+x, Centrey+y].difficulty += 5
-                if not ((x, y) == (0, 0)):
-                    cellmap[Centrex+x, Centrey+y].name = "debris from an explosion"
-                if cellmap[Centrex+x, Centrey+y].image == images.Wood:
-                    cellmap[Centrex+x, Centrey+y].image = images.Water
-    Dynamite -= 1
-    return Dynamite
+world.moveplayer(0, 0)
 
 def HandleEvents():
     '''respond to user input'''
@@ -121,8 +89,8 @@ def HandleEvents():
             if event.key == RIGHT:
                 move_x += 1
             world.moveplayer(move_x, move_y)
-            if event.key == BLAST and ExplosionValid(world.player.position[0], world.player.position[1], world.player.score[collectables.DYNAMITE]):
-                world.player.score[collectables.DYNAMITE] = Explosion(world.player.score[collectables.DYNAMITE], world.player.position[0], world.player.position[1])
+            if event.key == BLAST:
+                world.update(world.player.detonate(world.cellmap))
             if world.player.score[collectables.CHOCOLATE] <= 0:
                 quitting = True
     return quitting
