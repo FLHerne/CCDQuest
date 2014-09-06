@@ -1,11 +1,9 @@
 from colours import *
+import collectables
 import images
 
 class Cell:
     '''A single square in the world grid, with many properties'''
-    COIN = 1
-    CHOCOLATE = 2
-    DYNAMITE = 3
     def __init__(self, groundcolor, collectablecolor):
         '''Set up initial attributes'''
         self.damaged = False
@@ -97,11 +95,11 @@ class Cell:
             raise Exception("Unknown map color")
         
         if collectablecolor == YELLOW:
-            self.collectableitem = Cell.COIN
+            self.collectableitem = collectables.COIN
         elif collectablecolor == BROWN:
-            self.collectableitem = Cell.CHOCOLATE
+            self.collectableitem = collectables.CHOCOLATE
         elif collectablecolor == RED:
-            self.collectableitem = Cell.DYNAMITE
+            self.collectableitem = collectables.DYNAMITE
         
     def draw(self, drawSurface, x, y):
         '''Blit cell graphics to the specified surface'''

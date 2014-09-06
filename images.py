@@ -1,4 +1,5 @@
 import pygame
+import collectables
 
 '''this file loads the images needed for CCDQuest, and converts them if necessary'''
 BLOCKSIZE = 8
@@ -32,6 +33,8 @@ Snow = pygame.image.load("tiles/Snow.png")
 BearLeft = pygame.image.load("tiles/Bear.png")
 BearRight = pygame.transform.flip(BearLeft, True, False)
 
-CollectablesImages = { 1 : Coin,                           # semi-enum for referencing collectable images
-                       2 : Choc,
-                       3 : Dynamite}
+CollectablesImages = {
+    collectables.COIN: Coin,                           # semi-enum for referencing collectable images
+    collectables.CHOCOLATE: Choc,
+    collectables.DYNAMITE: Dynamite
+}

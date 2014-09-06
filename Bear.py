@@ -51,10 +51,5 @@ class Bear:
         self.position[1] += curp[1]-32
         return True
     
-    def draw(self, drawSurface, cellmap):
-        '''Blit self to specified surface'''
-        if cellmap[self.position].top or not cellmap[self.position].visible:
-            return
-        x = ((self.position[0]*images.BLOCKSIZE))
-        y = ((self.position[1]*images.BLOCKSIZE))
-        drawSurface.blit(images.BearRight if self.direction > 0 else images.BearLeft, (x, y))
+    def sprite(self):
+        return images.BearRight if self.direction > 0 else images.BearLeft

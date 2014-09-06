@@ -1,7 +1,7 @@
-import copy
 import pygame
 from Cell import *
 from colours import *
+import collectables
 
 class Map():
     def index(self, coord):
@@ -9,23 +9,23 @@ class Map():
     
     def __init__(self, groundfile, collectablefile):
         START = MAGENTA
-        ground = pygame.image.load(groundfile)
-        groundmap = pygame.PixelArray(ground)
-        collectables = pygame.image.load(collectablefile)
-        collectablesmap = pygame.PixelArray(collectables)
-        self.size = list(ground.get_rect().size)
+        groundimage = pygame.image.load(groundfile)
+        groundmap = pygame.PixelArray(groundimage)
+        collectablesimage = pygame.image.load(collectablefile)
+        collectablesmap = pygame.PixelArray(collectablesimage)
+        self.size = list(groundimage.get_rect().size)
         self.startpos = None
         self.origcoins = 0
         
         self.cellarray = []
         for x in xrange(0, self.size[0]):
             for y in xrange(0, self.size[1]):
-                groundcolour = ground.unmap_rgb(groundmap[x, y])
-                collectablecolour = collectables.unmap_rgb(collectablesmap[x, y])
+                groundcolour = groundimage.unmap_rgb(groundmap[x, y])
+                collectablecolour = collectablesimage.unmap_rgb(collectablesmap[x, y])
                 self.cellarray.append(Cell(groundcolour, collectablecolour))
                 if collectablecolour == START: 
                     self.startpos = (x, y)
-                elif self[x, y].collectableitem == Cell.COIN:
+                elif self[x, y].collectableitem == collectables.COIN:
                     self.origcoins += 1
         print self.origcoins
 
