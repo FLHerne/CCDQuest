@@ -3,12 +3,13 @@
 '''Game of exploration in a grid-based world'''
 
 import pygame
+import time
+import TextBox
 
 windowSize = (740, 480)
 window = pygame.display.set_mode(windowSize)
+window.fill(GREY)
 
-import time
-import TextBox
 from HUD import HUD
 from World import World
 from WorldView import WorldView
@@ -16,8 +17,6 @@ from WorldView import WorldView
 from colours import *
 from images import *
 import collectables
-
-window.fill(GREY)
 
 pygame.key.set_repeat(100, 75)      # press-and hold for faster movement
 USEARROWS = True                    # set the keyboard controls mode
@@ -34,9 +33,6 @@ else:                               # mode using WASD
     LEFT = pygame.K_a
     RIGHT = pygame.K_d
     BLAST = pygame.K_SPACE
-
-world = World()
-world.moveplayer(0, 0)
 
 def HandleEvents():
     '''respond to user input'''
@@ -72,6 +68,8 @@ def loop():
     '''to be used repeatedly'''
     pass
 
+world = World()
+world.moveplayer(0, 0)
 worldview = WorldView(world, (0, 0, windowSize[0]-100, windowSize[1]-20), window)
 hud = HUD(world, (windowSize[0]-100, 0, 100, windowSize[1]), window)
 
