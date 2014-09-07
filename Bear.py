@@ -38,10 +38,10 @@ class Bear:
             for nbrpos in [(curp[0]-1, curp[1]), (curp[0], curp[1]-1), (curp[0]+1, curp[1]), (curp[0], curp[1]+1)]:
                 if nbrpos[0] < 0 or nbrpos[1] < 0 or nbrpos[0] >= 64 or nbrpos[1] >= 64:
                     continue
-                if dijkstramap[nbrpos[0]][nbrpos[1]][0] <=curd+cellmap[mapcoord(nbrpos)].difficulty or cellmap[mapcoord(nbrpos)].solid:
+                if dijkstramap[nbrpos[0]][nbrpos[1]][0] != 512 or cellmap[mapcoord(nbrpos)].solid:
                     continue
                 dijkstramap[nbrpos[0]][nbrpos[1]] = (curd+1, curp)
-                heapq.heappush(openlist, (curd+cellmap[mapcoord(nbrpos)].difficulty, nbrpos))
+                heapq.heappush(openlist, (curd+1, nbrpos))
         if not foundtarget:
             return False
         while dijkstramap[curp[0]][curp[1]][1] != (32, 32):
