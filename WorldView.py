@@ -38,5 +38,6 @@ class WorldView:
                         window.blit(world.surface, (tx, ty))
             window.set_clip(oldclip)
 
+        updatescrollpos()
         blitworld()
         return self.scrollpos
