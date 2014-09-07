@@ -42,12 +42,12 @@ class World:
             for y in range(self.player.position[1]-self.player.visibility-1, self.player.position[1]+self.player.visibility+2):
                 self.cellmap[x, y].draw(self.surface, x%self.cellmap.size[0], y%self.cellmap.size[1])
         if not self.cellmap[self.player.position].top:
-            self.surface.blit(self.player.sprite(), (self.player.position[0]%self.cellmap.size[0]*BLOCKSIZE, self.player.position[1]%self.cellmap.size[1]*BLOCKSIZE))
+            self.surface.blit(self.player.sprite(), (self.player.position[0]*BLOCKSIZE, self.player.position[1]*BLOCKSIZE))
         
         for bear in self.bears:
             bear.huntplayer(self.player.position, self.cellmap)
             if self.cellmap[bear.position].visible:
-                self.surface.blit(bear.sprite(), (bear.position[0]%self.cellmap.size[0]*BLOCKSIZE, bear.position[1]%self.cellmap.size[1]*BLOCKSIZE))
+                self.surface.blit(bear.sprite(), (bear.position[0]*BLOCKSIZE, bear.position[1]*BLOCKSIZE))
 
     def update(self, tiles):
         for tile in tiles:

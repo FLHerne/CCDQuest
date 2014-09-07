@@ -15,7 +15,6 @@ from World import World
 from WorldView import WorldView
 
 from colors import *
-from images import *
 import collectables
 
 window.fill(GREY)
