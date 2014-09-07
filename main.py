@@ -4,7 +4,7 @@
 
 import pygame
 import time
-import TextBox
+#import TextBox
 
 windowSize = (740, 480)
 window = pygame.display.set_mode(windowSize)
@@ -14,7 +14,7 @@ from World import World
 from WorldView import WorldView
 
 from colors import *
-from images import *
+#import images
 import collectables
 
 window.fill(GREY)
