@@ -12,7 +12,7 @@ class Bear:
         '''move towards the player'''
         if random.random() > 0.7:
             return False
-        if abs(playerpos[0]-self.position[0]) + abs(playerpos[1]-self.position[1]) > 15:
+        if abs(playerpos[0]%cellmap.size[0]-self.position[0]%cellmap.size[0]) + abs(playerpos[1]%cellmap.size[1]-self.position[1]%cellmap.size[1]) > 15:
             return False
         def mapcoord(d_coord):
             return (self.position[0] + d_coord[0] - 32,
