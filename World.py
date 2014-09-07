@@ -45,7 +45,9 @@ class World:
             self.surface.blit(self.player.sprite(), (self.player.position[0]*BLOCKSIZE, self.player.position[1]*BLOCKSIZE))
         
         for bear in self.bears:
-            bear.huntplayer(self.player.position, self.cellmap)
+            if not bear.huntplayer(self.player.position, self.cellmap):
+                pass
+                #bear.wander()
             if self.cellmap[bear.position].visible:
                 self.surface.blit(bear.sprite(), (bear.position[0]*BLOCKSIZE, bear.position[1]*BLOCKSIZE))
 
