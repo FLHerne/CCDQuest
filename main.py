@@ -6,8 +6,8 @@ import pygame
 import time
 #import TextBox
 
-windowsize = (740, 480)
-window = pygame.display.set_mode(windowsize)
+WINDOWSIZE = (740, 480)
+window = pygame.display.set_mode(WINDOWSIZE)
 
 from HUD import HUD
 from World import World
@@ -62,9 +62,9 @@ def handleevents():
 
 world = World()
 world.moveplayer(0, 0)
-worldviewrect = (0, 0, windowsize[0] - 90, windowsize[1] - 20)
+worldviewrect = (0, 0, WINDOWSIZE[0] - 90, WINDOWSIZE[1] - 20)
 worldview = WorldView(world, worldviewrect, window)
-hud = HUD(world, (windowsize[0] - 100, 0, 100, windowsize[1]), window)
+hud = HUD(world, (WINDOWSIZE[0] - 100, 0, 100, WINDOWSIZE[1]), window)
 
 quitting = False
 while not quitting:
