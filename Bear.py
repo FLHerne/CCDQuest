@@ -7,13 +7,12 @@ class Bear:
         '''setup bear in given position'''
         self.position = list(position)
         self.direction = -1 # Left
-        self.circleradius = 15
 
     def huntplayer(self, playerpos, cellmap):
         '''move towards the player'''
         if random.random() > 0.7:
             return False
-        if (playerpos[0]-self.position[0])**2 + (playerpos[1]-self.position[1])**2 > self.circleradius**2:
+        if abs(playerpos[0]-self.position[0]) + abs(playerpos[1]-self.position[1]) > 15:
             return False
         def mapcoord(d_coord):
             return (self.position[0] + d_coord[0] - 32,
