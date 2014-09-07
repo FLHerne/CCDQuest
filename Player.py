@@ -3,6 +3,7 @@ from colors import *
 from images import BLOCKSIZE
 import collectables
 
+
 class Player:
     def __init__(self, position):
         self.animcounter = 0
@@ -16,10 +17,10 @@ class Player:
         }
         print BLOCKSIZE
         self.circle = pygame.Surface((BLOCKSIZE, BLOCKSIZE))
-        self.circle.set_colorkey((0,0,0))
+        self.circle.set_colorkey((0, 0, 0))
         radius = int(BLOCKSIZE/2)
         pygame.draw.circle(self.circle, self.color, (radius, radius), radius)
-    
+
     def move(self, x, y, cellmap):
         assert abs(x) + abs(y) <= 1
         if cellmap[self.position[0]+x, self.position[1]+y].solid:
@@ -32,10 +33,10 @@ class Player:
         cellmap[self.position].collectableitem = None
         self.score[collectables.CHOCOLATE] -= cellmap[self.position].difficulty
         return True
-    
+
     def sprite(self):
         self.animcounter = (self.animcounter+1) % 9
-        return self.circle# if self.animcounter != 0 else pygame.Surface()
+        return self.circle  # if self.animcounter != 0 else pygame.Surface()
 
     def visible_tiles(self, cellmap):
         visible = set()
@@ -44,7 +45,7 @@ class Player:
             '''Test visibility along (offset) diagonals away from player'''
             x = self.position[0]
             y = self.position[1]
-            visible.add((x, y))                       # make the currently occupied cell visible
+            visible.add((x, y))                             # make the currently occupied cell visible
             for horizontal in (True, False):                # horizontal and vertical
                 for Dir1 in (-1, 1):                        # left/right or up/down
                     for Dir2 in (-1, 1):                    # final division into octants
@@ -52,7 +53,7 @@ class Player:
                         while (abs(Base) < self.visibility and
                             cellmap[self.position[0]+(Base if horizontal else 0),
                                 self.position[1]+(0 if horizontal else Base)].transparent):   # repeatedly test if a cell is transparent and within a bounding square
-                            #Base += Dir1       #FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
+                            #Base += Dir1       # FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
                             if horizontal:
                                 x = self.position[0] + Base
                                 y = self.position[1]
@@ -61,7 +62,7 @@ class Player:
                                 y = self.position[1] + Base
                             visible.add((x, y))
                             cellmap[x, y].visible = True
-                            while cellmap[x, y].transparent and ((self.position[1]-y)**2) + ((self.position[0]-x)**2) <= self.visibility**2: # test in bounding circle
+                            while cellmap[x, y].transparent and ((self.position[1]-y)**2) + ((self.position[0]-x)**2) <= self.visibility**2:  # test in bounding circle
                                 if horizontal:                                                                      # move diagonally
                                     x += Dir1
                                     y += Dir2
@@ -70,7 +71,7 @@ class Player:
                                     y += Dir1
                                 visible.add((x, y))                                                           # make visible
                             visible.add((x, y))                                                               # make the first opaque cell visible too
-                            Base += Dir1       #FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
+                            Base += Dir1       # FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
                         visible.add((x, y))
 
         def crosscheck():
@@ -80,7 +81,7 @@ class Player:
                 while cellmap[(X*i)+self.position[0], self.position[1]].transparent and X < self.visibility:     # if transparent and within bounding range
                     visible.add(((X*i)+self.position[0], self.position[1]))
                     X += 1                                                              # move away from player
-                visible.add(((X*i)+self.position[0], self.position[1])) # make final cell visible
+                visible.add(((X*i)+self.position[0], self.position[1]))                 # make final cell visible
             for i in (-1, 1):                                                           # Repeat as above, but vertically
                 Y = 0
                 while cellmap[self.position[0], (Y*i)+self.position[1]].transparent and Y < self.visibility:
@@ -98,6 +99,7 @@ class Player:
             return exploded
         if not cellmap[self.position].destructable:
             return exploded
+
         def blam(epicentre):
             cellmap[epicentre].collectableitem = None
             for dx in (-1, 0, 1):
