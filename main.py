@@ -13,11 +13,11 @@ from HUD import HUD
 from World import World
 from WorldView import WorldView
 
-from colors import *
+#from colors import *
 #import images
 import collectables
 
-window.fill(GREY)
+#window.fill(GREY)
 
 pygame.key.set_repeat(100, 75)      # press-and hold for faster movement
 USEARROWS = True                    # set the keyboard controls mode
