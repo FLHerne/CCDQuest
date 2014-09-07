@@ -6,6 +6,7 @@ from Map import Map
 from Player import Player
 from colors import *
 
+
 class World:
     def __init__(self):
         groundfile = 'map/World7-ground.png'
@@ -17,17 +18,17 @@ class World:
         
         def placeBears(number):
             '''randomly add bears to the map'''
-            max_attempts = 20*number
+            max_attempts = 20 * number
             created = []
             for i in xrange(max_attempts):
-                attempt = (random.randint(0,self.cellmap.size[0]-1), random.randint(0,self.cellmap.size[1]-1))
+                attempt = (random.randint(0, self.cellmap.size[0]-1), random.randint(0, self.cellmap.size[1]-1))
                 if self.cellmap[attempt].name not in ['grass', 'forest', 'rocky ground']:
                     continue
                 created.append(Bear(attempt))
                 if len(created) == number:
                     break
             return created
-        self.bears = placeBears(int(self.cellmap.size[0]*self.cellmap.size[1]/5000))
+        self.bears = placeBears(int(self.cellmap.size[0] * self.cellmap.size[1]/5000))
         
     def moveplayer(self, x, y):
         if self.player.move(x, y, self.cellmap):
