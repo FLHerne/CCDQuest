@@ -52,11 +52,6 @@ class Bear:
         self.direction = curp[0]-self.huntingrange if abs(curp[0]-self.huntingrange) else self.direction
         self.position[1] += curp[1]-self.huntingrange
         return True
-        
-    def wander(self):
-        if random.random() > 0.5:
-            self.position[0] += random.randint(-1, 1)
-            self.position[1] += random.randint(-1, 1)
     
     def sprite(self):
         return images.BearRight if self.direction > 0 else images.BearLeft
