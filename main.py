@@ -3,6 +3,7 @@
 '''Game of exploration in a grid-based world'''
 
 import pygame
+import sys
 import time
 
 WINDOWSIZE = (740, 480)
@@ -22,6 +23,7 @@ def handleevents():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
+            sys.exit()
         if event.type == pygame.KEYDOWN:
             move_x = 0
             move_y = 0
@@ -56,3 +58,4 @@ while not quitting:
 
 time.sleep(2)
 pygame.quit()
+sys.exit()

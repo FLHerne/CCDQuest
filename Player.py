@@ -26,7 +26,8 @@ class Player:
         if cellmap[self.position[0]+x, self.position[1]+y].solid:
             self.score[collectables.CHOCOLATE] -= 50
             return False
-        self.position = [self.position[0]+x, self.position[1]+y]
+        self.position = [(self.position[0]+x)%cellmap.size[0],
+                         (self.position[1]+y)%cellmap.size[1]]
         collectable = cellmap[self.position].collectableitem
         if collectable != None:
             self.score[collectable] += collectables.value[collectable]

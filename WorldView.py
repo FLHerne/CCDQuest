@@ -10,8 +10,8 @@ class WorldView:
     def draw(self, world, window):
         def updatescrollpos():
             '''scroll towards the correct position'''
-            world.playerx = (world.player.position[0]*BLOCKSIZE)+self.scrollpos[0]
-            world.playery = (world.player.position[1]*BLOCKSIZE)+self.scrollpos[1]
+            world.playerx = (world.player.position[0]*BLOCKSIZE + self.scrollpos[0]) % world.surface.get_width()
+            world.playery = (world.player.position[1]*BLOCKSIZE + self.scrollpos[1]) % world.surface.get_height()
             if world.playerx+(world.player.visibility*BLOCKSIZE) > self.area.width:         #too far right
                 scrollStep = (abs((world.playerx+(world.player.visibility*BLOCKSIZE)) - (self.area.width)) / 2) +1
                 self.scrollpos = (self.scrollpos[0]-scrollStep, self.scrollpos[1])
@@ -24,6 +24,8 @@ class WorldView:
             if world.playery-(world.player.visibility*BLOCKSIZE) < 0:                         #too far up
                 scrollStep = (abs((world.playery-(world.player.visibility*BLOCKSIZE))) / 2) +1
                 self.scrollpos = (self.scrollpos[0], self.scrollpos[1]+scrollStep)
+            self.scrollpos = (self.scrollpos[0] % world.surface.get_width(),
+                              self.scrollpos[1] % world.surface.get_height())
 
         def blitworld():
             oldclip = window.get_clip()
@@ -35,17 +37,6 @@ class WorldView:
                         window.blit(world.surface, (tx, ty))
             window.set_clip(oldclip)
 
-        def wrapcoords():
-            '''allow world.player to walk around the world in a loop'''
-            world.playerx = (world.player.position[0]*BLOCKSIZE)+self.scrollpos[0]
-            world.playery = (world.player.position[1]*BLOCKSIZE)+self.scrollpos[1]
-            if world.player.position[0] % world.cellmap.size[0] == int(world.cellmap.size[0]/2):
-                world.player.position[0] %= world.cellmap.size[0]
-            if world.player.position[1] % world.cellmap.size[1] == int(world.cellmap.size[1]/2):
-                world.player.position[1] %= world.cellmap.size[1]
-            self.scrollpos = ((-BLOCKSIZE*world.player.position[0])+world.playerx, (-BLOCKSIZE*world.player.position[1])+world.playery)
-
         updatescrollpos()
         blitworld()
-        wrapcoords()
         return self.scrollpos

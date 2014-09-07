@@ -35,9 +35,10 @@ class World:
             for x in range(self.player.position[0]-self.player.visibility-1, self.player.position[0]+self.player.visibility+2):
                 for y in range(self.player.position[1]-self.player.visibility-1, self.player.position[1]+self.player.visibility+2):
                     self.cellmap[x, y].visible = False
-            for cell in self.player.visible_tiles(self.cellmap):
-                self.cellmap[cell].explored = True
-                self.cellmap[cell].visible = True
+            for tile in self.player.visible_tiles(self.cellmap):
+                self.cellmap[tile].explored = True
+                if self.cellmap[tile].transparent:
+                    self.cellmap[tile].visible = True
         for x in range(self.player.position[0]-self.player.visibility-1, self.player.position[0]+self.player.visibility+2):
             for y in range(self.player.position[1]-self.player.visibility-1, self.player.position[1]+self.player.visibility+2):
                 self.cellmap[x, y].draw(self.surface, x%self.cellmap.size[0], y%self.cellmap.size[1])
