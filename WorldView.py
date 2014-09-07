@@ -12,7 +12,6 @@ class WorldView:
             '''scroll towards the correct position'''
             world.playerx = (world.player.position[0]*BLOCKSIZE + self.scrollpos[0]) % world.surface.get_width()
             world.playery = (world.player.position[1]*BLOCKSIZE + self.scrollpos[1]) % world.surface.get_height()
-            print self.scrollpos[0], world.player.position[0], world.playerx, (world.player.visibility*BLOCKSIZE, self.area.width-world.player.visibility*BLOCKSIZE)
             if world.playerx+(world.player.visibility*BLOCKSIZE) > self.area.width:         #too far right
                 scrollStep = (abs((world.playerx+(world.player.visibility*BLOCKSIZE)) - (self.area.width)) / 2) +1
                 self.scrollpos = (self.scrollpos[0]-scrollStep, self.scrollpos[1])
