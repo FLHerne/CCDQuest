@@ -6,8 +6,8 @@ import pygame
 import time
 #import TextBox
 
-windowSize = (740, 480)
-window = pygame.display.set_mode(windowSize)
+windowsize = (740, 480)
+window = pygame.display.set_mode(windowsize)
 
 from HUD import HUD
 from World import World
@@ -35,9 +35,10 @@ else:                               # mode using WASD
     RIGHT = pygame.K_d
     BLAST = pygame.K_SPACE
 
+
 def handleevents():
     '''respond to user input'''
-    quitting = False
+    quittrigger = False
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -56,14 +57,14 @@ def handleevents():
             if event.key == BLAST:
                 world.update(world.player.detonate(world.cellmap))
             if world.player.score[collectables.CHOCOLATE] <= 0:
-                quitting = True
-    return quitting
+                quittrigger = True
+    return quittrigger
 
 world = World()
 world.moveplayer(0, 0)
-worldviewrect = (0, 0, windowSize[0]-90, windowSize[1]-20)
+worldviewrect = (0, 0, windowsize[0] - 90, windowsize[1] - 20)
 worldview = WorldView(world, worldviewrect, window)
-hud = HUD(world, (windowSize[0]-100, 0, 100, windowSize[1]), window)
+hud = HUD(world, (windowsize[0] - 100, 0, 100, windowsize[1]), window)
 
 quitting = False
 while not quitting:
