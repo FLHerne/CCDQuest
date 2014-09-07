@@ -61,7 +61,7 @@ def handleevents():
 
 world = World()
 world.moveplayer(0, 0)
-worldview = WorldView(world, (0, 0, windowSize[0]-100, windowSize[1]-20), window)
+worldview = WorldView(world, (0, 0, windowSize[0]-90, windowSize[1]-20), window)
 hud = HUD(world, (windowSize[0]-100, 0, 100, windowSize[1]), window)
 
 quitting = False
