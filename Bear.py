@@ -12,11 +12,15 @@ class Bear:
         '''move towards the player'''
         if random.random() > 0.7:
             return False
-        if abs(playerpos[0]-self.position[0]) + abs(playerpos[1]-self.position[1]) > 15:
+        def mindist(a, b, size):
+            '''distance between two values accounting for world wrapping'''
+            return min((b-a)%size,(a-b)%size)
+        if (mindist(playerpos[0], self.position[0], cellmap.size[0]) +
+            mindist(playerpos[1], self.position[1], cellmap.size[1])) > 15:
             return False
         def mapcoord(d_coord):
-            return (self.position[0] + d_coord[0] - 32,
-                    self.position[1] + d_coord[1] - 32)
+            return ((self.position[0] + d_coord[0] - 32) % cellmap.size[0],
+                    (self.position[1] + d_coord[1] - 32) % cellmap.size[1])
         def istarget(d_coord):
             return (mapcoord(d_coord)[0] == playerpos[0] and
                     mapcoord(d_coord)[1] == playerpos[1])
@@ -31,7 +35,6 @@ class Bear:
             curn = heapq.heappop(openlist)
             curd = curn[0]
             curp = curn[1]
-            #print "CurP is", curp
             if istarget(curp):
                 foundtarget = True
                 break
