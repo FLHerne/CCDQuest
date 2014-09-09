@@ -115,6 +115,7 @@ class Player:
                     cell.solid = False
                     cell.name = "debris from an explosion"
                     cell.difficulty += 5
+                    cell.top = False
                     cell.damaged = True
                     if cell.collectableitem == collectables.DYNAMITE:
                         blam((epicentre[0]+dx, epicentre[1]+dy))

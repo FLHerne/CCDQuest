@@ -37,7 +37,8 @@ def handleevents():
                 move_x += 1
             world.moveplayer(move_x, move_y)
             if event.key == BLAST:
-                world.update(world.player.detonate(world.cellmap))
+                world.player.detonate(world.cellmap)
+                world.moveplayer(0, 0)
             if world.player.score[collectables.CHOCOLATE] <= 0:
                 quittrigger = True
     return quittrigger
