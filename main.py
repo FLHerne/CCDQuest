@@ -13,7 +13,7 @@ from HUD import HUD
 from World import World
 from WorldView import WorldView
 
-from KeySettings import *
+from keysettings import *
 import collectables
 
 
