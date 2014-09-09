@@ -12,7 +12,7 @@ class WorldView:
             '''scroll towards the correct position'''
             for axis in [0, 1]:
                 pq = (world.player.position[axis]*BLOCKSIZE+self.scrollpos[axis]) % world.surface.get_size()[axis]
-                dr = (world.player.visibility*BLOCKSIZE, self.area.size[axis]-world.player.visibility*BLOCKSIZE)
+                dr = (world.player.visibility*BLOCKSIZE+self.area.topleft[axis], self.area.bottomright[axis]-(world.player.visibility+1)*BLOCKSIZE)
                 self.scrollpos[axis] = (self.scrollpos[axis]+(max(dr[0],min(dr[1],pq))-pq)/2) % world.surface.get_size()[axis]
 
         def blitworld():
