@@ -47,14 +47,17 @@ world.moveplayer(0, 0)
 worldviewrect = (0, 0, WINDOWSIZE[0] - 90, WINDOWSIZE[1] - 20)
 worldview = WorldView(world, worldviewrect, window)
 hud = HUD(world, (WINDOWSIZE[0] - 100, 0, 100, WINDOWSIZE[1]), window)
-
 quitting = False
-while not quitting:
-    time.sleep(0.04)
+
+def mainloop():
     quitting = handleevents()
     scrollpos = worldview.draw(world, window)
     hud.draw(world, window, scrollpos)
     pygame.display.update()
+
+while not quitting:
+    time.sleep(0.04)
+    mainloop()
 
 time.sleep(2)
 pygame.quit()
