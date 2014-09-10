@@ -49,15 +49,16 @@ world = World()
 world.moveplayer(0, 0)
 worldviewrect = (0, 0, WINDOWSIZE[0] - 90, WINDOWSIZE[1] - 20)
 worldview = WorldView(world, worldviewrect, window)
-hud = HUD(world, (WINDOWSIZE[0] - 100, 0, 100, WINDOWSIZE[1]), window)
+hudrect = (WINDOWSIZE[0] - 100, 0, 100, WINDOWSIZE[1])
+hud = HUD(world, window)
 gameended = False
 
 def mainloop():
     gameended = handleevents()
     scrollpos = worldview.draw(world, window)
-    hud.draw(world, window, scrollpos)
+    hud.draw(hudrect, scrollpos)
     if gameended:
-        hud.endsplash(gameended, window)
+        hud.endsplash(gameended)
     pygame.display.update()
 
 while not gameended:
