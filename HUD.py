@@ -6,7 +6,6 @@ from colors import *
 
 class HUD:
     def __init__(self, world, window):
-        self.fontsize = 20
         self.window = window
         self.world = world
         self.miniWorld = pygame.transform.scale(world.surface, (90, (world.surface.get_height()/world.surface.get_width())*90))
@@ -15,40 +14,23 @@ class HUD:
         '''Draw the heads-up display, with current information'''
         area = pygame.Rect(area)
         self.window.blit(images.HudImage, (area))
-        TextBox.Print(self.window,
-                    False,      #Password
-                    area.left+5, 75, #X, Y
-                    100,        #Length
-                    None,       #InColour
-                    BLACK,      #FontColour
-                    'Arial', self.fontsize,       #Font, Size
-                    str(self.world.player.score[collectables.COIN]) + "/" + str(self.world.cellmap.origcoins),        #Message
-                    True,       #Centre
-                    [False, area.height])     #YCentre
-        TextBox.Print(self.window,
-                    False,
-                    area.left+5, 275,
-                    100,
-                    None,
-                    BLACK,
-                    'Arial', self.fontsize,
-                    str(self.world.player.score[collectables.DYNAMITE]),
-                    True,
-                    [False, area.height])
+        
+        # Score indicators
         if self.world.player.score[collectables.CHOCOLATE] >= 1000:
             ChocAmountString = str(round(self.world.player.score[collectables.CHOCOLATE] / 1000.0, 2)) + "kg"
         else:
             ChocAmountString = str(self.world.player.score[collectables.CHOCOLATE])+"g"
-        TextBox.Print(self.window,
-                    False,
-                    area.left+5, 175,
-                    100,
-                    None,
-                    BLACK,
-                    'Arial', self.fontsize,
-                    ChocAmountString,
-                    True,
-                    [False, area.height])
+        def scoretext(y, text):
+            TextBox.Print(self.window, False,
+                          area.left+5, y, 100,
+                          None, BLACK, 'Arial', 20,
+                          text,
+                          True, [False, area.height])
+        scoretext(75, str(self.world.player.score[collectables.COIN]) + "/" + str(self.world.cellmap.origcoins))
+        scoretext(175, ChocAmountString)
+        scoretext(275, str(self.world.player.score[collectables.DYNAMITE]))
+
+        # Minimap
         old_clip = self.window.get_clip()
         self.window.set_clip((area.left+10, 302, 90, 90))
         pygame.transform.scale(self.world.surface, (90, (self.world.surface.get_height()/self.world.surface.get_width())*90), self.miniWorld)
@@ -66,10 +48,11 @@ class HUD:
         self.window.set_clip(old_clip)
     
     def endsplash(self, reason):
+        '''Display a splash message across the entire window'''
         def splash(message):
             TextBox.Print(self.window, False,
                           0, 0, self.window.get_width(),
-                          BLACK, WHITE, 'Arial', self.fontsize*2,
+                          BLACK, WHITE, 'Arial', 40,
                           message,
                           True, [True, self.window.get_height()])
         if reason == collectables.CHOCOLATE:
