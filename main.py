@@ -7,7 +7,7 @@ import sys
 import time
 
 WINDOWSIZE = (740, 480)
-window = pygame.display.set_mode(WINDOWSIZE)
+window = pygame.display.set_mode(WINDOWSIZE, pygame.RESIZABLE)
 
 from HUD import HUD
 from World import World
@@ -24,6 +24,8 @@ def handleevents():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+        if event.type==pygame.VIDEORESIZE:
+            window = pygame.display.set_mode(event.dict['size'], pygame.RESIZABLE)
         if event.type == pygame.KEYDOWN:
             move_x = 0
             move_y = 0
@@ -47,15 +49,19 @@ def handleevents():
 
 world = World()
 world.moveplayer(0, 0)
-worldviewrect = (0, 0, WINDOWSIZE[0] - 90, WINDOWSIZE[1] - 20)
-worldview = WorldView(world, worldviewrect, window)
-hudrect = (WINDOWSIZE[0] - 100, 0, 100, WINDOWSIZE[1])
+worldviewrect = pygame.Rect(0, 0, WINDOWSIZE[0] - 95, WINDOWSIZE[1] - 20)
+worldview = WorldView(world, window)
+hudrect = pygame.Rect(WINDOWSIZE[0] - 100, 0, 100, WINDOWSIZE[1])
 hud = HUD(world, window)
 gameended = False
 
 def mainloop():
     gameended = handleevents()
-    scrollpos = worldview.draw(world, window)
+    worldviewrect.width = window.get_width() - 95
+    worldviewrect.height = window.get_height() - 20
+    hudrect.left = window.get_width() - 100
+    hudrect.height = window.get_height()
+    scrollpos = worldview.draw(worldviewrect, world, window)
     hud.draw(hudrect, scrollpos)
     if gameended:
         hud.endsplash(gameended)
