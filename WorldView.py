@@ -19,7 +19,7 @@ class WorldView:
             '''scroll towards the correct position'''
             for axis in [0, 1]:
                 pq = (world.player.position[axis]*BLOCKSIZE+self.scrollpos[axis]) % world.surface.get_size()[axis]
-                if world.surface.get_size()[axis] > 2*world.player.visibility*BLOCKSIZE:
+                if dare.size[axis] > 2*world.player.visibility*BLOCKSIZE:
                     dr = (world.player.visibility*BLOCKSIZE, dare.size[axis]-(world.player.visibility+1)*BLOCKSIZE)
                 else:
                     dr = [dare.size[axis]/2]
