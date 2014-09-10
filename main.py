@@ -55,7 +55,7 @@ hudrect = pygame.Rect(WINDOWSIZE[0] - 100, 0, 100, WINDOWSIZE[1])
 hud = HUD(world, window)
 gameended = False
 
-def mainloop():
+while not gameended:
     gameended = handleevents()
     worldviewrect.width = window.get_width() - 95
     worldviewrect.height = window.get_height() - 20
@@ -66,9 +66,6 @@ def mainloop():
     if gameended:
         hud.endsplash(gameended)
     pygame.display.update()
-
-while not gameended:
-    mainloop()
     time.sleep(0.04)
 
 time.sleep(2)
