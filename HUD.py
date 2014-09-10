@@ -63,25 +63,17 @@ class HUD:
                     1+ self.area.height*miniWorldScale),
                     1)
         window.set_clip(old_clip)
-        if world.player.score[collectables.CHOCOLATE] <= 0:
-            TextBox.Print(window,
-                    False,
-                    0, 0,
-                    window.get_width(),
-                    BLACK,
-                    WHITE,
-                    'Arial', self.fontsize*2,
-                    "You ran out of chocolate!",
-                    True,
-                    [True, window.get_height()])
-        if world.player.score[collectables.COIN] >= world.cellmap.origcoins:
-            TextBox.Print(window,
-                    False,
-                    0, 0,
-                    window.get_width(),
-                    BLACK,
-                    WHITE,
-                    'Arial', self.fontsize*2,
-                    "You found all the coins!",
-                    True,
-                    [True, window.get_height()])
+    
+    def endsplash(self, reason, window):
+        def splash(message):
+            TextBox.Print(window, False,
+                          0, 0, window.get_width(),
+                          BLACK, WHITE, 'Arial', self.fontsize*2,
+                          message,
+                          True, [True, window.get_height()])
+        if reason == collectables.CHOCOLATE:
+            splash("You ran out of chocolate!")
+        elif reason == collectables.COIN:
+            splash("You found all the coins!")
+        else:
+            splash("What happened here?")

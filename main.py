@@ -19,7 +19,7 @@ import collectables
 
 def handleevents():
     '''respond to user input'''
-    quittrigger = False
+    gameended = False
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -40,25 +40,29 @@ def handleevents():
                 world.player.detonate(world.cellmap)
                 world.moveplayer(0, 0)
             if world.player.score[collectables.CHOCOLATE] <= 0:
-                quittrigger = True
-    return quittrigger
+                gameended = collectables.CHOCOLATE
+            if world.player.score[collectables.COIN] == world.cellmap.origcoins:
+                gameended = collectables.COIN
+    return gameended
 
 world = World()
 world.moveplayer(0, 0)
 worldviewrect = (0, 0, WINDOWSIZE[0] - 90, WINDOWSIZE[1] - 20)
 worldview = WorldView(world, worldviewrect, window)
 hud = HUD(world, (WINDOWSIZE[0] - 100, 0, 100, WINDOWSIZE[1]), window)
-quitting = False
+gameended = False
 
 def mainloop():
-    quitting = handleevents()
+    gameended = handleevents()
     scrollpos = worldview.draw(world, window)
     hud.draw(world, window, scrollpos)
+    if gameended:
+        hud.endsplash(gameended, window)
     pygame.display.update()
 
-while not quitting:
-    time.sleep(0.04)
+while not gameended:
     mainloop()
+    time.sleep(0.04)
 
 time.sleep(2)
 pygame.quit()
