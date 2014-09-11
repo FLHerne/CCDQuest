@@ -2,7 +2,8 @@ import pygame
 from colors import *
 from images import BLOCKSIZE
 import collectables
-
+# Remove solidity and movement cost for testing
+FREEPLAYER = False
 
 class Player:
     def __init__(self, position):
@@ -23,7 +24,7 @@ class Player:
 
     def move(self, x, y, cellmap):
         assert abs(x) + abs(y) <= 1
-        if cellmap[self.position[0]+x, self.position[1]+y].solid:
+        if cellmap[self.position[0]+x, self.position[1]+y].solid and not FREEPLAYER:
             self.score[collectables.CHOCOLATE] -= 50
             return False
         self.position = [(self.position[0]+x)%cellmap.size[0],
@@ -32,7 +33,8 @@ class Player:
         if collectable != None:
             self.score[collectable] += collectables.value[collectable]
         cellmap[self.position].collectableitem = None
-        self.score[collectables.CHOCOLATE] -= cellmap[self.position].difficulty
+        if not FREEPLAYER:
+            self.score[collectables.CHOCOLATE] -= cellmap[self.position].difficulty
         return True
 
     def sprite(self):
@@ -113,6 +115,7 @@ class Player:
                     cell.solid = False
                     cell.name = "debris from an explosion"
                     cell.difficulty += 5
+                    cell.top = False
                     cell.damaged = True
                     if cell.collectableitem == collectables.DYNAMITE:
                         blam((epicentre[0]+dx, epicentre[1]+dy))

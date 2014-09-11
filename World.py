@@ -36,9 +36,10 @@ class World:
                 for y in range(self.player.position[1]-self.player.visibility-1, self.player.position[1]+self.player.visibility+2):
                     self.cellmap[x, y].visible = False
             for tile in self.player.visible_tiles(self.cellmap):
-                self.cellmap[tile].explored = True
-                if self.cellmap[tile].transparent:
-                    self.cellmap[tile].visible = True
+                cell = self.cellmap[tile]
+                cell.explored = True
+                if cell.transparent:
+                    cell.visible = True
         for x in range(self.player.position[0]-self.player.visibility-1, self.player.position[0]+self.player.visibility+2):
             for y in range(self.player.position[1]-self.player.visibility-1, self.player.position[1]+self.player.visibility+2):
                 self.cellmap[x, y].draw(self.surface, x%self.cellmap.size[0], y%self.cellmap.size[1])
@@ -49,7 +50,3 @@ class World:
             bear.huntplayer(self.player.position, self.cellmap)
             if self.cellmap[bear.position].visible:
                 self.surface.blit(bear.sprite(), (bear.position[0]*BLOCKSIZE, bear.position[1]*BLOCKSIZE))
-
-    def update(self, tiles):
-        for tile in tiles:
-            self.cellmap[tile].draw(self.surface, tile[0], tile[1])
