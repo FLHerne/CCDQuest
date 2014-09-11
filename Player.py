@@ -23,7 +23,8 @@ class Player:
         pygame.draw.circle(self.circle, self.color, (radius, radius), radius)
 
     def move(self, x, y, cellmap):
-        assert abs(x) + abs(y) <= 1
+        if abs(x) + abs(y) != 1:
+            return False
         if cellmap[self.position[0]+x, self.position[1]+y].solid and not FREEPLAYER:
             self.score[collectables.CHOCOLATE] -= 50
             return False
