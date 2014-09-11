@@ -1,6 +1,7 @@
 import pygame
 import images
 import TextBox
+import newTextBox
 import collectables
 from colors import *
 
