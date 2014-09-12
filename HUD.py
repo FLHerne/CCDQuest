@@ -9,26 +9,26 @@ class ScoreWidget:
     def __init__(self, image, window, total=None, stringfunc=None):
         self.image = image
         self.window = window
-        self.prevarea = None
+        self.prevregion = None
         self.total = total
         self.stringfunc = (stringfunc if stringfunc != None else
                            lambda a, b: str(a) + ("/"+str(b) if b != None else ""))
-    
-    def draw(self, area, quantity):
+
+    def draw(self, region, quantity):
         '''Draw the score widget'''
-        area = pygame.Rect(area)
-        pygame.draw.rect(self.window, WHITE, area)
-        imagearea = area.inflate(-10,-10)
-        imagearea.height -= 20
-        if imagearea.height > 0 and imagearea.height > 0:
-            fittedimage = self.image.get_rect().fit(imagearea)
+        region = pygame.Rect(region)
+        pygame.draw.rect(self.window, WHITE, region)
+        imageregion = region.inflate(-10,-10)
+        imageregion.height -= 20
+        if imageregion.height > 0 and imageregion.height > 0:
+            fittedimage = self.image.get_rect().fit(imageregion)
             self.window.blit(pygame.transform.scale(self.image, fittedimage.size), fittedimage)
         string = self.stringfunc(quantity, self.total)
         TextBox.Print(self.window, False,
-                        area.left, area.bottom-25, area.width,
+                        region.left, region.bottom-25, region.width,
                         None, BLACK, 'Arial', 20,
                         string,
-                        True, [False, area.height])
+                        True, [False, region.height])
 
 class MinimapWidget:
     '''Widget to display a small map of the world'''
@@ -36,21 +36,21 @@ class MinimapWidget:
         self.world = world
         self.window = window
 
-    def draw(self, area, scrollpos):
+    def draw(self, region, scrollpos):
         '''Draw the minimap'''
-        area = pygame.Rect(area)
-        miniworldScale = min(float(area.width)/(self.world.cellmap.size[0]*images.BLOCKSIZE),
-                             float(area.height)/(self.world.cellmap.size[1]*images.BLOCKSIZE))
+        region = pygame.Rect(region)
+        miniworldScale = min(float(region.width)/(self.world.cellmap.size[0]*images.BLOCKSIZE),
+                             float(region.height)/(self.world.cellmap.size[1]*images.BLOCKSIZE))
         miniworld = pygame.transform.scale(self.world.surface, (int(self.world.cellmap.size[0]*images.BLOCKSIZE*miniworldScale), int(self.world.cellmap.size[1]*images.BLOCKSIZE*miniworldScale)))
         old_clip = self.window.get_clip()
-        self.window.set_clip(area.left, area.top, int(self.world.cellmap.size[0]*images.BLOCKSIZE*miniworldScale), int(self.world.cellmap.size[1]*images.BLOCKSIZE*miniworldScale))
-        self.window.blit(miniworld, area)
+        self.window.set_clip(region.left, region.top, int(self.world.cellmap.size[0]*images.BLOCKSIZE*miniworldScale), int(self.world.cellmap.size[1]*images.BLOCKSIZE*miniworldScale))
+        self.window.blit(miniworld, region)
         for tx in [scrollpos[0]-self.world.surface.get_width(), scrollpos[0], scrollpos[0]+self.world.surface.get_width()]:
             for ty in [scrollpos[1]-self.world.surface.get_height(), scrollpos[1], scrollpos[1]+self.world.surface.get_height()]:
                 pygame.draw.rect(self.window,
                     self.world.player.color,
-                    (area.left-(tx*miniworldScale), # Top x corner of minimap, plus scroll offset
-                    area.top-(ty*miniworldScale), # Top y ''
+                    (region.left-(tx*miniworldScale), # Top x corner of minimap, plus scroll offset
+                    region.top-(ty*miniworldScale), # Top y ''
                     #FIXME should be viewport size, not window size!
                     1+ self.window.get_width()*miniworldScale,
                     1+ self.window.get_height()*miniworldScale),
@@ -68,19 +68,19 @@ class HUD:
         self.dynamitewidget = ScoreWidget(images.HudDynamite, window)
         self.minimapwidget = MinimapWidget(world, window)
 
-    def draw(self, area, scrollpos):
+    def draw(self, region, scrollpos):
         '''Draw the heads-up display'''
-        area = pygame.Rect(area)
-        pygame.draw.rect(self.window, BLACK, area)
+        region = pygame.Rect(region)
+        pygame.draw.rect(self.window, BLACK, region)
         border = 2
-        widgetwidth = area.width-border
-        scoreheight = area.height-widgetwidth-2 # Leave space for the HUD
+        widgetwidth = region.width-border
+        scoreheight = region.height-widgetwidth-2 # Leave space for the HUD
         widgetheight = (scoreheight-4)/3
-        self.coinwidget.draw((area.left+border, area.top, widgetwidth, widgetheight), self.world.player.score[collectables.COIN])
-        self.chocwidget.draw((area.left+border, area.top+border+widgetheight, widgetwidth, widgetheight), self.world.player.score[collectables.CHOCOLATE])
-        self.dynamitewidget.draw((area.left+border, area.top+2*border+2*widgetheight, widgetwidth, widgetheight), self.world.player.score[collectables.DYNAMITE])
-        self.minimapwidget.draw((area.left+border, area.bottom-widgetwidth, widgetwidth, widgetwidth), scrollpos)
-    
+        self.coinwidget.draw((region.left+border, region.top, widgetwidth, widgetheight), self.world.player.score[collectables.COIN])
+        self.chocwidget.draw((region.left+border, region.top+border+widgetheight, widgetwidth, widgetheight), self.world.player.score[collectables.CHOCOLATE])
+        self.dynamitewidget.draw((region.left+border, region.top+2*border+2*widgetheight, widgetwidth, widgetheight), self.world.player.score[collectables.DYNAMITE])
+        self.minimapwidget.draw((region.left+border, region.bottom-widgetwidth, widgetwidth, widgetwidth), scrollpos)
+
     def endsplash(self, reason):
         '''Display a splash message across the entire window'''
         def splash(message):
