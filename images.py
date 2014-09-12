@@ -39,4 +39,6 @@ CollectablesImages = {
     collectables.DYNAMITE: Dynamite
 }
 
-HudImage = pygame.image.load("HudPanel.png")
+HudCoin = pygame.image.load("hud/Coin.png")
+HudChoc = pygame.image.load("hud/Chocolate.png")
+HudDynamite = pygame.image.load("hud/Dynamite.png")
