@@ -5,7 +5,7 @@ import collectables
 from colors import *
 
 class ScoreWidget:
-    '''Widget to show a score and assosciated image'''
+    '''Widget to show a score and associated image'''
     def __init__(self, image, window, total=None, stringfunc=None):
         self.image = image
         self.window = window
@@ -31,7 +31,7 @@ class ScoreWidget:
                         True, [False, area.height])
 
 class MinimapWidget:
-    '''Widget to display a small map of the whole world'''
+    '''Widget to display a small map of the world'''
     def __init__(self, world, window):
         self.world = world
         self.window = window
@@ -58,6 +58,7 @@ class MinimapWidget:
         self.window.set_clip(old_clip)
 
 class HUD:
+    '''Vertical bar with player scores and minimap'''
     def __init__(self, world, window):
         self.window = window
         self.world = world
@@ -66,10 +67,9 @@ class HUD:
                                       stringfunc=lambda a, b: str(round(a/1000.0, 2))+"kg" if a >= 1000 else str(a)+"g")
         self.dynamitewidget = ScoreWidget(images.HudDynamite, window)
         self.minimapwidget = MinimapWidget(world, window)
-        #str(round(self.world.player.score[collectables.CHOCOLATE] / 1000.0, 2)) + "kg"
 
     def draw(self, area, scrollpos):
-        '''Draw the heads-up display, with current information'''
+        '''Draw the heads-up display'''
         area = pygame.Rect(area)
         pygame.draw.rect(self.window, BLACK, area)
         border = 2
