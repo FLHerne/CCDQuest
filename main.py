@@ -49,17 +49,17 @@ def handleevents():
 
 world = World()
 world.moveplayer(0, 0)
-worldviewrect = pygame.Rect(0, 0, WINDOWSIZE[0] - 95, WINDOWSIZE[1] - 20)
+worldviewrect = pygame.Rect(0, 0, WINDOWSIZE[0] - 92, WINDOWSIZE[1] - 20)
 worldview = WorldView(world, window)
-hudrect = pygame.Rect(WINDOWSIZE[0] - 100, 0, 100, WINDOWSIZE[1])
+hudrect = pygame.Rect(WINDOWSIZE[0] - 92, 0, 100, WINDOWSIZE[1])
 hud = HUD(world, window)
 gameended = False
 
 while not gameended:
     gameended = handleevents()
-    worldviewrect.width = window.get_width() - 95
+    worldviewrect.width = window.get_width() - 92
     worldviewrect.height = window.get_height() - 20
-    hudrect.left = window.get_width() - 100
+    hudrect.left = window.get_width() - 92
     hudrect.height = window.get_height()
     scrollpos = worldview.draw(worldviewrect, world, window)
     hud.draw(hudrect, scrollpos)
