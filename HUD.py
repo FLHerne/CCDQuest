@@ -15,16 +15,19 @@ class ScoreWidget:
     def draw(self, area, quantity):
         '''Draw the score widget'''
         area = pygame.Rect(area)
-        self.window.blit(self.image, area.move(5,5))
+        imagearea = area.inflate(-10,-10)
+        imagearea.height -= 20
+        fittedimage = self.image.get_rect().fit(imagearea)
+        pygame.draw.rect(self.window, WHITE, area)
+        self.window.blit(pygame.transform.scale(self.image, fittedimage.size), fittedimage)
         string = str(quantity)
         if self.total:
-            string += " / " + str(self.total)
+            string += "/" + str(self.total)
         TextBox.Print(self.window, False,
-                        area.left, area.top + 65, area.width,
+                        area.left, area.bottom-25, area.width,
                         None, BLACK, 'Arial', 20,
                         string,
                         True, [False, area.height])
-        pygame.draw.rect(self.window, BLACK, area, 2)
 
 class MinimapWidget:
     '''Widget to display a small map of the whole world'''
@@ -65,7 +68,7 @@ class HUD:
     def draw(self, area, scrollpos):
         '''Draw the heads-up display, with current information'''
         area = pygame.Rect(area)
-        pygame.draw.rect(self.window, WHITE, area)
+        pygame.draw.rect(self.window, BLACK, area)
         self.coinwidget.draw((area.left+10, area.top, 90, 90), self.world.player.score[collectables.COIN])
         self.chocwidget.draw((area.left+10, area.top+90, 90, 90), self.world.player.score[collectables.CHOCOLATE])
         self.dynamitewidget.draw((area.left+10, area.top+180, 90, 90), self.world.player.score[collectables.DYNAMITE])
