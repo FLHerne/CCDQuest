@@ -19,17 +19,15 @@ class ScoreWidget:
         '''Draw the score widget'''
         area = pygame.Rect(area)
         pygame.draw.rect(self.window, WHITE, area)
+        pygame.draw.rect(self.window, GREY, area, 1)
         imagearea = area.inflate(-10,-10)
         imagearea.height -= 20
         if imagearea.height > 0 and imagearea.height > 0:
             fittedimage = self.image.get_rect().fit(imagearea)
             self.window.blit(pygame.transform.scale(self.image, fittedimage.size), fittedimage)
         string = self.stringfunc(quantity, self.total)
-        TextBox.Print(self.window, False,
-                        area.left, area.bottom-25, area.width,
-                        None, BLACK, 'Arial', 20,
-                        string,
-                        True, [False, area.height])
+        newTextBox.Draw(self.window, string, area, colour=BLACK, size=18, ycentred=False)
+
 
 class MinimapWidget:
     '''Widget to display a small map of the world'''
