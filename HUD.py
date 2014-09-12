@@ -17,11 +17,12 @@ class ScoreWidget:
     def draw(self, area, quantity):
         '''Draw the score widget'''
         area = pygame.Rect(area)
+        pygame.draw.rect(self.window, WHITE, area)
         imagearea = area.inflate(-10,-10)
         imagearea.height -= 20
-        fittedimage = self.image.get_rect().fit(imagearea)
-        pygame.draw.rect(self.window, WHITE, area)
-        self.window.blit(pygame.transform.scale(self.image, fittedimage.size), fittedimage)
+        if imagearea.height > 0 and imagearea.height > 0:
+            fittedimage = self.image.get_rect().fit(imagearea)
+            self.window.blit(pygame.transform.scale(self.image, fittedimage.size), fittedimage)
         string = self.stringfunc(quantity, self.total)
         TextBox.Print(self.window, False,
                         area.left, area.bottom-25, area.width,
