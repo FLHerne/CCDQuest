@@ -6,11 +6,13 @@ from colors import *
 
 class ScoreWidget:
     '''Widget to show a score and assosciated image'''
-    def __init__(self, image, window, total=None):
+    def __init__(self, image, window, total=None, stringfunc=None):
         self.image = image
         self.window = window
         self.prevarea = None
         self.total = total
+        self.stringfunc = (stringfunc if stringfunc != None else
+                           lambda a, b: str(a) + ("/"+str(b) if b != None else ""))
     
     def draw(self, area, quantity):
         '''Draw the score widget'''
@@ -20,9 +22,7 @@ class ScoreWidget:
         fittedimage = self.image.get_rect().fit(imagearea)
         pygame.draw.rect(self.window, WHITE, area)
         self.window.blit(pygame.transform.scale(self.image, fittedimage.size), fittedimage)
-        string = str(quantity)
-        if self.total:
-            string += "/" + str(self.total)
+        string = self.stringfunc(quantity, self.total)
         TextBox.Print(self.window, False,
                         area.left, area.bottom-25, area.width,
                         None, BLACK, 'Arial', 20,
@@ -61,9 +61,11 @@ class HUD:
         self.window = window
         self.world = world
         self.coinwidget = ScoreWidget(images.HudCoin, window, world.cellmap.origcoins)
-        self.chocwidget = ScoreWidget(images.HudChoc, window)
+        self.chocwidget = ScoreWidget(images.HudChoc, window,
+                                      stringfunc=lambda a, b: str(round(a/1000.0, 2))+"kg" if a >= 1000 else str(a)+"g")
         self.dynamitewidget = ScoreWidget(images.HudDynamite, window)
         self.minimapwidget = MinimapWidget(world, window)
+        #str(round(self.world.player.score[collectables.CHOCOLATE] / 1000.0, 2)) + "kg"
 
     def draw(self, area, scrollpos):
         '''Draw the heads-up display, with current information'''
