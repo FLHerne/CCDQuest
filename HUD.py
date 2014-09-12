@@ -72,12 +72,14 @@ class HUD:
         '''Draw the heads-up display, with current information'''
         area = pygame.Rect(area)
         pygame.draw.rect(self.window, BLACK, area)
-        scoreheight = area.height - 92 # Leave space for the HUD
+        border = 2
+        widgetwidth = area.width-border
+        scoreheight = area.height-widgetwidth-2 # Leave space for the HUD
         widgetheight = (scoreheight-4)/3
-        self.coinwidget.draw((area.left+2, area.top, 90, widgetheight), self.world.player.score[collectables.COIN])
-        self.chocwidget.draw((area.left+2, area.top+2+widgetheight, 90, widgetheight), self.world.player.score[collectables.CHOCOLATE])
-        self.dynamitewidget.draw((area.left+2, area.top+4+2*widgetheight, 90, widgetheight), self.world.player.score[collectables.DYNAMITE])
-        self.minimapwidget.draw((area.left+2, area.bottom-90, 90, 90), scrollpos)
+        self.coinwidget.draw((area.left+border, area.top, widgetwidth, widgetheight), self.world.player.score[collectables.COIN])
+        self.chocwidget.draw((area.left+border, area.top+border+widgetheight, widgetwidth, widgetheight), self.world.player.score[collectables.CHOCOLATE])
+        self.dynamitewidget.draw((area.left+border, area.top+2*border+2*widgetheight, widgetwidth, widgetheight), self.world.player.score[collectables.DYNAMITE])
+        self.minimapwidget.draw((area.left+border, area.bottom-widgetwidth, widgetwidth, widgetwidth), scrollpos)
     
     def endsplash(self, reason):
         '''Display a splash message across the entire window'''
