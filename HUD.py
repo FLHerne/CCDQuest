@@ -7,8 +7,9 @@ from colors import *
 
 class ScoreWidget:
     '''Widget to show a score and associated image'''
-    def __init__(self, image, window, total=None, stringfunc=None):
+    def __init__(self, image, window, total=None, stringfunc=None, bgtileimage=None):
         self.image = image
+        self.bgtileimage = bgtileimage
         self.window = window
         self.prevregion = None
         self.total = total
@@ -18,7 +19,14 @@ class ScoreWidget:
     def draw(self, region, quantity):
         '''Draw the score widget'''
         region = pygame.Rect(region)
-        pygame.draw.rect(self.window, WHITE, region)
+        old_clip = self.window.get_clip()
+        self.window.set_clip(region)
+        if self.bgtileimage:
+            for ix in range(region.left, region.right, self.bgtileimage.get_width()):
+                for iy in range(region.top, region.bottom, self.bgtileimage.get_height()):
+                    self.window.blit(self.bgtileimage, (ix, iy))
+        else:
+            pygame.draw.rect(self.window, WHITE, region)
         pygame.draw.rect(self.window, GREY, region, 1)
         imageregion = region.inflate(-10,-10)
         imageregion.height -= 20
@@ -27,6 +35,7 @@ class ScoreWidget:
             self.window.blit(pygame.transform.scale(self.image, fittedimage.size), fittedimage)
         string = self.stringfunc(quantity, self.total)
         newTextBox.Draw(self.window, string, region, colour=BLACK, size=18, ycentred=False)
+        self.window.set_clip(old_clip)
 
 class MinimapWidget:
     '''Widget to display a small map of the world'''
