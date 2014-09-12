@@ -35,12 +35,12 @@ class MinimapWidget:
     def draw(self, area, scrollpos):
         '''Draw the minimap'''
         area = pygame.Rect(area)
-        #FIXME Stretches the map if aspect ratios don't match.
-        miniworld = pygame.transform.scale(self.world.surface, (area.width, area.height))
+        miniworldScale = min(float(area.width)/(self.world.cellmap.size[0]*images.BLOCKSIZE),
+                             float(area.height)/(self.world.cellmap.size[1]*images.BLOCKSIZE))
+        miniworld = pygame.transform.scale(self.world.surface, (int(self.world.cellmap.size[0]*images.BLOCKSIZE*miniworldScale), int(self.world.cellmap.size[1]*images.BLOCKSIZE*miniworldScale)))
         old_clip = self.window.get_clip()
-        self.window.set_clip(area)
+        self.window.set_clip(area.left, area.top, int(self.world.cellmap.size[0]*images.BLOCKSIZE*miniworldScale), int(self.world.cellmap.size[1]*images.BLOCKSIZE*miniworldScale))
         self.window.blit(miniworld, area)
-        miniworldScale = float(area.width)/(self.world.cellmap.size[0]*images.BLOCKSIZE)
         for tx in [scrollpos[0]-self.world.surface.get_width(), scrollpos[0], scrollpos[0]+self.world.surface.get_width()]:
             for ty in [scrollpos[1]-self.world.surface.get_height(), scrollpos[1], scrollpos[1]+self.world.surface.get_height()]:
                 pygame.draw.rect(self.window,
