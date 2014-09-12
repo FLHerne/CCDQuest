@@ -83,11 +83,8 @@ class HUD:
     def endsplash(self, reason):
         '''Display a splash message across the entire window'''
         def splash(message):
-            TextBox.Print(self.window, False,
-                          0, 0, self.window.get_width(),
-                          BLACK, WHITE, 'Arial', 40,
-                          message,
-                          True, [True, self.window.get_height()])
+            pygame.draw.rect(self.window, BLACK, self.window.get_rect())
+            newTextBox.Draw(self.window, message, self.window.get_rect(), colour=WHITE, size=40)
         if reason == collectables.CHOCOLATE:
             splash("You ran out of chocolate!")
         elif reason == collectables.COIN:
