@@ -97,21 +97,22 @@ class HUD:
         '''Draw the heads-up display'''
         region = pygame.Rect(region)
         pygame.draw.rect(self.window, BLACK, region)
-        VERTICAL = Frame.VERTICAL
-        HORIZONTAL = Frame.HORIZONTAL
-        framewidth = self.frame.thickness[VERTICAL]
-        frameheight = self.frame.thickness[HORIZONTAL]
+        framewidth = self.frame.thickness[Frame.VERTICAL]
+        frameheight = self.frame.thickness[Frame.HORIZONTAL]
         widgetwidth = region.width-framewidth
-        self.frame.draw(region, VERTICAL)
+        self.frame.draw(region, Frame.VERTICAL)
         self.minimapwidget.draw((region.left+framewidth, region.bottom-widgetwidth, widgetwidth, widgetwidth), scrollpos)
-        scoreheight = region.height-3*frameheight-widgetwidth
-        widgetheight = int(scoreheight/3)
-        self.coinwidget.draw((region.left+framewidth, region.top, widgetwidth, widgetheight), self.world.player.score[collectables.COIN])
-        self.frame.draw(region.move(0, widgetheight), HORIZONTAL)
-        self.chocwidget.draw((region.left+framewidth, region.top+frameheight+widgetheight, widgetwidth, widgetheight), self.world.player.score[collectables.CHOCOLATE])
-        self.frame.draw(region.move(0,2*widgetheight+frameheight), HORIZONTAL)
-        self.dynamitewidget.draw((region.left+framewidth, region.top+2*(frameheight+widgetheight), widgetwidth, widgetheight), self.world.player.score[collectables.DYNAMITE])
-        self.frame.draw(region.move(0,3*widgetheight+2*frameheight), HORIZONTAL)
+        region.height -= widgetwidth+framewidth
+        self.frame.draw(region.move(0, region.height), Frame.HORIZONTAL)
+        widgetareas = []
+        for iy in range(0, 3):
+            offset_y = int(iy*region.height/3)
+            self.frame.draw(region.move(0, offset_y), Frame.HORIZONTAL)
+            widgetareas.append((region.left+framewidth, region.top+offset_y+frameheight,
+                                widgetwidth, (region.height/3)-frameheight+1))
+        self.dynamitewidget.draw(widgetareas[0], self.world.player.score[collectables.DYNAMITE])
+        self.chocwidget.draw(widgetareas[1], self.world.player.score[collectables.CHOCOLATE])
+        self.coinwidget.draw(widgetareas[2], self.world.player.score[collectables.COIN])
 
     def endsplash(self, reason):
         '''Display a splash message across the entire window'''
@@ -124,4 +125,3 @@ class HUD:
             splash("You found all the coins!")
         else:
             splash("What happened here?")
-            
