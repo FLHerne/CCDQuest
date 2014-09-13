@@ -44,11 +44,11 @@ class MinimapWidget:
     def draw(self, region, scrollpos):
         '''Draw the minimap'''
         region = pygame.Rect(region)
+        old_clip = self.window.get_clip()
         self.window.set_clip(region)
         miniworldScale = min(float(region.width)/(self.world.cellmap.size[0]*images.BLOCKSIZE),
                              float(region.height)/(self.world.cellmap.size[1]*images.BLOCKSIZE))
         miniworld = pygame.transform.scale(self.world.surface, (int(self.world.cellmap.size[0]*images.BLOCKSIZE*miniworldScale), int(self.world.cellmap.size[1]*images.BLOCKSIZE*miniworldScale)))
-        old_clip = self.window.get_clip()
         self.window.blit(miniworld, region)
         for tx in [scrollpos[0]-self.world.surface.get_width(), scrollpos[0], scrollpos[0]+self.world.surface.get_width()]:
             for ty in [scrollpos[1]-self.world.surface.get_height(), scrollpos[1], scrollpos[1]+self.world.surface.get_height()]:
