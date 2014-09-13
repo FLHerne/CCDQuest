@@ -2,7 +2,7 @@ import pygame
 from colors import *
 
 def draw(drawsurface, string, region, colour=YELLOW, size=12, font="./fonts/MorrisRomanBlack.ttf", xcentered=True, ycentered=True, beveled=False):
-    outputbitmap = pygame.Surface(region.size(), pygame.SRCALPHA, 32)
+    outputbitmap = pygame.Surface(region.size, pygame.SRCALPHA, 32)
     font = pygame.font.Font(font, size)
     darkcolour = BLACK
     maincolour = YELLOW
