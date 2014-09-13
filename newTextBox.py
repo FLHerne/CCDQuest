@@ -3,7 +3,7 @@ from colors import *
 
 defaultSize = 12
 defaultColour = WHITE
-defaultFont = "./fonts/morris_roman/MorrisRomanBlack.ttf" #'Dejavu Sans'
+defaultFont = "./fonts/MorrisRomanBlack.ttf" #'Dejavu Sans'
 
 def Draw(drawSurface, textString, rect, colour=defaultColour, size=defaultSize, font=defaultFont, xcentred=True, ycentred=True):
     font = pygame.font.Font(font, size)
