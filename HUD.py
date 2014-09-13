@@ -64,9 +64,10 @@ class MinimapWidget:
 
 class HUD:
     '''Vertical bar with player scores and minimap'''
-    def __init__(self, world, window):
+    def __init__(self, world, window, bgtileimage=None):
         self.window = window
         self.world = world
+        self.bgtileimage = bgtileimage
         self.coinwidget = ScoreWidget(images.HudCoin, window, world.cellmap.origcoins)
         self.chocwidget = ScoreWidget(images.HudChoc, window,
                                       stringfunc=lambda a, b: str(round(a/1000.0, 2))+"kg" if a >= 1000 else str(a)+"g")
@@ -76,7 +77,12 @@ class HUD:
     def draw(self, region, scrollpos):
         '''Draw the heads-up display'''
         region = pygame.Rect(region)
-        pygame.draw.rect(self.window, BLACK, region)
+        if self.bgtileimage:
+            for ix in range(region.left, region.right, self.bgtileimage.get_width()):
+                for iy in range(region.top, region.bottom, self.bgtileimage.get_height()):
+                    self.window.blit(self.bgtileimage, (ix, iy))
+        else:
+            pygame.draw.rect(self.window, BLACK, region)
         border = 2
         widgetwidth = region.width-border
         scoreheight = region.height-widgetwidth-2 # Leave space for the HUD

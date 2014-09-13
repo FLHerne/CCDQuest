@@ -6,6 +6,7 @@ import pygame
 import sys
 import time
 
+pygame.init()
 WINDOWSIZE = (740, 480)
 window = pygame.display.set_mode(WINDOWSIZE, pygame.RESIZABLE)
 
@@ -15,7 +16,7 @@ from WorldView import WorldView
 
 from keysettings import *
 import collectables
-
+import images
 
 def handleevents():
     '''respond to user input'''
@@ -28,7 +29,6 @@ def handleevents():
             size = event.dict['size']
             if size[1] >= 180:
                 window = pygame.display.set_mode(size, pygame.RESIZABLE)
-            
         if event.type == pygame.KEYDOWN:
             move_x = 0
             move_y = 0
@@ -57,7 +57,7 @@ MESSAGEBARDEPTH = 20
 worldviewrect = pygame.Rect(0, 0, WINDOWSIZE[0]-HUDWIDTH, WINDOWSIZE[1]-MESSAGEBARDEPTH)
 worldview = WorldView(world, window)
 hudrect = pygame.Rect(WINDOWSIZE[0]-HUDWIDTH, 0, HUDWIDTH, WINDOWSIZE[1])
-hud = HUD(world, window)
+hud = HUD(world, window, images.Paving)
 gameended = False
 
 while not gameended:
