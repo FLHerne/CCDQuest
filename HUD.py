@@ -102,8 +102,9 @@ class HUD:
         frameheight = self.frame.thickness[Frame.HORIZONTAL]
         widgetwidth = region.width-framewidth
         self.frame.draw(region, Frame.VERTICAL)
-        self.minimapwidget.draw((region.left+framewidth, region.bottom-widgetwidth, widgetwidth, widgetwidth), scrollpos)
-        region.height -= widgetwidth+framewidth
+        self.frame.draw(region.move(0, region.height-framewidth), Frame.HORIZONTAL)
+        self.minimapwidget.draw((region.left+framewidth, region.bottom-widgetwidth-framewidth, widgetwidth, widgetwidth), scrollpos)
+        region.height -= widgetwidth+(2*framewidth)
         self.frame.draw(region.move(0, region.height), Frame.HORIZONTAL)
         widgetareas = []
         for iy in range(0, 3):
