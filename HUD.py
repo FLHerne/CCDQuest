@@ -87,10 +87,11 @@ class HUD:
         self.window = window
         self.world = world
         self.frame = Frame((images.HudFrameHoriz, images.HudFrameVert), window)
-        self.coinwidget = ScoreWidget(images.HudCoin, window, world.cellmap.origcoins)
+        self.coinwidget = ScoreWidget(images.HudCoin, window, world.cellmap.origcoins, bgtileimage=images.HudBackground)
         self.chocwidget = ScoreWidget(images.HudChoc, window,
-                                      stringfunc=lambda a, b: str(round(a/1000.0, 2))+"kg" if a >= 1000 else str(a)+"g")
-        self.dynamitewidget = ScoreWidget(images.HudDynamite, window)
+                                      stringfunc=lambda a, b: str(round(a/1000.0, 2))+"kg" if a >= 1000 else str(a)+"g",
+                                      bgtileimage=images.HudBackground)
+        self.dynamitewidget = ScoreWidget(images.HudDynamite, window, bgtileimage=images.HudBackground)
         self.minimapwidget = MinimapWidget(world, window)
 
     def draw(self, region, scrollpos):
