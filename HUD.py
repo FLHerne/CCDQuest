@@ -24,15 +24,14 @@ class ScoreWidget:
                 for iy in range(region.top, region.bottom, self.bgtileimage.get_height()):
                     self.window.blit(self.bgtileimage, (ix, iy))
         else:
-            pygame.draw.rect(self.window, WHITE, region)
-        pygame.draw.rect(self.window, GREY, region, 1)
+            pygame.draw.rect(self.window, GREY, region)
         imageregion = region.inflate(-10,-10)
         imageregion.height -= 20
         if imageregion.height > 0 and imageregion.height > 0:
             fittedimage = self.image.get_rect().fit(imageregion)
             self.window.blit(pygame.transform.scale(self.image, fittedimage.size), fittedimage)
         string = self.stringfunc(quantity, self.total)
-        TextBox.draw(self.window, string, region, color=BLACK, size=20, ycentered=False)
+        TextBox.draw(self.window, string, region, size=22, ycentered=False, beveled=True)
         self.window.set_clip(old_clip)
 
 class MinimapWidget:
@@ -121,3 +120,4 @@ class HUD:
             splash("You found all the coins!")
         else:
             splash("What happened here?")
+            
