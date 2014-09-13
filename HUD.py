@@ -62,6 +62,24 @@ class MinimapWidget:
                     1)
         self.window.set_clip(old_clip)
 
+class Frame:
+    '''Thingy to draw around widgets'''
+    HORIZONTAL = 0
+    VERTICAL = 1
+    def __init__(self, images, window):
+        self.images = images
+        self.thickness = (images[Frame.HORIZONTAL].get_height(),
+                          images[Frame.VERTICAL].get_width())
+        self.window = window
+
+    def draw(self, region, orientation):
+        region = pygame.Rect(region)
+        old_clip = self.window.get_clip()
+        self.window.set_clip(region)
+        for ix in range(region.left, region.right, self.images[orientation].get_size()[orientation]):
+            self.window.blit(self.images[orientation], (ix, region.top))
+        self.window.set_clip(old_clip)
+
 class HUD:
     '''Vertical bar with player scores and minimap'''
     def __init__(self, world, window, bgtileimage=None):
