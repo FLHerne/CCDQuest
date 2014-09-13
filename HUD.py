@@ -83,10 +83,9 @@ class Frame:
 
 class HUD:
     '''Vertical bar with player scores and minimap'''
-    def __init__(self, world, window, bgtileimage=None):
+    def __init__(self, world, window):
         self.window = window
         self.world = world
-        self.bgtileimage = bgtileimage
         self.frame = Frame((images.HudFrameHoriz, images.HudFrameVert), window)
         self.coinwidget = ScoreWidget(images.HudCoin, window, world.cellmap.origcoins)
         self.chocwidget = ScoreWidget(images.HudChoc, window,
@@ -97,12 +96,7 @@ class HUD:
     def draw(self, region, scrollpos):
         '''Draw the heads-up display'''
         region = pygame.Rect(region)
-        if self.bgtileimage:
-            for ix in range(region.left, region.right, self.bgtileimage.get_width()):
-                for iy in range(region.top, region.bottom, self.bgtileimage.get_height()):
-                    self.window.blit(self.bgtileimage, (ix, iy))
-        else:
-            pygame.draw.rect(self.window, BLACK, region)
+        pygame.draw.rect(self.window, BLACK, region)
         VERTICAL = Frame.VERTICAL
         HORIZONTAL = Frame.HORIZONTAL
         framewidth = self.frame.thickness[VERTICAL]
