@@ -26,7 +26,7 @@ class ScoreWidget:
             fittedimage = self.image.get_rect().fit(imageregion)
             self.window.blit(pygame.transform.scale(self.image, fittedimage.size), fittedimage)
         string = self.stringfunc(quantity, self.total)
-        newTextBox.Draw(self.window, string, region, colour=BLACK, size=18, ycentred=False)
+        newTextBox.Draw(self.window, string, region, colour=BLACK, size=22, ycentred=False)
 
 class MinimapWidget:
     '''Widget to display a small map of the world'''
@@ -90,3 +90,4 @@ class HUD:
             splash("You found all the coins!")
         else:
             splash("What happened here?")
+            

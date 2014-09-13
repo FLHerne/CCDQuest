@@ -6,7 +6,7 @@ import pygame
 import sys
 import time
 
-WINDOWSIZE = (740, 480)
+WINDOWSIZE = (800, 480)
 window = pygame.display.set_mode(WINDOWSIZE, pygame.RESIZABLE)
 
 from HUD import HUD

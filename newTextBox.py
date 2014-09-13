@@ -3,10 +3,10 @@ from colors import *
 
 defaultSize = 12
 defaultColour = WHITE
-defaultFont = 'Dejavu Sans'
+defaultFont = "./fonts/morris_roman/MorrisRomanBlack.ttf" #'Dejavu Sans'
 
 def Draw(drawSurface, textString, rect, colour=defaultColour, size=defaultSize, font=defaultFont, xcentred=True, ycentred=True):
-    font = pygame.font.SysFont(font, size)
+    font = pygame.font.Font(font, size)
     textBitmap = font.render(textString, True, colour)
     xoffset = 0
     yoffset = rect.height-(size*1.25)                   # Clunky - FIXME
