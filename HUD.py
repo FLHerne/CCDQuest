@@ -19,6 +19,7 @@ class ScoreWidget:
         '''Draw the score widget'''
         region = pygame.Rect(region)
         pygame.draw.rect(self.window, GREY, region)
+        self.window.blit(images.HudBackground, region)
         pygame.draw.rect(self.window, GREY, region, 1)
         imageregion = region.inflate(-10,-10)
         imageregion.height -= 20
