@@ -75,8 +75,12 @@ class Frame:
         region = pygame.Rect(region)
         old_clip = self.window.get_clip()
         self.window.set_clip(region)
-        for ix in range(region.left, region.right, self.images[orientation].get_size()[orientation]):
-            self.window.blit(self.images[orientation], (ix, region.top))
+        if orientation == Frame.HORIZONTAL:
+            for ix in range(region.left, region.right, self.images[orientation].get_width()):
+                self.window.blit(self.images[orientation], (ix, region.top))
+        else:
+            for iy in range(region.top, region.bottom, self.images[orientation].get_height()):
+                self.window.blit(self.images[orientation], (region.left, iy))
         self.window.set_clip(old_clip)
 
 class HUD:
@@ -85,6 +89,7 @@ class HUD:
         self.window = window
         self.world = world
         self.bgtileimage = bgtileimage
+        self.frame = Frame((images.HudFrameHoriz, images.HudFrameVert), window)
         self.coinwidget = ScoreWidget(images.HudCoin, window, world.cellmap.origcoins)
         self.chocwidget = ScoreWidget(images.HudChoc, window,
                                       stringfunc=lambda a, b: str(round(a/1000.0, 2))+"kg" if a >= 1000 else str(a)+"g")
@@ -100,14 +105,21 @@ class HUD:
                     self.window.blit(self.bgtileimage, (ix, iy))
         else:
             pygame.draw.rect(self.window, BLACK, region)
-        border = 2
-        widgetwidth = region.width-border
-        scoreheight = region.height-widgetwidth-2 # Leave space for the HUD
-        widgetheight = (scoreheight-4)/3
-        self.coinwidget.draw((region.left+border, region.top, widgetwidth, widgetheight), self.world.player.score[collectables.COIN])
-        self.chocwidget.draw((region.left+border, region.top+border+widgetheight, widgetwidth, widgetheight), self.world.player.score[collectables.CHOCOLATE])
-        self.dynamitewidget.draw((region.left+border, region.top+2*border+2*widgetheight, widgetwidth, widgetheight), self.world.player.score[collectables.DYNAMITE])
-        self.minimapwidget.draw((region.left+border, region.bottom-widgetwidth, widgetwidth, widgetwidth), scrollpos)
+        VERTICAL = Frame.VERTICAL
+        HORIZONTAL = Frame.HORIZONTAL
+        framewidth = self.frame.thickness[VERTICAL]
+        frameheight = self.frame.thickness[HORIZONTAL]
+        widgetwidth = region.width-framewidth
+        self.frame.draw((region.left, region.top, framewidth, region.height), VERTICAL)
+        self.minimapwidget.draw((region.left+framewidth, region.bottom-widgetwidth, widgetwidth, widgetwidth), scrollpos)
+        scoreheight = region.height-3*frameheight-widgetwidth
+        widgetheight = int(scoreheight/3)
+        self.coinwidget.draw((region.left+framewidth, region.top, widgetwidth, widgetheight), self.world.player.score[collectables.COIN])
+        self.frame.draw((region.left, region.top+widgetheight, region.width, frameheight), HORIZONTAL)
+        self.chocwidget.draw((region.left+framewidth, region.top+frameheight+widgetheight, widgetwidth, widgetheight), self.world.player.score[collectables.CHOCOLATE])
+        self.frame.draw((region.left, region.top+2*widgetheight+frameheight, region.width, frameheight), HORIZONTAL)
+        self.dynamitewidget.draw((region.left+framewidth, region.top+2*(frameheight+widgetheight), widgetwidth, widgetheight), self.world.player.score[collectables.DYNAMITE])
+        self.frame.draw((region.left, region.top+3*widgetheight+2*frameheight, region.width, frameheight), HORIZONTAL)
 
     def endsplash(self, reason):
         '''Display a splash message across the entire window'''

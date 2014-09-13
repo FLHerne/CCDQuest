@@ -42,3 +42,5 @@ CollectablesImages = {
 HudCoin = pygame.image.load("hud/Coin.png")
 HudChoc = pygame.image.load("hud/Chocolate.png")
 HudDynamite = pygame.image.load("hud/Dynamite.png")
+HudFrameHoriz =  pygame.image.load("hud/WoodenRuleHoriz.png")
+HudFrameVert =  pygame.image.load("hud/WoodenRule.png")

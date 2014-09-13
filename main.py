@@ -57,7 +57,7 @@ MESSAGEBARDEPTH = 20
 worldviewrect = pygame.Rect(0, 0, WINDOWSIZE[0]-HUDWIDTH, WINDOWSIZE[1]-MESSAGEBARDEPTH)
 worldview = WorldView(world, window)
 hudrect = pygame.Rect(WINDOWSIZE[0]-HUDWIDTH, 0, HUDWIDTH, WINDOWSIZE[1])
-hud = HUD(world, window, images.Paving)
+hud = HUD(world, window)
 gameended = False
 
 while not gameended:
