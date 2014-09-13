@@ -27,7 +27,7 @@ class ScoreWidget:
             fittedimage = self.image.get_rect().fit(imageregion)
             self.window.blit(pygame.transform.scale(self.image, fittedimage.size), fittedimage)
         string = self.stringfunc(quantity, self.total)
-        newTextBox.Draw(self.window, string, region, size=22, ycentred=False, beveled=True)
+        newTextBox.Draw(self.window, string, region, size=22, colour=YELLOW, ycentred=False, beveled=True)
 
 class MinimapWidget:
     '''Widget to display a small map of the world'''
