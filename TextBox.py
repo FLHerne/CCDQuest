@@ -1,11 +1,9 @@
 import pygame
 from colors import *
 
-defaultSize = 12
-defaultColour = YELLOW
 defaultFont = "./fonts/MorrisRomanBlack.ttf" #'Dejavu Sans'
 
-def draw(drawSurface, textString, rect, colour=defaultColour, size=defaultSize, font=defaultFont, xcentered=True, ycentered=True, beveled=False):
+def draw(drawSurface, textString, rect, size, colour, font=defaultFont, xcentered=True, ycentered=True, beveled=False):
     outputBitmap = pygame.Surface((rect.width, rect.height), pygame.SRCALPHA, 32)
     font = pygame.font.Font(font, size)
     maincolour = pygame.Color(colour[0], colour[1], colour[2])
