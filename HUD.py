@@ -31,7 +31,7 @@ class ScoreWidget:
             fittedimage = self.image.get_rect().fit(imageregion)
             self.window.blit(pygame.transform.scale(self.image, fittedimage.size), fittedimage)
         string = self.stringfunc(quantity, self.total)
-        TextBox.draw(self.window, string, region, size=22, colour=YELLOW, ycentered=False, beveled=True)
+        TextBox.draw(self.window, string, region, size=22, color=YELLOW, ycentered=False, beveled=True)
         self.window.set_clip(old_clip)
 
 class MinimapWidget:
