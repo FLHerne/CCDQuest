@@ -24,14 +24,14 @@ class ScoreWidget:
                 for iy in range(region.top, region.bottom, self.bgtileimage.get_height()):
                     self.window.blit(self.bgtileimage, (ix, iy))
         else:
-            pygame.draw.rect(self.window, GREY, region)
+            pygame.draw.rect(self.window, BLACK, region)
         imageregion = region.inflate(-10,-10)
         imageregion.height -= 20
         if imageregion.height > 0 and imageregion.height > 0:
             fittedimage = self.image.get_rect().fit(imageregion)
             self.window.blit(pygame.transform.scale(self.image, fittedimage.size), fittedimage)
         string = self.stringfunc(quantity, self.total)
-        TextBox.draw(self.window, string, region, size=22, color=YELLOW, ycentered=False, beveled=True)
+        TextBox.draw(self.window, string, region, size=22, color=(205, 205, 75), ycentered=False, beveled=True)
         self.window.set_clip(old_clip)
 
 class MinimapWidget:
@@ -102,6 +102,7 @@ class HUD:
         frameheight = self.frame.thickness[Frame.HORIZONTAL]
         widgetwidth = region.width-framewidth
         self.frame.draw(region, Frame.VERTICAL)
+        
         self.frame.draw(region.move(0, region.height-framewidth), Frame.HORIZONTAL)
         self.minimapwidget.draw((region.left+framewidth, region.bottom-widgetwidth-framewidth, widgetwidth, widgetwidth), scrollpos)
         region.height -= widgetwidth+(2*framewidth)
