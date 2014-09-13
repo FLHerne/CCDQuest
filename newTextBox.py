@@ -13,7 +13,7 @@ def Draw(drawSurface, textString, rect, colour=defaultColour, size=defaultSize, 
     lightcolour = DARKYELLOW
     for x3doffset, y3doffset, colour in ((1, 1, darkcolour), (-1, -1, lightcolour), (0, 0, maincolour) if beveled else (0, 0, maincolour)):
         xoffset = x3doffset
-        yoffset = y3doffset + rect.height-(size*1.25)                   # Clunky - FIXME
+        yoffset = y3doffset + rect.height-size                   # Clunky - FIXME
         textBitmap = font.render(textString, True, colour)
         if xcentred:
             xoffset = x3doffset + (rect.width - textBitmap.get_width())/2
