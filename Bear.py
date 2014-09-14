@@ -64,7 +64,8 @@ class Bear:
     def move(self, playerpos, cellmap):
         poschange = self.huntplayer(playerpos, cellmap)
         if poschange == False:
-            poschange = (0, 0)
+            poschange = [0, random.randint(-1,1)]
+            random.shuffle(poschange)
         newpos = ((self.position[0]+poschange[0]) % cellmap.size[0],
                   (self.position[1]+poschange[1]) % cellmap.size[1])
         if cellmap[newpos].solid:
