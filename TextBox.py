@@ -19,4 +19,3 @@ def draw(drawsurface, string, region, size, color, font=defaultfont, xcentered=T
             yoffset = ybeveloffset + (region.height - textbitmap.get_height())/2
         outputbitmap.blit(textbitmap, (xoffset, yoffset))
     drawsurface.blit(outputbitmap, region.topleft)
-    
