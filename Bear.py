@@ -44,10 +44,13 @@ class Bear:
             else:
                 dijkstramap[curpos[0]][curpos[1]][2] = True
             for nbrpos in [(curpos[0]-1, curpos[1]), (curpos[0], curpos[1]-1), (curpos[0]+1, curpos[1]), (curpos[0], curpos[1]+1)]:
-                if nbrpos[0] < 0 or nbrpos[1] < 0 or nbrpos[0] >= 2*self.pfmapsize or nbrpos[1] >= 2*self.pfmapsize or nbrpos == (self.pfmapsize, self.pfmapsize):
+                if (nbrpos[0] < 0 or nbrpos[1] < 0 or
+                    nbrpos[0] >= 2*self.pfmapsize or nbrpos[1] >= 2*self.pfmapsize or
+                    nbrpos == (self.pfmapsize, self.pfmapsize)):
                     continue
                 newdist = curdist+cellmap[mapcoord(nbrpos)].difficulty
-                if (dijkstramap[nbrpos[0]][nbrpos[1]][0] <= newdist and dijkstramap[nbrpos[0]][nbrpos[1]][0] != 0) or cellmap[mapcoord(nbrpos)].solid:
+                if ((dijkstramap[nbrpos[0]][nbrpos[1]][0] <= newdist and dijkstramap[nbrpos[0]][nbrpos[1]][0] != 0) or
+                    cellmap[mapcoord(nbrpos)].solid):
                     continue
                 dijkstramap[nbrpos[0]][nbrpos[1]] = [newdist, curpos, False]
                 heapq.heappush(openlist, (newdist, nbrpos))
