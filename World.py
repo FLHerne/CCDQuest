@@ -28,7 +28,7 @@ class World:
                 if len(created) == number:
                     break
             return created
-        self.bears = placeBears(int(self.cellmap.size[0] * self.cellmap.size[1]/5000))
+        self.bears = placeBears(int(self.cellmap.size[0] * self.cellmap.size[1]/500))
         
     def moveplayer(self, x, y):
         self.player.move(x, y, self.cellmap)
@@ -47,6 +47,6 @@ class World:
             self.surface.blit(self.player.sprite(), (self.player.position[0]*BLOCKSIZE, self.player.position[1]*BLOCKSIZE))
         
         for bear in self.bears:
-            bear.huntplayer(self.player.position, self.cellmap)
+            bear.move(self.player.position, self.cellmap)
             if self.cellmap[bear.position].visible:
                 self.surface.blit(bear.sprite(), (bear.position[0]*BLOCKSIZE, bear.position[1]*BLOCKSIZE))

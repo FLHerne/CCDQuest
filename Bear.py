@@ -58,9 +58,19 @@ class Bear:
             return False
         while dijkstramap[curpos[0]][curpos[1]][1] != (self.pfmapsize, self.pfmapsize):
             curpos = dijkstramap[curpos[0]][curpos[1]][1]
-        self.position[0] = (self.position[0]+curpos[0]-self.pfmapsize)%cellmap.size[0]
-        self.direction = curpos[0]-self.pfmapsize if abs(curpos[0]-self.pfmapsize) else self.direction
-        self.position[1] = (self.position[1]+curpos[1]-self.pfmapsize)%cellmap.size[1]
+        return [curpos[0]-self.pfmapsize,
+                curpos[1]-self.pfmapsize]
+
+    def move(self, playerpos, cellmap):
+        poschange = self.huntplayer(playerpos, cellmap)
+        if poschange == False:
+            poschange = (0, 0)
+        newpos = ((self.position[0]+poschange[0]) % cellmap.size[0],
+                  (self.position[1]+poschange[1]) % cellmap.size[1])
+        if cellmap[newpos].solid:
+            return False
+        self.direction = poschange[0] if abs(poschange[0]) else self.direction
+        self.position = newpos
         return True
 
     def sprite(self):
