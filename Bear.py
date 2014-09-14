@@ -10,7 +10,6 @@ class Bear:
         self.speed = 0.7         # Chance of moving per turn, max 1, min 0
         self.pfmapsize = 32
         self.detectionrange = 18
-        self.pfinitialvalue = (2*self.pfmapsize)**2
 
     def huntplayer(self, playerpos, cellmap):
         '''move towards the player'''
@@ -28,7 +27,7 @@ class Bear:
                     (self.position[1] + pfcoord[1] - self.pfmapsize) % cellmap.size[1])
 
         foundtarget = False
-        dijkstramap = [[(self.pfinitialvalue, (self.pfmapsize, self.pfmapsize)) for x in xrange(2*self.pfmapsize)] for x in xrange(2*self.pfmapsize)]
+        dijkstramap = [[(0, (self.pfmapsize, self.pfmapsize)) for x in xrange(2*self.pfmapsize)] for x in xrange(2*self.pfmapsize)]
         import heapq
         openlist = []
         heapq.heappush(openlist, (0, (self.pfmapsize, self.pfmapsize)))
@@ -41,9 +40,9 @@ class Bear:
                 foundtarget = True
                 break
             for nbrpos in [(curpos[0]-1, curpos[1]), (curpos[0], curpos[1]-1), (curpos[0]+1, curpos[1]), (curpos[0], curpos[1]+1)]:
-                if nbrpos[0] < 0 or nbrpos[1] < 0 or nbrpos[0] >= 2*self.pfmapsize or nbrpos[1] >= 2*self.pfmapsize:
+                if nbrpos[0] < 0 or nbrpos[1] < 0 or nbrpos[0] >= 2*self.pfmapsize or nbrpos[1] >= 2*self.pfmapsize or nbrpos == (self.pfmapsize, self.pfmapsize):
                     continue
-                if dijkstramap[nbrpos[0]][nbrpos[1]][0] != self.pfinitialvalue or cellmap[mapcoord(nbrpos)].solid:
+                if (dijkstramap[nbrpos[0]][nbrpos[1]][0] <= curdist+1 and dijkstramap[nbrpos[0]][nbrpos[1]][0] != 0) or cellmap[mapcoord(nbrpos)].solid:
                     continue
                 dijkstramap[nbrpos[0]][nbrpos[1]] = (curdist+1, curpos)
                 heapq.heappush(openlist, (curdist+1, nbrpos))
