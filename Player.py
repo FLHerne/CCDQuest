@@ -81,7 +81,7 @@ class Player:
         def crosscheck():
             '''Check visibility straight up, down, left and right'''
             for i in (-1, 1):                                                           # Horizontally left and right
-                X = 0                                                                   # start at the player      
+                X = 0                                                                   # start at the player
                 while cellmap[(X*i)+self.position[0], self.position[1]].transparent and X < self.visibility:     # if transparent and within bounding range
                     visible.add(((X*i)+self.position[0], self.position[1]))
                     X += 1                                                              # move away from player

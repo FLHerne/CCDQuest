@@ -93,14 +93,14 @@ class Cell:
             self.name = "paving"
         else:
             raise Exception("Unknown map color")
-        
+
         if collectablecolor == YELLOW:
             self.collectableitem = collectables.COIN
         elif collectablecolor == BROWN:
             self.collectableitem = collectables.CHOCOLATE
         elif collectablecolor == RED:
             self.collectableitem = collectables.DYNAMITE
-        
+
     def draw(self, drawSurface, x, y):
         '''Blit cell graphics to the specified surface'''
         DrawPos = (x*images.BLOCKSIZE, y*images.BLOCKSIZE)
