@@ -27,7 +27,7 @@ class Bear:
                     (self.position[1] + pfcoord[1] - self.pfmapsize) % cellmap.size[1])
 
         foundtarget = False
-        dijkstramap = [[(0, (self.pfmapsize, self.pfmapsize)) for x in xrange(2*self.pfmapsize)] for x in xrange(2*self.pfmapsize)]
+        dijkstramap = [[[0, (self.pfmapsize, self.pfmapsize), False] for x in xrange(2*self.pfmapsize)] for x in xrange(2*self.pfmapsize)]
         import heapq
         openlist = []
         heapq.heappush(openlist, (0, (self.pfmapsize, self.pfmapsize)))
@@ -39,13 +39,18 @@ class Bear:
             if mapcoord(curpos) == tuple(playerpos):
                 foundtarget = True
                 break
+            if dijkstramap[curpos[0]][curpos[1]][2] == True:
+                continue
+            else:
+                dijkstramap[curpos[0]][curpos[1]][2] = True
             for nbrpos in [(curpos[0]-1, curpos[1]), (curpos[0], curpos[1]-1), (curpos[0]+1, curpos[1]), (curpos[0], curpos[1]+1)]:
                 if nbrpos[0] < 0 or nbrpos[1] < 0 or nbrpos[0] >= 2*self.pfmapsize or nbrpos[1] >= 2*self.pfmapsize or nbrpos == (self.pfmapsize, self.pfmapsize):
                     continue
-                if (dijkstramap[nbrpos[0]][nbrpos[1]][0] <= curdist+1 and dijkstramap[nbrpos[0]][nbrpos[1]][0] != 0) or cellmap[mapcoord(nbrpos)].solid:
+                newdist = curdist+cellmap[mapcoord(nbrpos)].difficulty
+                if (dijkstramap[nbrpos[0]][nbrpos[1]][0] <= newdist and dijkstramap[nbrpos[0]][nbrpos[1]][0] != 0) or cellmap[mapcoord(nbrpos)].solid:
                     continue
-                dijkstramap[nbrpos[0]][nbrpos[1]] = (curdist+1, curpos)
-                heapq.heappush(openlist, (curdist+1, nbrpos))
+                dijkstramap[nbrpos[0]][nbrpos[1]] = [newdist, curpos, False]
+                heapq.heappush(openlist, (newdist, nbrpos))
         if not foundtarget:
             return False
         while dijkstramap[curpos[0]][curpos[1]][1] != (self.pfmapsize, self.pfmapsize):
