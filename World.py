@@ -28,7 +28,7 @@ class World:
                 if len(created) == number:
                     break
             return created
-        self.bears = placeBears(int(self.cellmap.size[0] * self.cellmap.size[1]/500))
+        self.bears = placeBears(int(self.cellmap.size[0] * self.cellmap.size[1]/2000))
 
         def placeDragons(number):
             '''randomly add dragons to the map'''
@@ -37,7 +37,7 @@ class World:
                 pos = (random.randint(0, self.cellmap.size[0]-1), random.randint(0, self.cellmap.size[1]-1))
                 created.append(Dragon(pos))
             return created
-        self.dragons = placeDragons(int(self.cellmap.size[0] * self.cellmap.size[1]/100))
+        self.dragons = placeDragons(int(self.cellmap.size[0] * self.cellmap.size[1]/4000))
 
     def moveplayer(self, x, y):
         self.player.move(x, y, self.cellmap)
