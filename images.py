@@ -33,6 +33,11 @@ Snow = pygame.image.load("tiles/Snow.png")
 BearLeft = pygame.image.load("tiles/Bear.png")
 BearRight = pygame.transform.flip(BearLeft, True, False)
 
+DragonRedUpLeft = pygame.image.load("tiles/Dragon-Red.png")
+DragonRedUpRight = pygame.transform.flip(DragonRedUpLeft, True, False)
+DragonRedDownLeft = pygame.transform.flip(DragonRedUpLeft, False, True)
+DragonRedDownRight = pygame.transform.flip(DragonRedUpLeft, True, True)
+
 CollectablesImages = {
     collectables.COIN: Coin,                           # semi-enum for referencing collectable images
     collectables.CHOCOLATE: Choc,
