@@ -37,7 +37,7 @@ class World:
         for tile in self.player.visible_tiles(self.cellmap):
             cell = self.cellmap[tile]
             cell.explored = True
-            if cell.transparent or tile != self.player.position:
+            if cell.transparent or list(tile) != self.player.position:
                 cell.visible = True
         for x in range(self.player.position[0]-self.player.visibility-1, self.player.position[0]+self.player.visibility+2):
             for y in range(self.player.position[1]-self.player.visibility-1, self.player.position[1]+self.player.visibility+2):
