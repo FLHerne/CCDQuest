@@ -30,6 +30,9 @@ Trees = pygame.image.load("tiles/Trees.png")
 Sand = pygame.image.load("tiles/Sand.png")
 Snow = pygame.image.load("tiles/Snow.png")
 
+Player = pygame.image.load("tiles/Player.png")
+Player = Player.convert_alpha()
+
 BearLeft = pygame.image.load("tiles/Bear.png")
 BearRight = pygame.transform.flip(BearLeft, True, False)
 

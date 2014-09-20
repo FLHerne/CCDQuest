@@ -1,6 +1,7 @@
 import pygame
 from colors import *
 from images import BLOCKSIZE
+import images
 import collectables
 # Remove solidity and movement cost for testing
 FREEPLAYER = False
@@ -11,16 +12,13 @@ class Player:
         self.color = MAGENTA
         self.visibility = 15
         self.position = list(position)
+        self.image = images.Player
         self.score = {
             collectables.COIN: 0,
             collectables.CHOCOLATE: 10000,
             collectables.DYNAMITE: 15
         }
         print BLOCKSIZE
-        self.circle = pygame.Surface((BLOCKSIZE, BLOCKSIZE))
-        self.circle.set_colorkey((0, 0, 0))
-        radius = int(BLOCKSIZE/2)
-        pygame.draw.circle(self.circle, self.color, (radius, radius), radius)
 
     def move(self, x, y, cellmap):
         if abs(x) + abs(y) != 1:
@@ -39,8 +37,7 @@ class Player:
         return True
 
     def sprite(self):
-        self.animcounter = (self.animcounter+1) % 9
-        return self.circle  # if self.animcounter != 0 else pygame.Surface()
+        return self.image
 
     def visible_tiles(self, cellmap):
         visible = set()
