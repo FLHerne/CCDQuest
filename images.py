@@ -2,7 +2,7 @@ import pygame
 import collectables
 
 '''this file loads the images needed for CCDQuest, and converts them if necessary'''
-BLOCKSIZE = 8
+BLOCKSIZE = 12
 
 Unknown = pygame.image.load("tiles/Unknown.png")           # Used for tiles that must appear to be empty blank nothingness
 NonVisible = pygame.image.load("tiles/NonVisible.png")     # An overlay for no-longer-visible tiles
