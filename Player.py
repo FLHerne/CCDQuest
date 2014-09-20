@@ -12,7 +12,7 @@ class Player:
         self.color = MAGENTA
         self.visibility = 15
         self.position = list(position)
-        self.image = images.Player
+        self.direction = 1
         self.score = {
             collectables.COIN: 0,
             collectables.CHOCOLATE: 10000,
@@ -23,6 +23,8 @@ class Player:
     def move(self, x, y, cellmap):
         if abs(x) + abs(y) != 1:
             return False
+        self.direction = ((x*1)) + ((y*2))
+        print "direction = " + str(self.direction)
         if cellmap[self.position[0]+x, self.position[1]+y].solid and not FREEPLAYER:
             self.score[collectables.CHOCOLATE] -= 50
             return False
@@ -37,7 +39,16 @@ class Player:
         return True
 
     def sprite(self):
-        return self.image
+        if self.direction == -2:
+            return images.PlayerUp
+        elif self.direction == 2:
+            return images.PlayerDown
+        elif self.direction == 1:
+            return images.PlayerRight
+        elif self.direction == -1:
+            return images.PlayerLeft
+        else:
+            return images.Unknown
 
     def visible_tiles(self, cellmap):
         visible = set()
