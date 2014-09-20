@@ -47,5 +47,5 @@ class World:
 
         for bear in self.bears:
             bear.move(self.player.position, self.cellmap)
-            if self.cellmap[bear.position].visible:
+            if self.cellmap[bear.position].visible and not  self.cellmap[bear.position].top:
                 self.surface.blit(bear.sprite(), (bear.position[0]*BLOCKSIZE, bear.position[1]*BLOCKSIZE))
