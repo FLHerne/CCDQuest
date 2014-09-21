@@ -17,8 +17,13 @@ class MessageBox:
     def draw(self, region, string):
         '''Draw the message box'''
         region = pygame.Rect(region)
+        
+        textwidth = region.height + TextBox.draw(self.window, string, region.move(0, 2), size=18, color=BLACK, ycentered=True, beveled=False, rendering=False)
+        
         horizontaltilenumber = 0
-        width = max(region.width, self.minwidth)
+        width = max(textwidth, self.minwidth)
+        #region.width = width+(2*region.height)
+        region.inflate_ip(width-region.width, 0)
         
         while (horizontaltilenumber+1)*(self.image.get_width()) < width:
             backgroundblitposition = horizontaltilenumber*(self.image.get_width())
@@ -26,7 +31,7 @@ class MessageBox:
             horizontaltilenumber += 1
         self.window.blit(self.leftimage, region)
         self.window.blit(self.rightimage, region.move((width-self.rightimage.get_width()), 0))
-        TextBox.draw(self.window, string, region.move(0, 2), size=18, color=BLACK, ycentered=True,beveled=False)
+        TextBox.draw(self.window, string, region.move(0, 2), size=18, color=BLACK, ycentered=True, beveled=False)
 
 
 

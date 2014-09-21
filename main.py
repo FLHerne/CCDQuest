@@ -74,6 +74,7 @@ while not gameended:
     messageboxregion.top = window.get_height()-messageboxheight-messageboxpadding
     messageboxregion.width = window.get_width()-(HUDWIDTH+(2*messageboxpadding))
     string = "Hello, world"
+    string = "The quick brown fox jumped over the lazy dog"
     messagebox.draw(messageboxregion, string)
     hud.draw(hudrect, scrollpos)
     if gameended:

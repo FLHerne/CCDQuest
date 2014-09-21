@@ -3,7 +3,7 @@ from colors import *
 
 defaultfont = "./fonts/MorrisRomanBlack.ttf" #'Dejavu Sans'
 
-def draw(drawsurface, string, region, size, color, font=defaultfont, xcentered=True, ycentered=True, beveled=False):
+def draw(drawsurface, string, region, size, color, font=defaultfont, xcentered=True, ycentered=True, beveled=False, rendering=True):
     outputbitmap = pygame.Surface((region.width, region.height), pygame.SRCALPHA, 32)
     font = pygame.font.Font(font, size)
     maincolor = pygame.Color(color[0], color[1], color[2])
@@ -19,4 +19,6 @@ def draw(drawsurface, string, region, size, color, font=defaultfont, xcentered=T
         if ycentered:
             yoffset = ybeveloffset + (region.height - textbitmap.get_height())/2
         outputbitmap.blit(textbitmap, (xoffset, yoffset))
-    drawsurface.blit(outputbitmap, region.topleft)
+    if rendering:
+        drawsurface.blit(outputbitmap, region.topleft)
+    return textbitmap.get_width()
