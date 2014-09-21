@@ -28,7 +28,7 @@ def handleevents():
             sys.exit()
         if event.type==pygame.VIDEORESIZE:
             size = event.dict['size']
-            if size[1] >= 180:
+            if size[0] >= 320 and size[1] >= 240:
                 window = pygame.display.set_mode(size, pygame.RESIZABLE)
         if event.type == pygame.KEYDOWN:
             move_x = 0
