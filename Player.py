@@ -24,7 +24,6 @@ class Player:
         if abs(x) + abs(y) != 1:
             return False
         self.direction = ((x*1)) + ((y*2))
-        print "direction = " + str(self.direction)
         if cellmap[self.position[0]+x, self.position[1]+y].solid and not FREEPLAYER:
             self.score[collectables.CHOCOLATE] -= 50
             return False
