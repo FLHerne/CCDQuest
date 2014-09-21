@@ -12,7 +12,7 @@ class World:
         collectablefile = 'map/World7-collectables.png'
         self.cellmap = Map(groundfile, collectablefile)
         self.surface = pygame.Surface((self.cellmap.size[0]*BLOCKSIZE, self.cellmap.size[1]*BLOCKSIZE))
-        self.surface.fill(GREY)
+        self.surface.fill(BLACK)
         self.player = Player(self.cellmap.startpos)
 
         def placeBears(number):
@@ -27,7 +27,7 @@ class World:
                 if len(created) == number:
                     break
             return created
-        self.bears = placeBears(int(self.cellmap.size[0] * self.cellmap.size[1]/500))
+        self.bears = placeBears(int(self.cellmap.size[0] * self.cellmap.size[1]/5000))
 
     def moveplayer(self, x, y):
         self.player.move(x, y, self.cellmap)
