@@ -71,6 +71,7 @@ while not gameended:
     hudrect.left = window.get_width()-HUDWIDTH
     hudrect.height = window.get_height()
     scrollpos = worldview.draw(worldviewrect, world, window)
+    messageboxregion.top = window.get_height()-messageboxheight-messageboxpadding
     messageboxregion.width = window.get_width()-(HUDWIDTH+(2*messageboxpadding))
     string = "Hello, world"
     messagebox.draw(messageboxregion, string)
