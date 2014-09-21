@@ -57,3 +57,6 @@ HudBackground = pygame.image.load("hud/RockWall.png")
 HudFrameHoriz =  pygame.image.load("hud/WoodenRuleHoriz.png")
 HudFrameVert =  pygame.image.load("hud/WoodenRule.png")
 
+HudMessageBackground = pygame.image.load("hud/MessageBackground.png")
+HudMessageBackgroundLeft = pygame.image.load("hud/MessageBackgroundLeft.png")
+HudMessageBackgroundRight = pygame.image.load("hud/MessageBackgroundRight.png")
