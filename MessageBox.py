@@ -18,7 +18,7 @@ class MessageBox:
         '''Draw the message box'''
         region = pygame.Rect(region)
         
-        textwidth = region.height + TextBox.draw(self.window, string, region.move(0, 2), size=18, color=BLACK, ycentered=True, beveled=False, rendering=False)
+        textwidth = region.height + TextBox.getwidth(string, size=18)
         
         horizontaltilenumber = 0
         width = min(max(textwidth, self.minwidth), region.width)
