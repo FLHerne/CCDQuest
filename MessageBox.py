@@ -26,7 +26,7 @@ class MessageBox:
             horizontaltilenumber += 1
         self.window.blit(self.leftimage, region)
         self.window.blit(self.rightimage, region.move((width-self.image.get_width()), 0))
-        TextBox.draw(self.window, string, region, size=18, color=BLACK, ycentered=True, beveled=False)
+        TextBox.draw(self.window, string, region.move(0, 2), size=18, color=BLACK, ycentered=True,beveled=False)
 
 
 
