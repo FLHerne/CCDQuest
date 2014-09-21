@@ -11,7 +11,7 @@ class MessageBox:
         self.image = images.HudMessageBackground
         self.rightimage = images.HudMessageBackgroundRight
         self.leftimage = images.HudMessageBackgroundLeft
-        self.minwidth = 1.2*self.image.get_width()
+        self.minwidth = 1.2 * self.image.get_width()
 
 
     def draw(self, region, string):
@@ -24,8 +24,8 @@ class MessageBox:
         width = min(max(textwidth, self.minwidth), region.width)
         region.inflate_ip(width-region.width, 0)
         
-        while (horizontaltilenumber+1)*(self.image.get_width()) < width:
-            backgroundblitposition = horizontaltilenumber*(self.image.get_width())
+        while (horizontaltilenumber+1) * (self.image.get_width()) < width:
+            backgroundblitposition = horizontaltilenumber * (self.image.get_width())
             self.window.blit(self.image, region.move(backgroundblitposition, 0))
             horizontaltilenumber += 1
         self.window.blit(self.leftimage, region)
