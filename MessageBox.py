@@ -20,8 +20,8 @@ class MessageBox:
         horizontaltilenumber = 0
         width = max(region.width, self.minwidth)
         
-        while (horizontaltilenumber+1)*(self.image.get_width()-10) < width:
-            backgroundblitposition = horizontaltilenumber*(self.image.get_width()-20)
+        while (horizontaltilenumber+1)*(self.image.get_width()) < width:
+            backgroundblitposition = horizontaltilenumber*(self.image.get_width())
             self.window.blit(self.image, region.move(backgroundblitposition, 0))
             horizontaltilenumber += 1
         self.window.blit(self.leftimage, region)
