@@ -71,9 +71,10 @@ while not gameended:
     hudrect.left = window.get_width()-HUDWIDTH
     hudrect.height = window.get_height()
     scrollpos = worldview.draw(worldviewrect, world, window)
-    hud.draw(hudrect, scrollpos)
     messageboxregion.width = window.get_width()-(HUDWIDTH+(2*messageboxpadding))
-    messagebox.draw(messageboxregion)
+    string = "Hello, world"
+    messagebox.draw(messageboxregion, string)
+    hud.draw(hudrect, scrollpos)
     if gameended:
         hud.endsplash(gameended)
     pygame.display.update()
