@@ -1,6 +1,6 @@
 import pygame
 import images
-import TextBox
+from TextBox import TextBox
 import collectables
 from colors import *
 
@@ -13,6 +13,7 @@ class ScoreWidget:
         self.total = total
         self.stringfunc = (stringfunc if stringfunc != None else
                            lambda a, b: str(a) + ("/"+str(b) if b != None else ""))
+        self.textbox = TextBox(22, (205, 205, 75), True)
 
     def draw(self, region, quantity):
         '''Draw the score widget'''
@@ -31,7 +32,7 @@ class ScoreWidget:
             fittedimage = self.image.get_rect().fit(imageregion)
             self.window.blit(pygame.transform.scale(self.image, fittedimage.size), fittedimage)
         string = self.stringfunc(quantity, self.total)
-        TextBox.draw(self.window, string, region, size=22, color=(205, 205, 75), ycentered=False, beveled=True)
+        self.textbox.draw(string, region, (True, False), self.window)
         self.window.set_clip(old_clip)
 
 class MinimapWidget:
@@ -121,7 +122,8 @@ class HUD:
         '''Display a splash message across the entire window'''
         def splash(message):
             pygame.draw.rect(self.window, BLACK, self.window.get_rect())
-            TextBox.draw(self.window, message, self.window.get_rect(), color=WHITE, size=40)
+            textbox = TextBox(40, WHITE, False)
+            textbox.draw(message, self.window.get_rect(), surface=self.window)
         if reason == collectables.CHOCOLATE:
             splash("You ran out of chocolate!")
         elif reason == collectables.COIN:

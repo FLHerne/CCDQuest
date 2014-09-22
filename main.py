@@ -58,7 +58,7 @@ worldviewrect = pygame.Rect(0, 0, WINDOWSIZE[0]-HUDWIDTH, WINDOWSIZE[1])
 worldview = WorldView(world, window)
 hudrect = pygame.Rect(WINDOWSIZE[0]-HUDWIDTH, 0, HUDWIDTH, WINDOWSIZE[1])
 hud = HUD(world, window)
-messagebox = MessageBox(world, window)
+messagebox = MessageBox(window)
 messageboxheight = 25
 messageboxpadding = 15
 messageboxregion = pygame.Rect(messageboxpadding, WINDOWSIZE[1]-messageboxheight-messageboxpadding, WINDOWSIZE[0]-HUDWIDTH-messageboxpadding, messageboxheight)
@@ -73,7 +73,6 @@ while not gameended:
     scrollpos = worldview.draw(worldviewrect, world, window)
     messageboxregion.top = window.get_height()-messageboxheight-messageboxpadding
     messageboxregion.width = window.get_width()-(HUDWIDTH+(2*messageboxpadding))
-    string = "Hello, world"
     string = "The quick brown fox jumped over the lazy dog"
     messagebox.draw(messageboxregion, string)
     hud.draw(hudrect, scrollpos)

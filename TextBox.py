@@ -1,24 +1,35 @@
 import pygame
 from colors import *
 
-defaultfont = "./fonts/MorrisRomanBlack.ttf" #'Dejavu Sans'
+class TextBox:
+    def __init__(self, size, color, beveled=True, font="./fonts/MorrisRomanBlack.ttf"):
+        self.font = pygame.font.Font(font, size)
+        self.beveled = beveled
+        self.maincolor = pygame.Color(*color).correct_gamma(1) 
+        self.darkcolor = BLACK #FIXME
+        self.lightcolor = self.maincolor.correct_gamma(8)
 
-def draw(drawsurface, string, region, size, color, font=defaultfont, xcentered=True, ycentered=True, beveled=False, rendering=True):
-    font = pygame.font.Font(font, size)
-    if rendering:
-        outputbitmap = pygame.Surface((region.width, region.height), pygame.SRCALPHA, 32)
-        maincolor = pygame.Color(color[0], color[1], color[2])
-        maincolor = maincolor.correct_gamma(1) 
-        darkcolor = BLACK # maincolor.correct_gamma(8)
-        lightcolor = maincolor.correct_gamma(8)
-        for (xbeveloffset, ybeveloffset, color) in ((1, 1, darkcolor), (1, -1, lightcolor), (-1, 1, darkcolor), (-1, -1, lightcolor), (0, 0, maincolor)) if beveled else ((0, 0, color),):
-            xoffset = xbeveloffset
-            yoffset = ybeveloffset + region.height-size                   # Clunky - FIXME
-            textbitmap = font.render(string, True, color)
-            if xcentered:
-                xoffset = xbeveloffset + (region.width - textbitmap.get_width())/2
-            if ycentered:
-                yoffset = ybeveloffset + (region.height - textbitmap.get_height())/2
-            outputbitmap.blit(textbitmap, (xoffset, yoffset))
-            drawsurface.blit(outputbitmap, region.topleft)
-    return font.size(string)[0]
+    def size(self, string):
+        return self.font.size(string)
+
+    def draw(self, string, region, centered=(True, True), surface=None):
+        textsize = self.font.size(string)
+        returnsurface = False
+        if surface == None:
+            surface = pygame.Surface((textsize[0]+2, textsize[1]+2), pygame.SRCALPHA, 32)
+            region = region.copy()
+            region.topleft = (0, 0)
+            offset = [1, 1]
+            returnsurface = True
+        else:
+            offset = [region.left+1, region.top+1]
+            for axis in [0, 1]:
+                if centered[axis]:
+                    offset[axis] += int(region.size[axis]/2 - textsize[axis]/2)
+                elif axis == 1:
+                    offset[axis] = region.bottom-textsize[1]-1
+        for (xbeveloffset, ybeveloffset, color) in ((1, 1, self.darkcolor), (1, -1, self.lightcolor), (-1, 1, self.darkcolor), (-1, -1, self.lightcolor), (0, 0, self.maincolor)) if self.beveled else ((0, 0, self.maincolor),):
+            textbitmap = self.font.render(string, True, color)
+            surface.blit(textbitmap, (offset[0]+xbeveloffset, offset[1]+ybeveloffset))
+        if returnsurface:
+            return surface
