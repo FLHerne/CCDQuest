@@ -32,5 +32,5 @@ class Dragon:
         self.position = ((self.position[0]+self.direction[0]) % cellmap.size[0],
                          (self.position[1]+self.direction[1]) % cellmap.size[1])
 
-    def sprite(self):
-        return images.DragonRed[self.direction]
+    def offsetsprite(self):
+        return images.DragonRed[self.direction], [-1 if axis == 1 else 0 for axis in self.position]

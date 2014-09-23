@@ -68,4 +68,7 @@ class World:
                     if self.cellmap[dragon.position[0]+ix, dragon.position[1]+iy].visible:
                         isvisible = True
             if isvisible:
-                self.surface.blit(dragon.sprite(), (dragon.position[0]*BLOCKSIZE, dragon.position[1]*BLOCKSIZE))
+                offsetsprite = dragon.offsetsprite()
+                blitpos = ((dragon.position[0]+offsetsprite[1][0])*BLOCKSIZE,
+                           (dragon.position[1]+offsetsprite[1][1])*BLOCKSIZE)
+                self.surface.blit(offsetsprite[0], blitpos)
