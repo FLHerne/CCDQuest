@@ -1,6 +1,6 @@
 from colors import *
 import collectables
-import tileimages
+import images
 
 class Cell:
     '''A single square in the world grid, with many properties'''

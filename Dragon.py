@@ -1,6 +1,6 @@
 import random
 from directions import *
-import tileimages
+import images
 
 class Dragon:
     '''follows you around when in range'''

@@ -18,11 +18,11 @@ class MessageBox:
         MARGINY = 3
         boxregion = textsurface.get_rect(center=region.center).inflate(2*MARGINX, 2*MARGINY).clip(region)
 
-        imagewidth = images.HudMessageBackground.get_width()
+        imagewidth = hudimages.HudMessageBackground.get_width()
         horiztileoffset = 0
         while horiztileoffset+imagewidth < boxregion.width:
-            self.window.blit(images.HudMessageBackground, boxregion.move(horiztileoffset, 0))
+            self.window.blit(hudimages.HudMessageBackground, boxregion.move(horiztileoffset, 0))
             horiztileoffset += imagewidth
-        self.window.blit(images.HudMessageBackgroundLeft, boxregion)
-        self.window.blit(images.HudMessageBackgroundRight, boxregion.move(-images.HudMessageBackgroundRight.get_width(), 0).topright)
+        self.window.blit(hudimages.HudMessageBackgroundLeft, boxregion)
+        self.window.blit(hudimages.HudMessageBackgroundRight, boxregion.move(-hudimages.HudMessageBackgroundRight.get_width(), 0).topright)
         self.window.blit(textsurface, boxregion.move(MARGINX, MARGINY))

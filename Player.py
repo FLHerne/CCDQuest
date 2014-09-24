@@ -1,6 +1,6 @@
 import pygame
-import tileimages
-from tileimages import BLOCKSIZE
+import images
+from images import BLOCKSIZE
 import collectables
 from colors import *
 
