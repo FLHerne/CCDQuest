@@ -1,5 +1,6 @@
 import pygame
 import collectables
+from directions import *
 
 '''this file loads the images needed for CCDQuest, and converts them if necessary'''
 BLOCKSIZE = 12
@@ -38,6 +39,18 @@ PlayerRight = pygame.transform.flip(PlayerLeft, True, False)
 
 BearLeft = pygame.image.load("tiles/Bear.png")
 BearRight = pygame.transform.flip(BearLeft, True, False)
+
+DragonRedUpLeft = pygame.image.load("tiles/Dragon-Red.png")
+DragonRedUpRight = pygame.transform.flip(DragonRedUpLeft, True, False)
+DragonRedDownLeft = pygame.transform.flip(DragonRedUpLeft, False, True)
+DragonRedDownRight = pygame.transform.flip(DragonRedUpLeft, True, True)
+
+DragonRed = {
+    UPLEFT: DragonRedUpLeft,
+    UPRIGHT: DragonRedUpRight,
+    DOWNLEFT: DragonRedDownLeft,
+    DOWNRIGHT: DragonRedDownRight
+}
 
 CollectablesImages = {
     collectables.COIN: Coin,                           # semi-enum for referencing collectable images
