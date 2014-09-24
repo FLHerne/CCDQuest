@@ -2,7 +2,9 @@ import pygame
 import collectables
 from directions import *
 
-'''Load and convert all game images'''
+'''Load and convert all in-game images'''
+
+# Size of terrain sprites.
 BLOCKSIZE = 12
 
 # Images with transparency use convert_alpha().

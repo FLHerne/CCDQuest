@@ -5,10 +5,12 @@ import collectables
 
 
 class Map():
+    '''Contains array of Cells and properties representing the map as a whole'''
     def index(self, coord):
         return (int(coord[0] % self.size[0] * self.size[0]) + coord[1] % self.size[1])
 
     def __init__(self, groundfile, collectablefile):
+        '''Load the map from image files'''
         START = MAGENTA
         groundimage = pygame.image.load(groundfile)
         groundmap = pygame.PixelArray(groundimage)
@@ -28,10 +30,11 @@ class Map():
                     self.startpos = (x, y)
                 elif self[x, y].collectableitem == collectables.COIN:
                     self.origcoins += 1
-        print self.origcoins
 
     def __getitem__(self, coord):
+        '''Get map item with [], wrapping'''
         return self.cellarray[self.index(coord)]
 
     def __setitem__(self, coord, value):
+        '''Set map item with [], wrapping'''
         self.cellarray[self.index(coord)] = value

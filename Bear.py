@@ -2,27 +2,29 @@ import random
 import images
 
 class Bear:
-    '''follows you around when in range'''
+    '''Harmless animal that follows the player'''
     def __init__(self, position):
-        '''setup bear in given position'''
+        '''Create bear at position'''
         self.position = list(position)
         self.direction = -1 # Left
-        self.speed = 0.7         # Chance of moving per turn, max 1, min 0
+        self.speed = 0.7    # Chance of moving per turn, max 1, min 0
         self.pfmapsize = 32
         self.detectionrange = 18
 
     def huntplayer(self, playerpos, cellmap):
-        '''move towards the player'''
+        '''Find the best direction to move towards the player'''
         if random.random() > self.speed:
             return False
         def mindist(a, b, size):
-            '''distance between two values accounting for world wrapping'''
+            '''Distance between two values accounting for world wrapping'''
             return min((b-a)%size,(a-b)%size)
+
         if (mindist(playerpos[0], self.position[0], cellmap.size[0])**2 +
             mindist(playerpos[1], self.position[1], cellmap.size[1])**2) > self.detectionrange**2:
             return False
+
         def mapcoord(pfcoord):
-            '''get map coordinate from pathfinder ones'''
+            '''Get map coordinate from pathfinder one'''
             return ((self.position[0] + pfcoord[0] - self.pfmapsize) % cellmap.size[0],
                     (self.position[1] + pfcoord[1] - self.pfmapsize) % cellmap.size[1])
 
@@ -62,6 +64,7 @@ class Bear:
                 curpos[1]-self.pfmapsize]
 
     def move(self, playerpos, cellmap):
+        '''Move towards the player, or in a random direction'''
         poschange = self.huntplayer(playerpos, cellmap)
         if poschange == False:
             poschange = [0, random.randint(-1,1)]

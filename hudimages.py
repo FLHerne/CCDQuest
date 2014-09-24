@@ -1,5 +1,7 @@
 import pygame
 
+'''Load and convert all HUD images'''
+
 # HUD score widget images.
 HudCoin = pygame.image.load("hud/MoneyBag.png").convert_alpha()
 HudChoc = pygame.image.load("hud/ChocolateBar.png").convert_alpha()

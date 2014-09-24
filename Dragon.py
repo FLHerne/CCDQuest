@@ -3,17 +3,17 @@ from directions import *
 import images
 
 class Dragon:
-    '''follows you around when in range'''
+    '''Harmless flying thing that follows the player'''
     detectionrange = 18
     speed = 0.8
 
     def __init__(self, position):
-        '''setup bear in given position'''
+        '''Create new dragon in position'''
         self.position = position
         self.direction = UPLEFT
 
     def move(self, playerpos, cellmap):
-        '''fly around the place'''
+        '''Fly toward the player if nearby, or continue in same direction'''
         def tileoffset(a, b, size):
             offset = [0, 0]
             for axis in [0, 1]:
@@ -39,4 +39,5 @@ class Dragon:
                          (self.position[1]+self.direction[1]) % cellmap.size[1])
 
     def offsetsprite(self):
+        '''Returns sprite plus offset in tiles'''
         return images.DragonRed[self.direction], [-1 if axis == 1 else 0 for axis in self.position]

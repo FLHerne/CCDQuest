@@ -75,6 +75,7 @@ class Frame:
         self.window = window
 
     def draw(self, region, orientation):
+        '''Draw frame along top or left of region'''
         region = pygame.Rect(region)
         old_clip = self.window.get_clip()
         self.window.set_clip(region)

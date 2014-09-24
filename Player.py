@@ -9,7 +9,9 @@ from directions import *
 FREEPLAYER = False
 
 class Player:
+    '''The player, exploring the grid-based world'''
     def __init__(self, position):
+        '''Initialise instance variables'''
         self.animcounter = 0
         self.color = MAGENTA
         self.visibility = 15
@@ -20,9 +22,9 @@ class Player:
             collectables.CHOCOLATE: 10000,
             collectables.DYNAMITE: 15
         }
-        print BLOCKSIZE
 
     def move(self, x, y, cellmap):
+        '''Move if possible, update collectable levels accordingly'''
         if abs(x) + abs(y) != 1:
             return False
         self.direction = (x, y)
@@ -43,6 +45,7 @@ class Player:
         return images.Player[self.direction]
 
     def visible_tiles(self, cellmap):
+        '''Calculate and return the set of tiles visible to player'''
         visible = set()
 
         def diagonalcheck():
@@ -98,6 +101,7 @@ class Player:
         return visible
 
     def detonate(self, cellmap):
+        '''Detonate carried explosives at player's location'''
         exploded = set()
         if self.score[collectables.DYNAMITE] <= 0:
             return exploded

@@ -17,7 +17,7 @@ class World:
         self.player = Player(self.cellmap.startpos)
 
         def placeBears(number):
-            '''randomly add bears to the map'''
+            '''Randomly add bears to the map'''
             max_attempts = 20 * number
             created = []
             for i in xrange(max_attempts):
@@ -32,7 +32,7 @@ class World:
         self.bears = placeBears(int(self.cellmap.size[0] * self.cellmap.size[1]/2000))
 
         def placeDragons(number):
-            '''randomly add dragons to the map'''
+            '''Randomly add dragons to the map'''
             created = []
             for i in xrange(number):
                 pos = (random.randint(0, self.cellmap.size[0]-1), random.randint(0, self.cellmap.size[1]-1))
@@ -41,6 +41,7 @@ class World:
         self.dragons = placeDragons(int(self.cellmap.size[0] * self.cellmap.size[1]/4000))
 
     def moveplayer(self, x, y):
+        '''Move the player by (x, y), move other fauna, update world surface around player'''
         self.player.move(x, y, self.cellmap)
         for x in range(self.player.position[0]-self.player.visibility-1, self.player.position[0]+self.player.visibility+2):
             for y in range(self.player.position[1]-self.player.visibility-1, self.player.position[1]+self.player.visibility+2):
