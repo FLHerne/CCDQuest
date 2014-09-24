@@ -43,6 +43,13 @@ PlayerDown = pygame.transform.flip(PlayerUp, False, True)
 PlayerLeft = pygame.transform.rotate(PlayerUp, 90)
 PlayerRight = pygame.transform.flip(PlayerLeft, True, False)
 
+Player = {
+    UP: PlayerUp,
+    DOWN: PlayerDown,
+    LEFT: PlayerLeft,
+    RIGHT: PlayerRight
+}
+
 # Bear sprites.
 BearLeft = pygame.image.load("tiles/Bear.png").convert_alpha()
 BearRight = pygame.transform.flip(BearLeft, True, False)
