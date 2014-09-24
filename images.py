@@ -5,7 +5,7 @@ from directions import *
 '''Load and convert all in-game images'''
 
 # Size of terrain sprites.
-BLOCKSIZE = 12
+TILESIZE = 12
 
 # Images with transparency use convert_alpha().
 
@@ -26,14 +26,14 @@ Snow = pygame.image.load("tiles/Snow.png").convert()
 # Overlays for unknown, non-visible, and damaged tiles.
 Unknown = pygame.image.load("tiles/Unknown.png").convert()
 NonVisible = pygame.image.load("tiles/NonVisible.png").convert_alpha()
-Damage = pygame.image.load("tiles/Damage.png").convert_alpha()
+Damaged = pygame.image.load("tiles/Damaged.png").convert_alpha()
 
 # Overlays for tiles with collectables.
 Coin = pygame.image.load("tiles/Coin.png").convert_alpha()
 Choc = pygame.image.load("tiles/Chocolate.png").convert_alpha()
 Dynamite = pygame.image.load("tiles/Dynamite.png").convert_alpha()
 
-CollectablesImages = {
+Collectables = {
     collectables.COIN: Coin,                           # semi-enum for referencing collectable images
     collectables.CHOCOLATE: Choc,
     collectables.DYNAMITE: Dynamite

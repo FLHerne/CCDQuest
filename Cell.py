@@ -103,14 +103,14 @@ class Cell:
 
     def draw(self, drawSurface, x, y):
         '''Blit cell graphics to the specified surface'''
-        DrawPos = (x*images.BLOCKSIZE, y*images.BLOCKSIZE)
+        DrawPos = (x*images.TILESIZE, y*images.TILESIZE)
         if not self.explored:
             drawSurface.blit(images.Unknown, DrawPos)
             return
         drawSurface.blit(self.image, DrawPos)
         if self.damaged:
-            drawSurface.blit(images.Damage, DrawPos)
+            drawSurface.blit(images.Damaged, DrawPos)
         if self.collectableitem != None:
-            drawSurface.blit(images.CollectablesImages[self.collectableitem], DrawPos)
+            drawSurface.blit(images.Collectables[self.collectableitem], DrawPos)
         if not self.visible:
             drawSurface.blit(images.NonVisible, DrawPos)

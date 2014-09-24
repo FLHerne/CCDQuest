@@ -46,21 +46,21 @@ class MinimapWidget:
         region = pygame.Rect(region)
         old_clip = self.window.get_clip()
         self.window.set_clip(region)
-        miniworldScale = min(float(region.width)/self.world.surface.get_width(),
+        miniworldscale = min(float(region.width)/self.world.surface.get_width(),
                              float(region.height)/self.world.surface.get_height())
         miniworld = pygame.transform.scale(self.world.surface,
-                                           (int(self.world.surface.get_width()*miniworldScale),
-                                            int(self.world.surface.get_height()*miniworldScale)))
+                                           (int(self.world.surface.get_width()*miniworldscale),
+                                            int(self.world.surface.get_height()*miniworldscale)))
         self.window.blit(miniworld, region)
         for tx in [scrollpos[0]-self.world.surface.get_width(), scrollpos[0], scrollpos[0]+self.world.surface.get_width()]:
             for ty in [scrollpos[1]-self.world.surface.get_height(), scrollpos[1], scrollpos[1]+self.world.surface.get_height()]:
                 pygame.draw.rect(self.window,
                     self.world.player.color,
-                    (region.left-(tx*miniworldScale), # Top x corner of minimap, plus scroll offset
-                    region.top-(ty*miniworldScale), # Top y ''
+                    (region.left-(tx*miniworldscale), # Top x corner of minimap, plus scroll offset
+                    region.top-(ty*miniworldscale), # Top y ''
                     #FIXME should be viewport size, not window size!
-                    1+ self.window.get_width()*miniworldScale,
-                    1+ self.window.get_height()*miniworldScale),
+                    1+ self.window.get_width()*miniworldscale,
+                    1+ self.window.get_height()*miniworldscale),
                     1)
         self.window.set_clip(old_clip)
 
@@ -68,10 +68,10 @@ class Frame:
     '''Thingy to draw around widgets'''
     HORIZONTAL = 0
     VERTICAL = 1
-    def __init__(self, hudimages, window):
-        self.hudimages = hudimages
-        self.thickness = (hudimages[Frame.HORIZONTAL].get_height(),
-                          hudimages[Frame.VERTICAL].get_width())
+    def __init__(self, images, window):
+        self.images = images
+        self.thickness = (images[Frame.HORIZONTAL].get_height(),
+                          images[Frame.VERTICAL].get_width())
         self.window = window
 
     def draw(self, region, orientation):
@@ -81,8 +81,8 @@ class Frame:
         self.window.set_clip(region)
         drawpoint = list(region.topleft)
         while region.collidepoint(drawpoint):
-            self.window.blit(self.hudimages[orientation], drawpoint)
-            drawpoint[orientation] += self.hudimages[orientation].get_size()[orientation]
+            self.window.blit(self.images[orientation], drawpoint)
+            drawpoint[orientation] += self.images[orientation].get_size()[orientation]
         self.window.set_clip(old_clip)
 
 class HUD:
@@ -90,12 +90,12 @@ class HUD:
     def __init__(self, world, window):
         self.window = window
         self.world = world
-        self.frame = Frame((hudimages.HudFrameHoriz, hudimages.HudFrameVert), window)
-        self.coinwidget = ScoreWidget(hudimages.HudCoin, window, world.cellmap.origcoins, bgtileimage=hudimages.HudBackground)
-        self.chocwidget = ScoreWidget(hudimages.HudChoc, window,
+        self.frame = Frame((hudimages.FrameHoriz, hudimages.FrameVert), window)
+        self.coinwidget = ScoreWidget(hudimages.Coin, window, world.cellmap.origcoins, bgtileimage=hudimages.HudBackground)
+        self.chocwidget = ScoreWidget(hudimages.Choc, window,
                                       stringfunc=lambda a, b: str(round(a/1000.0, 2))+"kg" if a >= 1000 else str(a)+"g",
                                       bgtileimage=hudimages.HudBackground)
-        self.dynamitewidget = ScoreWidget(hudimages.HudDynamite, window, bgtileimage=hudimages.HudBackground)
+        self.dynamitewidget = ScoreWidget(hudimages.Dynamite, window, bgtileimage=hudimages.HudBackground)
         self.minimapwidget = MinimapWidget(world, window)
 
     def draw(self, region, scrollpos):

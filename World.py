@@ -1,6 +1,6 @@
 import pygame
 import random
-from images import BLOCKSIZE
+from images import TILESIZE
 from Bear import Bear
 from Dragon import Dragon
 from Map import Map
@@ -12,7 +12,7 @@ class World:
         groundfile = 'map/World7-ground.png'
         collectablefile = 'map/World7-collectables.png'
         self.cellmap = Map(groundfile, collectablefile)
-        self.surface = pygame.Surface((self.cellmap.size[0]*BLOCKSIZE, self.cellmap.size[1]*BLOCKSIZE))
+        self.surface = pygame.Surface((self.cellmap.size[0]*TILESIZE, self.cellmap.size[1]*TILESIZE))
         self.surface.fill(BLACK)
         self.player = Player(self.cellmap.startpos)
 
@@ -55,12 +55,12 @@ class World:
             for y in range(self.player.position[1]-self.player.visibility-2, self.player.position[1]+self.player.visibility+3):
                 self.cellmap[x, y].draw(self.surface, x%self.cellmap.size[0], y%self.cellmap.size[1])
         if not self.cellmap[self.player.position].top:
-            self.surface.blit(self.player.sprite(), (self.player.position[0]*BLOCKSIZE, self.player.position[1]*BLOCKSIZE))
+            self.surface.blit(self.player.sprite(), (self.player.position[0]*TILESIZE, self.player.position[1]*TILESIZE))
 
         for bear in self.bears:
             bear.move(self.player.position, self.cellmap)
             if self.cellmap[bear.position].visible and not  self.cellmap[bear.position].top:
-                self.surface.blit(bear.sprite(), (bear.position[0]*BLOCKSIZE, bear.position[1]*BLOCKSIZE))
+                self.surface.blit(bear.sprite(), (bear.position[0]*TILESIZE, bear.position[1]*TILESIZE))
 
         for dragon in self.dragons:
             dragon.move(self.player.position, self.cellmap)
@@ -71,6 +71,6 @@ class World:
                         isvisible = True
             if isvisible:
                 offsetsprite = dragon.offsetsprite()
-                blitpos = ((dragon.position[0]+offsetsprite[1][0])*BLOCKSIZE,
-                           (dragon.position[1]+offsetsprite[1][1])*BLOCKSIZE)
+                blitpos = ((dragon.position[0]+offsetsprite[1][0])*TILESIZE,
+                           (dragon.position[1]+offsetsprite[1][1])*TILESIZE)
                 self.surface.blit(offsetsprite[0], blitpos)
