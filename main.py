@@ -17,7 +17,6 @@ from WorldView import WorldView
 
 from keysettings import *
 import collectables
-import images
 
 def handleevents():
     '''respond to user input'''

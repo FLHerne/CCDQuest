@@ -1,8 +1,9 @@
 import pygame
-from colors import *
-from images import BLOCKSIZE
-import images
+import tileimages
+from tileimages import BLOCKSIZE
 import collectables
+from colors import *
+
 # Remove solidity and movement cost for testing
 FREEPLAYER = False
 

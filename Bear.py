@@ -1,5 +1,5 @@
-import images
 import random
+import tileimages
 
 class Bear:
     '''follows you around when in range'''

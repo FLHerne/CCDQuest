@@ -1,5 +1,5 @@
 import pygame
-import images
+import hudimages
 import TextBox
 import collectables
 from colors import *

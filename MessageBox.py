@@ -1,5 +1,5 @@
 import pygame
-import images
+import hudimages
 import TextBox
 from colors import *
 
