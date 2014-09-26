@@ -50,6 +50,22 @@ class Map():
         cell.damaged = True
         self.burningtiles.add((coord[0]%self.size[0], coord[1]%self.size[1]))
 
+    def detonate(self, coord):
+        '''Set off an explosion at coord'''
+        def blam(epicentre):
+            self[epicentre].collectableitem = None
+            for dx in (-1, 0, 1):
+                for dy in (-1, 0, 1):
+                    cell = self[epicentre[0]+dx, epicentre[1]+dy]
+                    if not cell.destroy():
+                        continue
+                    if cell.collectableitem == collectables.DYNAMITE:
+                        blam((epicentre[0]+dx, epicentre[1]+dy))
+        if not self[coord].destructable:
+            return False
+        blam(coord)
+        return True
+
     def update(self):
         '''Spread fire, potentially other continuous map processes'''
         for tile in self.burningtiles.copy():

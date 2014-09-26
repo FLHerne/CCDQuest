@@ -102,22 +102,9 @@ class Player:
 
     def detonate(self, cellmap):
         '''Detonate carried explosives at player's location'''
-        exploded = set()
         if self.score[collectables.DYNAMITE] <= 0:
-            return exploded
+            return
         if not cellmap[self.position].destructable:
-            return exploded
-
-        def blam(epicentre):
-            cellmap[epicentre].collectableitem = None
-            for dx in (-1, 0, 1):
-                for dy in (-1, 0, 1):
-                    cell = cellmap[epicentre[0]+dx, epicentre[1]+dy]
-                    if not cell.destroy():
-                        continue
-                    exploded.add((epicentre[0]+dx, epicentre[1]+dy))
-                    if cell.collectableitem == collectables.DYNAMITE:
-                        blam((epicentre[0]+dx, epicentre[1]+dy))
-        blam(self.position)
+            return
+        cellmap.detonate(self.position)
         self.score[collectables.DYNAMITE] -= 1
-        return exploded
