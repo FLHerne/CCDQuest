@@ -1,7 +1,9 @@
 import pygame
 import random
+import collectables
 from images import TILESIZE
 from Bear import Bear
+from Cell import Cell
 from Dragon import Dragon
 from Map import Map
 from Player import Player
@@ -42,8 +44,8 @@ class World:
 
     def moveplayer(self, x, y):
         '''Move the player by (x, y), move other fauna, update world surface around player'''
-        self.player.move(x, y, self.cellmap)
         self.cellmap.update()
+        self.player.move(x, y, self.cellmap)
 
         for dragon in self.dragons:
             dragon.move(self.player.position, self.cellmap)
@@ -78,3 +80,6 @@ class World:
                 blitpos = ((dragon.position[0]+offsetsprite[1][0])*TILESIZE,
                            (dragon.position[1]+offsetsprite[1][1])*TILESIZE)
                 self.surface.blit(offsetsprite[0], blitpos)
+
+        if tuple(self.player.position) in self.cellmap.burningtiles:
+            self.player.score[collectables.CHOCOLATE] -= Cell.BURNINGCOST
