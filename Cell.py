@@ -14,10 +14,9 @@ class Cell:
         self.collectableitem = None
         self.top = False
         self.destructable = True
-        self.flammable = False
         self.temperature = 20
         self.fireoutchance = 0.15
-        self.firespreadchance = 0.1
+        self.fireignitechance = 0
         if groundcolor == BLACK:
             self.image = images.Wall
             self.transparent = False
@@ -35,7 +34,7 @@ class Cell:
             self.solid = False
             self.difficulty = 2
             self.name = "wooden planking"
-            self.flammable = True
+            self.fireignitechance = 0.4
         elif groundcolor == WHITE:
             self.image = images.Snow
             self.transparent = True
@@ -65,7 +64,8 @@ class Cell:
             self.solid = False
             self.difficulty = 2
             self.name = "grass"
-            self.flammable = True
+            self.fireignitechance = 0.1
+            self.fireoutchance = 0.3
         elif groundcolor == BLUEGREY:
             self.image = images.Marsh
             self.transparent = True
@@ -84,7 +84,8 @@ class Cell:
             self.solid = False
             self.difficulty = 8
             self.name = "forest"
-            self.flammable = True
+            self.fireignitechance = 0.18
+            self.fireoutchance = 0.1
             self.top = True
         elif groundcolor == DARKYELLOW:
             self.image = images.Sand
@@ -132,7 +133,7 @@ class Cell:
         self.name = "shattered debris"
         self.collectableitem = None
         self.top = False
-        self.flammable = False
+        self.fireignitechance = 0
         self.transparent = True
         self.solid = False
         self.difficulty += 5

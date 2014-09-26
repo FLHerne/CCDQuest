@@ -40,16 +40,17 @@ class Map():
         '''Set map item with [], wrapping'''
         self.cellarray[self.index(coord)] = value
 
-    def ignite(self, coord):
-        '''Attempt to start a fire at coord'''
+    def ignite(self, coord, multiplier=100):
+        '''Start a fire at coord, with chance cell.firestartchance * multiplier'''
         cell = self[coord]
         if cell.collectableitem == collectables.DYNAMITE:
             self.detonate(coord)
-        if not cell.flammable:
-            return False
-        cell.burning = True
-        cell.destroy()
-        self.burningtiles.add((coord[0]%self.size[0], coord[1]%self.size[1]))
+        if random.random() < cell.fireignitechance * multiplier:
+            cell.burning = True
+            cell.destroy()
+            self.burningtiles.add((coord[0]%self.size[0], coord[1]%self.size[1]))
+            return True
+        return False
 
     def detonate(self, coord):
         '''Set off an explosion at coord'''
@@ -57,13 +58,9 @@ class Map():
             self[epicentre].collectableitem = None
             for dx in (-1, 0, 1):
                 for dy in (-1, 0, 1):
-                    cell = self[epicentre[0]+dx, epicentre[1]+dy]
-                    if cell.collectableitem == collectables.DYNAMITE:
-                        blam((epicentre[0]+dx, epicentre[1]+dy))
-                    if cell.flammable and (random.random() < cell.firespreadchance*2):
-                        self.ignite((epicentre[0]+dx, epicentre[1]+dy))
-                    else:
-                        cell.destroy()
+                    curpos = (epicentre[0]+dx, epicentre[1]+dy)
+                    if not self.ignite(curpos, 3):
+                        self[curpos].destroy()
         if not self[coord].destructable:
             return False
         blam(coord)
@@ -74,8 +71,7 @@ class Map():
         for tile in self.burningtiles.copy():
             cell = self[tile]
             for nbrpos in [(tile[0]-1, tile[1]), (tile[0], tile[1]-1), (tile[0]+1, tile[1]), (tile[0], tile[1]+1)]:
-                if random.random() < cell.firespreadchance:
-                    self.ignite(nbrpos)
+                self.ignite(nbrpos, 1)
             if random.random() < cell.fireoutchance:
                 self[tile].burning = False
                 self.burningtiles.remove(tile)
