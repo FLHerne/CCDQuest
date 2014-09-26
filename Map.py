@@ -43,6 +43,8 @@ class Map():
     def ignite(self, coord):
         '''Attempt to start a fire at coord'''
         cell = self[coord]
+        if cell.collectableitem == collectables.DYNAMITE:
+            self.detonate(coord)
         if not cell.flammable:
             return False
         cell.burning = True
@@ -57,10 +59,10 @@ class Map():
             for dx in (-1, 0, 1):
                 for dy in (-1, 0, 1):
                     cell = self[epicentre[0]+dx, epicentre[1]+dy]
-                    if not cell.destroy():
-                        continue
                     if cell.collectableitem == collectables.DYNAMITE:
                         blam((epicentre[0]+dx, epicentre[1]+dy))
+                    if not cell.destroy():
+                        continue
         if not self[coord].destructable:
             return False
         blam(coord)
