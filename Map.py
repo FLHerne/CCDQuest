@@ -48,8 +48,7 @@ class Map():
         if not cell.flammable:
             return False
         cell.burning = True
-        cell.flammable = False
-        cell.damaged = True
+        cell.destroy()
         self.burningtiles.add((coord[0]%self.size[0], coord[1]%self.size[1]))
 
     def detonate(self, coord):
@@ -61,8 +60,7 @@ class Map():
                     cell = self[epicentre[0]+dx, epicentre[1]+dy]
                     if cell.collectableitem == collectables.DYNAMITE:
                         blam((epicentre[0]+dx, epicentre[1]+dy))
-                    if not cell.destroy():
-                        continue
+                    cell.destroy()
         if not self[coord].destructable:
             return False
         blam(coord)
