@@ -132,7 +132,6 @@ class Cell:
         self.name = "shattered debris"
         self.collectableitem = None
         self.top = False
-        self.destructable = False
         self.flammable = False
         self.transparent = True
         self.solid = False
