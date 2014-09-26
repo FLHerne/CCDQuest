@@ -1,14 +1,16 @@
 import pygame
+import random
 from Cell import *
 from colors import *
 import collectables
 
-
 class Map():
+    '''Contains array of Cells and properties representing the map as a whole'''
     def index(self, coord):
         return (int(coord[0] % self.size[0] * self.size[0]) + coord[1] % self.size[1])
 
     def __init__(self, groundfile, collectablefile):
+        '''Load the map from image files'''
         START = MAGENTA
         groundimage = pygame.image.load(groundfile)
         groundmap = pygame.PixelArray(groundimage)
@@ -17,6 +19,7 @@ class Map():
         self.size = list(groundimage.get_rect().size)
         self.startpos = None
         self.origcoins = 0
+        self.burningtiles = set()
 
         self.cellarray = []
         for x in xrange(0, self.size[0]):
@@ -28,10 +31,48 @@ class Map():
                     self.startpos = (x, y)
                 elif self[x, y].collectableitem == collectables.COIN:
                     self.origcoins += 1
-        print self.origcoins
 
     def __getitem__(self, coord):
+        '''Get map item with [], wrapping'''
         return self.cellarray[self.index(coord)]
 
     def __setitem__(self, coord, value):
+        '''Set map item with [], wrapping'''
         self.cellarray[self.index(coord)] = value
+
+    def ignite(self, coord, multiplier=True):
+        '''Start a fire at coord, with chance cell.firestartchance * multiplier'''
+        cell = self[coord]
+        if cell.collectableitem == collectables.DYNAMITE:
+            self.detonate(coord)
+        if multiplier is True or random.random() < cell.fireignitechance * multiplier:
+            cell.burning = True
+            if not (multiplier is True):
+                cell.destroy()
+            self.burningtiles.add((coord[0]%self.size[0], coord[1]%self.size[1]))
+            return True
+        return False
+
+    def detonate(self, coord):
+        '''Set off an explosion at coord'''
+        def blam(epicentre):
+            self[epicentre].collectableitem = None
+            for dx in (-1, 0, 1):
+                for dy in (-1, 0, 1):
+                    curpos = (epicentre[0]+dx, epicentre[1]+dy)
+                    if not self.ignite(curpos, 3):
+                        self[curpos].destroy()
+        if not self[coord].destructable:
+            return False
+        blam(coord)
+        return True
+
+    def update(self):
+        '''Spread fire, potentially other continuous map processes'''
+        for tile in self.burningtiles.copy():
+            cell = self[tile]
+            for nbrpos in [(tile[0]-1, tile[1]), (tile[0], tile[1]-1), (tile[0]+1, tile[1]), (tile[0], tile[1]+1)]:
+                self.ignite(nbrpos, 1)
+            if random.random() < cell.fireoutchance:
+                cell.burning = False
+                self.burningtiles.remove(tile)

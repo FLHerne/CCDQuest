@@ -1,4 +1,4 @@
-from images import BLOCKSIZE
+from images import TILESIZE
 import pygame
 
 class WorldView:
@@ -7,8 +7,8 @@ class WorldView:
 
     def draw(self, region, world, window):
         if self.scrollpos == None:
-            self.scrollpos = [(-BLOCKSIZE*world.player.position[0])+region.width/2,
-                              (-BLOCKSIZE*world.player.position[1])+region.height/2]
+            self.scrollpos = [(-TILESIZE*world.player.position[0])+region.width/2,
+                              (-TILESIZE*world.player.position[1])+region.height/2]
         drawregion = region.copy()
         def updateregion():
             drawregion.width = min(world.surface.get_width(), region.width)
@@ -18,9 +18,9 @@ class WorldView:
         def updatescrollpos():
             '''scroll towards the correct position'''
             for axis in [0, 1]:
-                pq = (world.player.position[axis]*BLOCKSIZE+self.scrollpos[axis]) % world.surface.get_size()[axis]
-                if drawregion.size[axis] > 2*world.player.visibility*BLOCKSIZE:
-                    dr = (world.player.visibility*BLOCKSIZE, drawregion.size[axis]-(world.player.visibility+1)*BLOCKSIZE)
+                pq = (world.player.position[axis]*TILESIZE+self.scrollpos[axis]) % world.surface.get_size()[axis]
+                if drawregion.size[axis] > 2*world.player.visibility*TILESIZE:
+                    dr = (world.player.visibility*TILESIZE, drawregion.size[axis]-(world.player.visibility+1)*TILESIZE)
                 else:
                     dr = [drawregion.size[axis]/2]
                 self.scrollpos[axis] = (self.scrollpos[axis]+(max(dr[0],min(dr[-1],pq))-pq)/2) % world.surface.get_size()[axis]

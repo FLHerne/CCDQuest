@@ -1,29 +1,33 @@
 import pygame
-from colors import *
-from images import BLOCKSIZE
 import images
+from images import TILESIZE
 import collectables
+from colors import *
+from directions import *
+
 # Remove solidity and movement cost for testing
 FREEPLAYER = False
 
 class Player:
+    '''The player, exploring the grid-based world'''
     def __init__(self, position):
+        '''Initialise instance variables'''
         self.animcounter = 0
         self.color = MAGENTA
         self.visibility = 15
         self.position = list(position)
-        self.direction = 1
+        self.direction = RIGHT
         self.score = {
             collectables.COIN: 0,
             collectables.CHOCOLATE: 10000,
             collectables.DYNAMITE: 15
         }
-        print BLOCKSIZE
 
     def move(self, x, y, cellmap):
+        '''Move if possible, update collectable levels accordingly'''
         if abs(x) + abs(y) != 1:
             return False
-        self.direction = ((x*1)) + ((y*2))
+        self.direction = (x, y)
         if cellmap[self.position[0]+x, self.position[1]+y].solid and not FREEPLAYER:
             self.score[collectables.CHOCOLATE] -= 50
             return False
@@ -38,18 +42,10 @@ class Player:
         return True
 
     def sprite(self):
-        if self.direction == -2:
-            return images.PlayerUp
-        elif self.direction == 2:
-            return images.PlayerDown
-        elif self.direction == 1:
-            return images.PlayerRight
-        elif self.direction == -1:
-            return images.PlayerLeft
-        else:
-            return images.Unknown
+        return images.Player[self.direction]
 
     def visible_tiles(self, cellmap):
+        '''Calculate and return the set of tiles visible to player'''
         visible = set()
 
         def diagonalcheck():
@@ -105,29 +101,10 @@ class Player:
         return visible
 
     def detonate(self, cellmap):
-        exploded = set()
+        '''Detonate carried explosives at player's location'''
         if self.score[collectables.DYNAMITE] <= 0:
-            return exploded
+            return
         if not cellmap[self.position].destructable:
-            return exploded
-
-        def blam(epicentre):
-            cellmap[epicentre].collectableitem = None
-            for dx in (-1, 0, 1):
-                for dy in (-1, 0, 1):
-                    cell = cellmap[epicentre[0]+dx, epicentre[1]+dy]
-                    if not cell.destructable:
-                        continue
-                    exploded.add((epicentre[0]+dx, epicentre[1]+dy))
-                    cell.transparent = True
-                    cell.solid = False
-                    cell.name = "debris from an explosion"
-                    cell.difficulty += 5
-                    cell.top = False
-                    cell.damaged = True
-                    if cell.collectableitem == collectables.DYNAMITE:
-                        blam((epicentre[0]+dx, epicentre[1]+dy))
-                    cell.collectableitem = None
-        blam(self.position)
+            return
+        cellmap.detonate(self.position)
         self.score[collectables.DYNAMITE] -= 1
-        return exploded

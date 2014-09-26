@@ -1,6 +1,6 @@
 import pygame
-import images
-import TextBox
+import hudimages
+from TextBox import TextBox
 import collectables
 from colors import *
 
@@ -13,6 +13,7 @@ class ScoreWidget:
         self.total = total
         self.stringfunc = (stringfunc if stringfunc != None else
                            lambda a, b: str(a) + ("/"+str(b) if b != None else ""))
+        self.textbox = TextBox(22, (205, 205, 75), True)
 
     def draw(self, region, quantity):
         '''Draw the score widget'''
@@ -31,7 +32,7 @@ class ScoreWidget:
             fittedimage = self.image.get_rect().fit(imageregion)
             self.window.blit(pygame.transform.scale(self.image, fittedimage.size), fittedimage)
         string = self.stringfunc(quantity, self.total)
-        TextBox.draw(self.window, string, region, size=22, color=(205, 205, 75), ycentered=False, beveled=True)
+        self.textbox.draw(string, region, (True, False), self.window)
         self.window.set_clip(old_clip)
 
 class MinimapWidget:
@@ -45,19 +46,21 @@ class MinimapWidget:
         region = pygame.Rect(region)
         old_clip = self.window.get_clip()
         self.window.set_clip(region)
-        miniworldScale = min(float(region.width)/(self.world.cellmap.size[0]*images.BLOCKSIZE),
-                             float(region.height)/(self.world.cellmap.size[1]*images.BLOCKSIZE))
-        miniworld = pygame.transform.scale(self.world.surface, (int(self.world.cellmap.size[0]*images.BLOCKSIZE*miniworldScale), int(self.world.cellmap.size[1]*images.BLOCKSIZE*miniworldScale)))
+        miniworldscale = min(float(region.width)/self.world.surface.get_width(),
+                             float(region.height)/self.world.surface.get_height())
+        miniworld = pygame.transform.scale(self.world.surface,
+                                           (int(self.world.surface.get_width()*miniworldscale),
+                                            int(self.world.surface.get_height()*miniworldscale)))
         self.window.blit(miniworld, region)
         for tx in [scrollpos[0]-self.world.surface.get_width(), scrollpos[0], scrollpos[0]+self.world.surface.get_width()]:
             for ty in [scrollpos[1]-self.world.surface.get_height(), scrollpos[1], scrollpos[1]+self.world.surface.get_height()]:
                 pygame.draw.rect(self.window,
                     self.world.player.color,
-                    (region.left-(tx*miniworldScale), # Top x corner of minimap, plus scroll offset
-                    region.top-(ty*miniworldScale), # Top y ''
+                    (region.left-(tx*miniworldscale), # Top x corner of minimap, plus scroll offset
+                    region.top-(ty*miniworldscale), # Top y ''
                     #FIXME should be viewport size, not window size!
-                    1+ self.window.get_width()*miniworldScale,
-                    1+ self.window.get_height()*miniworldScale),
+                    1+ self.window.get_width()*miniworldscale,
+                    1+ self.window.get_height()*miniworldscale),
                     1)
         self.window.set_clip(old_clip)
 
@@ -72,6 +75,7 @@ class Frame:
         self.window = window
 
     def draw(self, region, orientation):
+        '''Draw frame along top or left of region'''
         region = pygame.Rect(region)
         old_clip = self.window.get_clip()
         self.window.set_clip(region)
@@ -86,12 +90,12 @@ class HUD:
     def __init__(self, world, window):
         self.window = window
         self.world = world
-        self.frame = Frame((images.HudFrameHoriz, images.HudFrameVert), window)
-        self.coinwidget = ScoreWidget(images.HudCoin, window, world.cellmap.origcoins, bgtileimage=images.HudBackground)
-        self.chocwidget = ScoreWidget(images.HudChoc, window,
+        self.frame = Frame((hudimages.FrameHoriz, hudimages.FrameVert), window)
+        self.coinwidget = ScoreWidget(hudimages.Coin, window, world.cellmap.origcoins, bgtileimage=hudimages.HudBackground)
+        self.chocwidget = ScoreWidget(hudimages.Choc, window,
                                       stringfunc=lambda a, b: str(round(a/1000.0, 2))+"kg" if a >= 1000 else str(a)+"g",
-                                      bgtileimage=images.HudBackground)
-        self.dynamitewidget = ScoreWidget(images.HudDynamite, window, bgtileimage=images.HudBackground)
+                                      bgtileimage=hudimages.HudBackground)
+        self.dynamitewidget = ScoreWidget(hudimages.Dynamite, window, bgtileimage=hudimages.HudBackground)
         self.minimapwidget = MinimapWidget(world, window)
 
     def draw(self, region, scrollpos):
@@ -121,7 +125,8 @@ class HUD:
         '''Display a splash message across the entire window'''
         def splash(message):
             pygame.draw.rect(self.window, BLACK, self.window.get_rect())
-            TextBox.draw(self.window, message, self.window.get_rect(), color=WHITE, size=40)
+            textbox = TextBox(40, WHITE, False)
+            textbox.draw(message, self.window.get_rect(), surface=self.window)
         if reason == collectables.CHOCOLATE:
             splash("You ran out of chocolate!")
         elif reason == collectables.COIN:

@@ -4,9 +4,12 @@ import images
 
 class Cell:
     '''A single square in the world grid, with many properties'''
+    DAMAGEDCOST = 5
+    BURNINGCOST = 200
     def __init__(self, groundcolor, collectablecolor):
         '''Set up initial attributes'''
         self.damaged = False
+        self.burning = False
         self.explored = False
         self.visible = False
         self.name = "UNNAMED TERRAIN"
@@ -14,6 +17,8 @@ class Cell:
         self.top = False
         self.destructable = True
         self.temperature = 20
+        self.fireignitechance = 0
+        self.fireoutchance = 1
         if groundcolor == BLACK:
             self.image = images.Wall
             self.transparent = False
@@ -31,6 +36,8 @@ class Cell:
             self.solid = False
             self.difficulty = 2
             self.name = "wooden planking"
+            self.fireignitechance = 0.4
+            self.fireoutchance = 0.1
         elif groundcolor == WHITE:
             self.image = images.Snow
             self.transparent = True
@@ -60,6 +67,8 @@ class Cell:
             self.solid = False
             self.difficulty = 2
             self.name = "grass"
+            self.fireignitechance = 0.1
+            self.fireoutchance = 0.3
         elif groundcolor == BLUEGREY:
             self.image = images.Marsh
             self.transparent = True
@@ -78,6 +87,8 @@ class Cell:
             self.solid = False
             self.difficulty = 8
             self.name = "forest"
+            self.fireignitechance = 0.18
+            self.fireoutchance = 0.1
             self.top = True
         elif groundcolor == DARKYELLOW:
             self.image = images.Sand
@@ -103,14 +114,31 @@ class Cell:
 
     def draw(self, drawSurface, x, y):
         '''Blit cell graphics to the specified surface'''
-        DrawPos = (x*images.BLOCKSIZE, y*images.BLOCKSIZE)
+        DrawPos = (x*images.TILESIZE, y*images.TILESIZE)
         if not self.explored:
             drawSurface.blit(images.Unknown, DrawPos)
             return
         drawSurface.blit(self.image, DrawPos)
         if self.damaged:
-            drawSurface.blit(images.Damage, DrawPos)
+            drawSurface.blit(images.Damaged, DrawPos)
         if self.collectableitem != None:
-            drawSurface.blit(images.CollectablesImages[self.collectableitem], DrawPos)
+            drawSurface.blit(images.Collectables[self.collectableitem], DrawPos)
+        if self.burning:
+            drawSurface.blit(images.Burning, DrawPos)
         if not self.visible:
             drawSurface.blit(images.NonVisible, DrawPos)
+
+    def destroy(self):
+        '''Change cell attributes to reflect destruction'''
+        if not self.destructable:
+            return False
+        self.damaged = True
+        self.name = "shattered debris"
+        self.collectableitem = None
+        self.top = False
+        self.fireignitechance = 0
+        self.fireoutchance = 1
+        self.transparent = True
+        self.solid = False
+        self.difficulty += Cell.DAMAGEDCOST
+        return True
