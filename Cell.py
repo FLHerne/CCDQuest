@@ -17,8 +17,8 @@ class Cell:
         self.top = False
         self.destructable = True
         self.temperature = 20
-        self.fireoutchance = 0.15
         self.fireignitechance = 0
+        self.fireoutchance = 1
         if groundcolor == BLACK:
             self.image = images.Wall
             self.transparent = False
@@ -37,6 +37,7 @@ class Cell:
             self.difficulty = 2
             self.name = "wooden planking"
             self.fireignitechance = 0.4
+            self.fireoutchance = 0.1
         elif groundcolor == WHITE:
             self.image = images.Snow
             self.transparent = True
@@ -136,6 +137,7 @@ class Cell:
         self.collectableitem = None
         self.top = False
         self.fireignitechance = 0
+        self.fireoutchance = 1
         self.transparent = True
         self.solid = False
         self.difficulty += Cell.DAMAGEDCOST

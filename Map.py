@@ -40,15 +40,16 @@ class Map():
         '''Set map item with [], wrapping'''
         self.cellarray[self.index(coord)] = value
 
-    def ignite(self, coord, multiplier=100):
+    def ignite(self, coord, multiplier=True):
         '''Start a fire at coord, with chance cell.firestartchance * multiplier'''
         cell = self[coord]
         if cell.collectableitem == collectables.DYNAMITE:
             self.detonate(coord)
-        if random.random() < cell.fireignitechance * multiplier:
+        if multiplier is True or random.random() < cell.fireignitechance * multiplier:
             cell.burning = True
             cell.difficulty += Cell.BURNINGCOST
-            cell.destroy()
+            if not (multiplier is True):
+                cell.destroy()
             self.burningtiles.add((coord[0]%self.size[0], coord[1]%self.size[1]))
             return True
         return False

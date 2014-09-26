@@ -33,7 +33,7 @@ class Dragon:
             for tile in fronttiles:
                 if tile == tuple(playerpos):
                     for tile in fronttiles:
-                        cellmap.ignite(tile)
+                        cellmap.ignite(tile, True)
                     break
 
         if not cellmap[playerpos].top and random.random() < Dragon.speed:
