@@ -60,7 +60,10 @@ class Map():
                     cell = self[epicentre[0]+dx, epicentre[1]+dy]
                     if cell.collectableitem == collectables.DYNAMITE:
                         blam((epicentre[0]+dx, epicentre[1]+dy))
-                    cell.destroy()
+                    if cell.flammable and (random.random() < cell.firespreadchance*2):
+                        self.ignite((epicentre[0]+dx, epicentre[1]+dy))
+                    else:
+                        cell.destroy()
         if not self[coord].destructable:
             return False
         blam(coord)
