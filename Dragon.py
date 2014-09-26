@@ -40,4 +40,4 @@ class Dragon:
 
     def offsetsprite(self):
         '''Returns sprite plus offset in tiles'''
-        return images.DragonRed[self.direction], [-1 if axis == 1 else 0 for axis in self.position]
+        return images.DragonRed[self.direction], [-1 if axis == 1 else 0 for axis in self.direction]
