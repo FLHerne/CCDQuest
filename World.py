@@ -44,6 +44,10 @@ class World:
         '''Move the player by (x, y), move other fauna, update world surface around player'''
         self.player.move(x, y, self.cellmap)
         self.cellmap.update()
+
+        for dragon in self.dragons:
+            dragon.move(self.player.position, self.cellmap)
+
         for x in range(self.player.position[0]-self.player.visibility-1, self.player.position[0]+self.player.visibility+2):
             for y in range(self.player.position[1]-self.player.visibility-1, self.player.position[1]+self.player.visibility+2):
                 self.cellmap[x, y].visible = False
@@ -64,7 +68,6 @@ class World:
                 self.surface.blit(bear.sprite(), (bear.position[0]*TILESIZE, bear.position[1]*TILESIZE))
 
         for dragon in self.dragons:
-            dragon.move(self.player.position, self.cellmap)
             isvisible = False
             for ix in [0, 1]:
                 for iy in [0, 1]:

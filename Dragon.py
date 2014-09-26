@@ -14,6 +14,7 @@ class Dragon:
 
     def move(self, playerpos, cellmap):
         '''Fly toward the player if nearby, or continue in same direction'''
+
         def tileoffset(a, b, size):
             offset = [0, 0]
             for axis in [0, 1]:
@@ -24,6 +25,16 @@ class Dragon:
                 else:
                     offset[axis] = (size-absubtract) * cmp(0, subtract)
             return offset
+
+        def flameplayer():
+            def addtuple(a, b, c=1):
+                return (a[0]+b[0]*c, a[1]+b[1]*c)
+            fronttiles = [addtuple(self.position, self.direction, i) for i in range(1,4)]
+            for tile in fronttiles:
+                if tile == tuple(playerpos):
+                    for tile in fronttiles:
+                        cellmap.ignite(tile)
+                    break
 
         if not cellmap[playerpos].top and random.random() < Dragon.speed:
             offset = tileoffset(self.position, playerpos, cellmap.size)
@@ -37,6 +48,7 @@ class Dragon:
 
         self.position = ((self.position[0]+self.direction[0]) % cellmap.size[0],
                          (self.position[1]+self.direction[1]) % cellmap.size[1])
+        flameplayer()
 
     def offsetsprite(self):
         '''Returns sprite plus offset in tiles'''
