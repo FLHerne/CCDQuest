@@ -113,18 +113,11 @@ class Player:
             for dx in (-1, 0, 1):
                 for dy in (-1, 0, 1):
                     cell = cellmap[epicentre[0]+dx, epicentre[1]+dy]
-                    if not cell.destructable:
+                    if not cell.destroy():
                         continue
                     exploded.add((epicentre[0]+dx, epicentre[1]+dy))
-                    cell.transparent = True
-                    cell.solid = False
-                    cell.name = "debris from an explosion"
-                    cell.difficulty += 5
-                    cell.top = False
-                    cell.damaged = True
                     if cell.collectableitem == collectables.DYNAMITE:
                         blam((epicentre[0]+dx, epicentre[1]+dy))
-                    cell.collectableitem = None
         blam(self.position)
         self.score[collectables.DYNAMITE] -= 1
         return exploded

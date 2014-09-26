@@ -114,3 +114,16 @@ class Cell:
             drawSurface.blit(images.Collectables[self.collectableitem], DrawPos)
         if not self.visible:
             drawSurface.blit(images.NonVisible, DrawPos)
+
+    def destroy(self):
+        if not self.destructable:
+            return False
+        self.damaged = True
+        self.name = "shattered debris"
+        self.collectableitem = None
+        self.top = False
+        self.destructable = False
+        self.transparent = True
+        self.solid = False
+        self.difficulty += 5
+        return True
