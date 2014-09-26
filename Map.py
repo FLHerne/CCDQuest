@@ -47,6 +47,7 @@ class Map():
             self.detonate(coord)
         if random.random() < cell.fireignitechance * multiplier:
             cell.burning = True
+            cell.difficulty += Cell.BURNINGCOST
             cell.destroy()
             self.burningtiles.add((coord[0]%self.size[0], coord[1]%self.size[1]))
             return True
@@ -73,5 +74,6 @@ class Map():
             for nbrpos in [(tile[0]-1, tile[1]), (tile[0], tile[1]-1), (tile[0]+1, tile[1]), (tile[0], tile[1]+1)]:
                 self.ignite(nbrpos, 1)
             if random.random() < cell.fireoutchance:
-                self[tile].burning = False
+                cell.burning = False
+                cell.difficulty -= Cell.BURNINGCOST
                 self.burningtiles.remove(tile)

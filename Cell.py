@@ -4,6 +4,8 @@ import images
 
 class Cell:
     '''A single square in the world grid, with many properties'''
+    DAMAGEDCOST = 5
+    BURNINGCOST = 200
     def __init__(self, groundcolor, collectablecolor):
         '''Set up initial attributes'''
         self.damaged = False
@@ -136,5 +138,5 @@ class Cell:
         self.fireignitechance = 0
         self.transparent = True
         self.solid = False
-        self.difficulty += 5
+        self.difficulty += Cell.DAMAGEDCOST
         return True
