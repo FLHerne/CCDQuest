@@ -1,8 +1,8 @@
 import pygame
+import random
 from Cell import *
 from colors import *
 import collectables
-
 
 class Map():
     '''Contains array of Cells and properties representing the map as a whole'''
@@ -19,6 +19,7 @@ class Map():
         self.size = list(groundimage.get_rect().size)
         self.startpos = None
         self.origcoins = 0
+        self.burningtiles = set()
 
         self.cellarray = []
         for x in xrange(0, self.size[0]):
@@ -38,3 +39,24 @@ class Map():
     def __setitem__(self, coord, value):
         '''Set map item with [], wrapping'''
         self.cellarray[self.index(coord)] = value
+
+    def ignite(self, coord):
+        '''Attempt to start a fire at coord'''
+        cell = self[coord]
+        if not cell.flammable:
+            return False
+        cell.burning = True
+        cell.flammable = False
+        cell.damaged = True
+        self.burningtiles.add((coord[0]%self.size[0], coord[1]%self.size[1]))
+
+    def update(self):
+        '''Spread fire, potentially other continuous map processes'''
+        for tile in self.burningtiles.copy():
+            cell = self[tile]
+            for nbrpos in [(tile[0]-1, tile[1]), (tile[0], tile[1]-1), (tile[0]+1, tile[1]), (tile[0], tile[1]+1)]:
+                if random.random() < cell.firespreadchance:
+                    self.ignite(nbrpos)
+            if random.random() < cell.fireoutchance:
+                self[tile].burning = False
+                self.burningtiles.remove(tile)

@@ -23,10 +23,11 @@ Trees = pygame.image.load("tiles/Trees.png").convert()
 Sand = pygame.image.load("tiles/Sand.png").convert()
 Snow = pygame.image.load("tiles/Snow.png").convert()
 
-# Overlays for unknown, non-visible, and damaged tiles.
+# Overlays for unknown, non-visible, damaged or burning tiles.
 Unknown = pygame.image.load("tiles/Unknown.png").convert()
 NonVisible = pygame.image.load("tiles/NonVisible.png").convert_alpha()
 Damaged = pygame.image.load("tiles/Damaged.png").convert_alpha()
+Burning = pygame.image.load("tiles/Fire.png").convert()
 
 # Overlays for tiles with collectables.
 Coin = pygame.image.load("tiles/Coin.png").convert_alpha()
@@ -34,7 +35,7 @@ Choc = pygame.image.load("tiles/Chocolate.png").convert_alpha()
 Dynamite = pygame.image.load("tiles/Dynamite.png").convert_alpha()
 
 Collectables = {
-    collectables.COIN: Coin,                           # semi-enum for referencing collectable images
+    collectables.COIN: Coin,
     collectables.CHOCOLATE: Choc,
     collectables.DYNAMITE: Dynamite
 }

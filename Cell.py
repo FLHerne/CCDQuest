@@ -7,13 +7,17 @@ class Cell:
     def __init__(self, groundcolor, collectablecolor):
         '''Set up initial attributes'''
         self.damaged = False
+        self.burning = False
         self.explored = False
         self.visible = False
         self.name = "UNNAMED TERRAIN"
         self.collectableitem = None
         self.top = False
         self.destructable = True
+        self.flammable = False
         self.temperature = 20
+        self.fireoutchance = 0.15
+        self.firespreadchance = 0.1
         if groundcolor == BLACK:
             self.image = images.Wall
             self.transparent = False
@@ -31,6 +35,7 @@ class Cell:
             self.solid = False
             self.difficulty = 2
             self.name = "wooden planking"
+            self.flammable = True
         elif groundcolor == WHITE:
             self.image = images.Snow
             self.transparent = True
@@ -60,6 +65,7 @@ class Cell:
             self.solid = False
             self.difficulty = 2
             self.name = "grass"
+            self.flammable = True
         elif groundcolor == BLUEGREY:
             self.image = images.Marsh
             self.transparent = True
@@ -78,6 +84,7 @@ class Cell:
             self.solid = False
             self.difficulty = 8
             self.name = "forest"
+            self.flammable = True
             self.top = True
         elif groundcolor == DARKYELLOW:
             self.image = images.Sand
@@ -112,10 +119,13 @@ class Cell:
             drawSurface.blit(images.Damaged, DrawPos)
         if self.collectableitem != None:
             drawSurface.blit(images.Collectables[self.collectableitem], DrawPos)
+        if self.burning:
+            drawSurface.blit(images.Burning, DrawPos)
         if not self.visible:
             drawSurface.blit(images.NonVisible, DrawPos)
 
     def destroy(self):
+        '''Change cell attributes to reflect destruction'''
         if not self.destructable:
             return False
         self.damaged = True
@@ -123,6 +133,7 @@ class Cell:
         self.collectableitem = None
         self.top = False
         self.destructable = False
+        self.flammable = False
         self.transparent = True
         self.solid = False
         self.difficulty += 5
