@@ -22,8 +22,8 @@ import collectables
 
 worldnumber = 0
 worlds = [['map/smallMap-ground.png', 'map/smallMap-collectables.png'],
-          ['map/Labyrinth-ground.png', 'map/Labyrinth-collectables.png'],
-          ['map/World7-ground.png', 'map/World7-collectables.png'],
+          #['map/Labyrinth-ground.png', 'map/Labyrinth-collectables.png'],
+          #['map/World7-ground.png', 'map/World7-collectables.png'],
           ['map/terrain.png', 'map/blank.png']]
 
 def handleevents(worldnumber):
@@ -60,7 +60,7 @@ def handleevents(worldnumber):
             if world.player.score[collectables.COIN] == world.cellmap.origcoins:
                 window.fill(BLACK)
                 if worldnumber < len(worlds):
-                    hud.loading("Loading next level...")
+                    hud.loadingsplash("Loading next level...")
                     pygame.display.update()
                     worldnumber += 1
                     world = World(worlds[worldnumber][0], worlds[worldnumber][1])
@@ -69,7 +69,7 @@ def handleevents(worldnumber):
                     gameended = collectables.COIN
                 world.rendervisibletiles()
     return gameended, worldnumber
-    
+
 world = World(worlds[worldnumber][0], worlds[worldnumber][1])
 world.moveplayer(0, 0)
 HUDWIDTH = 92

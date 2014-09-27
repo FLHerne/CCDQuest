@@ -39,7 +39,7 @@ class World:
                 created.append(Dragon(pos))
             return created
         self.dragons = placeDragons(int(self.cellmap.size[0] * self.cellmap.size[1]/10000))
-        
+
     def rendervisibletiles(self):
         for x in range(self.player.position[0]-self.player.visibility-1, self.player.position[0]+self.player.visibility+2):
             for y in range(self.player.position[1]-self.player.visibility-1, self.player.position[1]+self.player.visibility+2):
