@@ -22,7 +22,8 @@ import collectables
 
 worldnumber = 0
 worlds = [['map/smallMap-ground.png', 'map/smallMap-collectables.png'],
-          #['map/World7-ground.png', 'map/World7-collectables.png'],
+          ['map/Labyrinth-ground.png', 'map/Labyrinth-collectables.png'],
+          ['map/World7-ground.png', 'map/World7-collectables.png'],
           ['map/terrain.png', 'map/blank.png']]
 
 def handleevents(worldnumber):
