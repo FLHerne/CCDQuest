@@ -10,9 +10,7 @@ from Player import Player
 from colors import *
 
 class World:
-    def __init__(self):
-        groundfile = 'map/World7-ground.png'
-        collectablefile = 'map/World7-collectables.png'
+    def __init__(self, groundfile, collectablefile):
         self.cellmap = Map(groundfile, collectablefile)
         self.surface = pygame.Surface((self.cellmap.size[0]*TILESIZE, self.cellmap.size[1]*TILESIZE))
         self.surface.fill(BLACK)
@@ -41,15 +39,8 @@ class World:
                 created.append(Dragon(pos))
             return created
         self.dragons = placeDragons(int(self.cellmap.size[0] * self.cellmap.size[1]/10000))
-
-    def moveplayer(self, x, y):
-        '''Move the player by (x, y), move other fauna, update world surface around player'''
-        self.cellmap.update()
-        self.player.move(x, y, self.cellmap)
-
-        for dragon in self.dragons:
-            dragon.move(self.player.position, self.cellmap)
-
+        
+    def rendervisibletiles(self):
         for x in range(self.player.position[0]-self.player.visibility-1, self.player.position[0]+self.player.visibility+2):
             for y in range(self.player.position[1]-self.player.visibility-1, self.player.position[1]+self.player.visibility+2):
                 self.cellmap[x, y].visible = False
@@ -63,6 +54,16 @@ class World:
                 self.cellmap[x, y].draw(self.surface, x%self.cellmap.size[0], y%self.cellmap.size[1])
         if not self.cellmap[self.player.position].top:
             self.surface.blit(self.player.sprite(), (self.player.position[0]*TILESIZE, self.player.position[1]*TILESIZE))
+
+    def moveplayer(self, x, y):
+        '''Move the player by (x, y), move other fauna, update world surface around player'''
+        self.cellmap.update()
+        self.player.move(x, y, self.cellmap)
+
+        for dragon in self.dragons:
+            dragon.move(self.player.position, self.cellmap)
+
+        self.rendervisibletiles()
 
         for bear in self.bears:
             bear.move(self.player.position, self.cellmap)

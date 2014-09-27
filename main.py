@@ -15,11 +15,18 @@ from MessageBox import MessageBox
 from World import World
 from WorldView import WorldView
 
+from colours import *
+
 from keysettings import *
 import collectables
 
+groundfile = 'map/smallMap-ground.png'
+collectablefile = 'map/smallMap-collectables.png'
+
 def handleevents():
     '''respond to user input'''
+    global world
+    global window
     gameended = False
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -48,9 +55,21 @@ def handleevents():
                 gameended = collectables.CHOCOLATE
             if world.player.score[collectables.COIN] == world.cellmap.origcoins:
                 gameended = collectables.COIN
+            if event.key == pygame.K_1:
+                window.fill(BLACK)
+                groundfile = 'map/smallMap-ground.png'
+                collectablefile = 'map/smallMap-collectables.png'
+                world = World(groundfile, collectablefile)
+                world.rendervisibletiles()
+            if event.key == pygame.K_2:
+                window.fill(BLACK)
+                groundfile = 'map/World7-ground.png'
+                collectablefile = 'map/World7-collectables.png'
+                world = World(groundfile, collectablefile)
+                world.rendervisibletiles()
     return gameended
 
-world = World()
+world = World(groundfile, collectablefile)
 world.moveplayer(0, 0)
 HUDWIDTH = 92
 worldviewrect = pygame.Rect(0, 0, WINDOWSIZE[0]-HUDWIDTH, WINDOWSIZE[1])
