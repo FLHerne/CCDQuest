@@ -109,8 +109,8 @@ class Cell:
             self.solid = False
             self.difficulty = 1
             self.name = "floor"
-            self.fireignitechance = 0.18
-            self.fireoutchance = 0.02
+            self.fireignitechance = 0.5
+            self.fireoutchance = 0.05
             self.hasroof = True
         else:
             raise Exception("Unknown map color")
