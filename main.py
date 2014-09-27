@@ -23,7 +23,10 @@ import collectables
 groundfile = 'map/smallMap-ground.png'
 collectablefile = 'map/smallMap-collectables.png'
 
-def handleevents():
+worldnumber = 0
+worlds = [['map/smallMap-ground.png', 'map/smallMap-collectables.png'], ['map/World7-ground.png', 'map/World7-collectables.png']]
+
+def handleevents(worldnumber):
     '''respond to user input'''
     global world
     global window
@@ -54,22 +57,17 @@ def handleevents():
             if world.player.score[collectables.CHOCOLATE] <= 0:
                 gameended = collectables.CHOCOLATE
             if world.player.score[collectables.COIN] == world.cellmap.origcoins:
-                gameended = collectables.COIN
-            if event.key == pygame.K_1:
                 window.fill(BLACK)
-                groundfile = 'map/smallMap-ground.png'
-                collectablefile = 'map/smallMap-collectables.png'
-                world = World(groundfile, collectablefile)
+                if worldnumber < len(worlds)+000:
+                    worldnumber += 1
+                    world = World(worlds[worldnumber][0], worlds[worldnumber][1])
+                    hud = HUD(world, window)
+                else:
+                    gameended = collectables.COIN
                 world.rendervisibletiles()
-            if event.key == pygame.K_2:
-                window.fill(BLACK)
-                groundfile = 'map/World7-ground.png'
-                collectablefile = 'map/World7-collectables.png'
-                world = World(groundfile, collectablefile)
-                world.rendervisibletiles()
-    return gameended
+    return gameended, worldnumber
 
-world = World(groundfile, collectablefile)
+world = World(worlds[worldnumber][0], worlds[worldnumber][1])
 world.moveplayer(0, 0)
 HUDWIDTH = 92
 worldviewrect = pygame.Rect(0, 0, WINDOWSIZE[0]-HUDWIDTH, WINDOWSIZE[1])
@@ -83,7 +81,7 @@ messageboxregion = pygame.Rect(messageboxpadding, WINDOWSIZE[1]-messageboxheight
 gameended = False
 
 while not gameended:
-    gameended = handleevents()
+    gameended, worldnumber = handleevents(worldnumber)
     worldviewrect.width = window.get_width()-HUDWIDTH
     worldviewrect.height = window.get_height()
     hudrect.left = window.get_width()-HUDWIDTH
