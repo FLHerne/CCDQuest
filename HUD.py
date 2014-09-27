@@ -133,3 +133,10 @@ class HUD:
             splash("You found all the coins!")
         else:
             splash("What happened here?")
+          
+    def loading(self, description):
+        #pygame.draw.rect(self.window, BLACK, self.window.get_rect())
+        self.window.blit(hudimages.HourGlass, ((self.window.get_width()-hudimages.HourGlass.get_width())/2, (self.window.get_height()-hudimages.HourGlass.get_height())/2))
+        textbox = TextBox(25, WHITE, False)
+        textbox.draw(description, self.window.get_rect().move(0, hudimages.HourGlass.get_height()), surface=self.window)
+        

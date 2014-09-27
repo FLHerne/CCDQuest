@@ -16,3 +16,5 @@ HudBackground = pygame.image.load("hud/RockWall.png").convert()
 MessageBackground = pygame.image.load("hud/MessageBackground.png").convert()
 MessageBackgroundLeft = pygame.image.load("hud/MessageBackgroundLeft.png").convert()
 MessageBackgroundRight = pygame.image.load("hud/MessageBackgroundRight.png").convert()
+
+HourGlass = pygame.image.load("hud/HourGlass.png").convert_alpha()
