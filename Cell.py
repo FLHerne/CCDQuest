@@ -19,6 +19,7 @@ class Cell:
         self.temperature = 20
         self.fireignitechance = 0
         self.fireoutchance = 1
+        self.hasroof = False
         if groundcolor == BLACK:
             self.image = images.Wall
             self.transparent = False
@@ -87,7 +88,7 @@ class Cell:
             self.solid = False
             self.difficulty = 8
             self.name = "forest"
-            self.fireignitechance = 0.18
+            self.fireignitechance = 0.5
             self.fireoutchance = 0.1
             self.top = True
         elif groundcolor == DARKYELLOW:
@@ -102,6 +103,15 @@ class Cell:
             self.solid = False
             self.difficulty = 1
             self.name = "paving"
+        elif groundcolor == DARKPINK:
+            self.image = images.Floor
+            self.transparent = True
+            self.solid = False
+            self.difficulty = 1
+            self.name = "floor"
+            self.fireignitechance = 0.18
+            self.fireoutchance = 0.02
+            self.hasroof = True
         else:
             raise Exception("Unknown map color")
 
@@ -133,6 +143,7 @@ class Cell:
         if not self.destructable:
             return False
         self.damaged = True
+        self.hasroof = False
         self.name = "shattered debris"
         self.collectableitem = None
         self.top = False
