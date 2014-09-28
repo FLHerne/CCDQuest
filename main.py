@@ -21,10 +21,10 @@ from keysettings import *
 import collectables
 
 worldnumber = 0
-worlds = [['map/smallMap-ground.png', 'map/smallMap-collectables.png'],
-          #['map/Labyrinth-ground.png', 'map/Labyrinth-collectables.png'],
-          #['map/World7-ground.png', 'map/World7-collectables.png'],
-          ['map/terrain.png', 'map/blank.png']]
+worlds = [['map/smallMap-ground.png', 'map/smallMap-collectables.png', 'Tiny Island'],
+          #['map/Labyrinth-ground.png', 'map/Labyrinth-collectables.png', 'the Maze'],
+          #['map/World7-ground.png', 'map/World7-collectables.png', 'World 7'],
+          ['map/terrain.png', 'map/blank.png', 'a randomly generated world']]
 
 def handleevents(worldnumber):
     '''respond to user input'''
@@ -60,7 +60,7 @@ def handleevents(worldnumber):
             if world.player.score[collectables.COIN] == world.cellmap.origcoins:
                 window.fill(BLACK)
                 if worldnumber < len(worlds):
-                    hud.loadingsplash("Loading next level...")
+                    hud.loadingsplash("Loading next level: " + worlds[worldnumber+1][2])
                     pygame.display.update()
                     worldnumber += 1
                     world = World(worlds[worldnumber][0], worlds[worldnumber][1])
