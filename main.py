@@ -22,8 +22,8 @@ import collectables
 
 worldnumber = 0
 worlds = [['map/smallMap-ground.png', 'map/smallMap-collectables.png', 'Tiny Island'],
-          #['map/Labyrinth-ground.png', 'map/Labyrinth-collectables.png', 'the Maze'],
-          #['map/World7-ground.png', 'map/World7-collectables.png', 'World 7'],
+          ['map/Labyrinth-ground.png', 'map/Labyrinth-collectables.png', 'the Maze'],
+          ['map/World7-ground.png', 'map/World7-collectables.png', 'World 7'],
           ['map/terrain.png', 'map/blank.png', 'a randomly generated world']]
 
 def handleevents(worldnumber):
@@ -51,6 +51,22 @@ def handleevents(worldnumber):
                 move_x -= 1
             if event.key == RIGHT:
                 move_x += 1
+            if event.key == pygame.K_1:
+                window.fill(BLACK)
+                worldnumber -= 1
+                hud.loadingsplash("Loading next level: " + worlds[worldnumber][2])
+                pygame.display.update()
+                world = World(worlds[worldnumber][0], worlds[worldnumber][1])
+                window.fill(BLACK)
+                hud = HUD(world, window)
+            if event.key == pygame.K_2:
+                window.fill(BLACK)
+                worldnumber += 1
+                hud.loadingsplash("Loading next level: " + worlds[worldnumber][2])
+                pygame.display.update()
+                world = World(worlds[worldnumber][0], worlds[worldnumber][1])
+                window.fill(BLACK)
+                hud = HUD(world, window)
             world.moveplayer(move_x, move_y)
             if event.key == BLAST:
                 world.player.detonate(world.cellmap)
