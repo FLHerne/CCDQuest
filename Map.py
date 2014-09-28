@@ -40,14 +40,14 @@ class Map():
         '''Set map item with [], wrapping'''
         self.cellarray[self.index(coord)] = value
 
-    def ignite(self, coord, multiplier=True):
+    def ignite(self, coord, multiplier=1, forceignite=False):
         '''Start a fire at coord, with chance cell.firestartchance * multiplier'''
         cell = self[coord]
         if cell.collectableitem == collectables.DYNAMITE:
             self.detonate(coord)
-        if multiplier is True or random.random() < cell.fireignitechance * multiplier:
+        if forceignite or random.random() < cell.fireignitechance * multiplier:
             cell.burning = True
-            if not (multiplier is True):
+            if cell.fireignitechance > 0:
                 cell.destroy()
             self.burningtiles.add((coord[0]%self.size[0], coord[1]%self.size[1]))
             return True
@@ -60,7 +60,7 @@ class Map():
             for dx in (-1, 0, 1):
                 for dy in (-1, 0, 1):
                     curpos = (epicentre[0]+dx, epicentre[1]+dy)
-                    if not self.ignite(curpos, 3):
+                    if not self.ignite(curpos, multiplier=3):
                         self[curpos].destroy()
         if not self[coord].destructable:
             return False
@@ -72,7 +72,7 @@ class Map():
         for tile in self.burningtiles.copy():
             cell = self[tile]
             for nbrpos in [(tile[0]-1, tile[1]), (tile[0], tile[1]-1), (tile[0]+1, tile[1]), (tile[0], tile[1]+1)]:
-                self.ignite(nbrpos, 1)
+                self.ignite(nbrpos)
             if random.random() < cell.fireoutchance:
                 cell.burning = False
                 self.burningtiles.remove(tile)
