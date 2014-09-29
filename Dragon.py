@@ -36,7 +36,7 @@ class Dragon:
                         cellmap.ignite(tile, forceignite=True)
                     break
 
-        if not cellmap[playerpos].top and not cellmap[playerpos].hasroof and random.random() < Dragon.speed:
+        if not cellmap[playerpos]['top'] and not cellmap[playerpos]['hasroof'] and random.random() < Dragon.speed:
             offset = tileoffset(self.position, playerpos, cellmap.size)
             if offset[0]**2 + offset[1]**1 <= Dragon.detectionrange**2:
                 newdirection = list(self.direction)
