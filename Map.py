@@ -38,7 +38,8 @@ class Map():
             ('hasroof',         numpy.bool_),
             ('difficulty',      numpy.int8),
             ('transparent',     numpy.bool_),
-            ('solid',     numpy.bool_),
+            ('solid',           numpy.bool_),
+            ('image',           numpy.int8)
             ])
 
         self.cellarray = numpy.ndarray(self.size, dtype=celldtype)
@@ -67,7 +68,7 @@ class Map():
         if not cell['explored']:
             drawSurface.blit(images.Unknown, DrawPos)
             return
-        drawSurface.blit(images.Snow, DrawPos)
+        drawSurface.blit(images.Terrain[cell['image']], DrawPos)
         if cell['damaged']:
             drawSurface.blit(images.Damaged, DrawPos)
         if cell['collectableitem'] != 0:
