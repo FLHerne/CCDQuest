@@ -1,6 +1,6 @@
 import pygame
 import random
-from CellFiller import *
+import CellFiller
 from colors import *
 import collectables
 import images
@@ -28,8 +28,8 @@ class Map():
             ('burning',         numpy.bool_),
             ('explored',        numpy.bool_),
             ('visible',         numpy.bool_),
-            ('name',            numpy.str_),
             ('collectableitem', numpy.int8),
+            ('name',            numpy.str_),
             ('top',             numpy.bool_),
             ('destructable',    numpy.bool_),
             ('temperature',     numpy.int8),
@@ -46,8 +46,7 @@ class Map():
             for y in xrange(0, self.size[1]):
                 groundcolour = groundimage.unmap_rgb(groundmap[x, y])
                 collectablecolour = collectablesimage.unmap_rgb(collectablesmap[x, y])
-                filler = CellFiller(groundcolour, collectablecolour)
-                self.cellarray[x][y] = filler.totuple()
+                self.cellarray[x][y] = (0,0,0,0) + CellFiller.collectablet[tuple(collectablecolour)[0:3]] + CellFiller.terraint[tuple(groundcolour)[0:3]]
                 if collectablecolour == START:
                     self.startpos = (x, y)
                 elif self.cellarray[x][y]['collectableitem'] == collectables.COIN:

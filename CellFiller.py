@@ -1,125 +1,40 @@
 from colors import *
 import collectables
 
-class CellFiller:
-    def __init__(self, groundcolor, collectablecolor):
-        '''Set up initial attributes'''
-        self.damaged = False
-        self.burning = False
-        self.explored = False
-        self.visible = False
-        self.name = "UNNAMED TERRAIN"
-        self.collectableitem = 0
-        self.top = False
-        self.destructable = True
-        self.temperature = 20
-        self.fireignitechance = 0
-        self.fireoutchance = 1
-        self.hasroof = False
-        if groundcolor == BLACK:
-            self.transparent = False
-            self.solid = True
-            self.difficulty = 3
-        elif groundcolor == GREY:
-            self.transparent = True
-            self.solid = False
-            self.difficulty = 5
-            self.name = "rocky ground"
-        elif groundcolor == BROWN:
-            self.transparent = True
-            self.solid = False
-            self.difficulty = 2
-            self.name = "wooden planking"
-            self.fireignitechance = 0.4
-            self.fireoutchance = 0.1
-        elif groundcolor == WHITE:
-            self.transparent = True
-            self.solid = False
-            self.difficulty = 4
-            self.name = "snow"
-            self.temperature = -5
-        elif groundcolor == LIGHTBLUE:
-            self.transparent = True
-            self.solid = False
-            self.difficulty = 25
-            self.name = "water"
-            self.destructable = False
-            self.temperature = 12
-        elif groundcolor == BLUE:
-            self.transparent = True
-            self.solid = True
-            self.difficulty = 25
-            self.name = "deep water"
-            self.destructable = False
-            self.temperature = 8
-        elif groundcolor == GREEN:
-            self.transparent = True
-            self.solid = False
-            self.difficulty = 2
-            self.name = "grass"
-            self.fireignitechance = 0.1
-            self.fireoutchance = 0.3
-        elif groundcolor == BLUEGREY:
-            self.transparent = True
-            self.solid = False
-            self.difficulty = 20
-            self.name = "marshland"
-        elif groundcolor == CYAN:
-            self.transparent = True
-            self.solid = True
-            self.difficulty = 3
-            self.name = "window"
-        elif groundcolor == DARKGREEN:
-            self.transparent = False
-            self.solid = False
-            self.difficulty = 8
-            self.name = "forest"
-            self.fireignitechance = 0.5
-            self.fireoutchance = 0.1
-            self.top = True
-        elif groundcolor == DARKYELLOW:
-            self.transparent = True
-            self.solid = False
-            self.difficulty = 3
-            self.name = "sand"
-        elif groundcolor == LIGHTYELLOW:
-            self.transparent = True
-            self.solid = False
-            self.difficulty = 1
-            self.name = "paving"
-        elif groundcolor == DARKPINK:
-            self.transparent = True
-            self.solid = False
-            self.difficulty = 1
-            self.name = "floor"
-            self.fireignitechance = 0.5
-            self.fireoutchance = 0.05
-            self.hasroof = True
-        else:
-            raise Exception("Unknown map color")
+terraint = {
+    # name top destructable temperature fireignitechance fireoutchance hasroof difficulty transparent solid
+    BLACK:
+        ('wall', False, True, 20, 0, 1, False, 3, False, True),
+    GREY:
+        ('rocky ground', False, True, 20, 0, 1, False, 5, True, False),
+    BROWN:
+        ('wooden planking', False, True, 20, 0.4, 0.1, False, 2, True, False),
+    WHITE:
+        ('snow', False, True, -5, 0, 1, False, 4, True, False),
+    LIGHTBLUE:
+        ('water', False, False, 12, 0, 1, False, 25, True, False),
+    BLUE:
+        ('deep water', False, False, 8, 0, 1, False, 25, True, True),
+    GREEN:
+        ('grass', False, True, 20, 0.1, 0.3, False, 2, True, False),
+    BLUEGREY:
+        ('marshland', False, True, 20, 0, 1, False, 20, True, False),
+    CYAN:
+        ('window', False, True, 20, 0, 1, False, 3, True, True),
+    DARKGREEN:
+        ('forest', True, True, 20, 0.5, 0.1, False, 8, False, False),
+    DARKYELLOW:
+        ('sand', False, True, 20, 0, 1, False, 3, True, False),
+    LIGHTYELLOW:
+        ('paving', False, True, 20, 0, 1, False, 1, True, False),
+    DARKPINK:
+        ('floor', False, True, 20, 0.5, 0.05, True, 1, True, False)
+}
 
-        if collectablecolor == YELLOW:
-            self.collectableitem = collectables.COIN
-        elif collectablecolor == BROWN:
-            self.collectableitem = collectables.CHOCOLATE
-        elif collectablecolor == RED:
-            self.collectableitem = collectables.DYNAMITE
-
-    def totuple(self):
-        return (
-            self.damaged, #0
-            self.burning, #0
-            self.explored, #0
-            self.visible, #0
-            self.name, #typefixed
-            self.collectableitem, #instance
-            self.top, #typefixed
-            self.destructable, #typefixed
-            self.temperature, #typefixed
-            self.fireignitechance, #typefixed
-            self.fireoutchance, #typefixed
-            self.hasroof, #typefixed
-            self.difficulty, #typefixed
-            self.transparent, #typefixed
-            self.solid #typefixed
-            )
+collectablet = {
+    WHITE: (0,),
+    MAGENTA: (0,),
+    YELLOW: (collectables.COIN,),
+    BROWN: (collectables.CHOCOLATE,),
+    RED: (collectables.DYNAMITE,)
+}
