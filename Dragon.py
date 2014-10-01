@@ -44,6 +44,10 @@ class Dragon:
                     newdirection[0] = cmp(offset[0], 0)
                 elif abs(offset[1]) > abs(offset[0]):
                     newdirection[1] = cmp(offset[1], 0)
+                elif cmp(offset[0], 0) != cmp(newdirection[0], 0):
+                    newdirection[0] = -self.direction[0]
+                elif cmp(offset[1], 0) != cmp(newdirection[1], 0):
+                    newdirection[1] = -self.direction[1]
                 self.direction = tuple(newdirection)
 
         self.position = ((self.position[0]+self.direction[0]) % cellmap.size[0],
