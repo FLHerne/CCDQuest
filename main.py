@@ -57,9 +57,9 @@ def handleevents(worldnumber):
                 world.moveplayer(0, 0)
             if world.player.score[collectables.CHOCOLATE] <= 0:
                 gameended = collectables.CHOCOLATE
-            if world.player.score[collectables.COIN] == world.cellmap.origcoins:
+            if world.player.score[collectables.COIN] == world.cellmap.origcoins+11111111111:
                 window.fill(BLACK)
-                if worldnumber < len(worlds):
+                if worldnumber < len(worlds)-1:
                     hud.loadingsplash("Loading next level...")
                     pygame.display.update()
                     worldnumber += 1

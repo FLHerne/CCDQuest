@@ -5,6 +5,7 @@ from colors import *
 import collectables
 import images
 import numpy
+import time
 
 class Map():
     '''Contains array of Cells and properties representing the map as a whole'''
@@ -13,15 +14,18 @@ class Map():
 
     def __init__(self, groundfile, collectablefile):
         '''Load the map from image files'''
+        intime = time.clock()
+        print intime
         START = MAGENTA
-        groundimage = pygame.image.load(groundfile)
-        groundmap = pygame.PixelArray(groundimage)
-        collectablesimage = pygame.image.load(collectablefile)
-        collectablesmap = pygame.PixelArray(collectablesimage)
+        groundimage = pygame.image.load(groundfile).convert()
+        groundarray = pygame.surfarray.pixels2d(groundimage)
+        collectablesimage = pygame.image.load(collectablefile).convert()
+        collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
         self.size = list(groundimage.get_rect().size)
         self.startpos = None
         self.origcoins = 0
         self.burningtiles = set()
+        self.crcount = 0
 
         celldtype = numpy.dtype([
             ('damaged',         numpy.bool_),
@@ -42,16 +46,22 @@ class Map():
             ('image',           numpy.int8)
             ])
 
+        def createcell(ground, collectable):
+            collectableitem = CellFiller.collectablet[collectable]
+            if collectable == CellFiller.mapcolor(START):
+                self.startpos = (102, 105)
+            elif collectableitem == collectables.COIN:
+                self.origcoins += 1
+            return list((0,0,0,0) + collectableitem + CellFiller.terraint[ground])
+        procfunc = numpy.frompyfunc(createcell, 2, 1)
+        temparr = procfunc(groundarray, collectablesarray)
         self.cellarray = numpy.ndarray(self.size, dtype=celldtype)
         for x in xrange(0, self.size[0]):
             for y in xrange(0, self.size[1]):
-                groundcolour = groundimage.unmap_rgb(groundmap[x, y])
-                collectablecolour = collectablesimage.unmap_rgb(collectablesmap[x, y])
-                self.cellarray[x][y] = (0,0,0,0) + CellFiller.collectablet[tuple(collectablecolour)[0:3]] + CellFiller.terraint[tuple(groundcolour)[0:3]]
-                if collectablecolour == START:
-                    self.startpos = (x, y)
-                elif self.cellarray[x][y]['collectableitem'] == collectables.COIN:
-                    self.origcoins += 1
+                tempval = tuple(temparr[x][y])
+                self.cellarray[x][y] = tempval
+
+        print time.clock() - intime
 
     def __getitem__(self, coord):
         '''Get map item with [], wrapping'''

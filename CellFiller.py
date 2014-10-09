@@ -1,40 +1,43 @@
 from colors import *
 import collectables
 
+def mapcolor(color):
+    return (color[0] << 16) + (color[1] << 8) + color[2]
+
 terraint = {
     # name top destructable temperature fireignitechance fireoutchance hasroof difficulty transparent solid
-    BLACK:
+    mapcolor(BLACK):
         ('wall', False, True, 20, 0, 1, False, 3, False, True, 7),
-    GREY:
+    mapcolor(GREY):
         ('rocky ground', False, True, 20, 0, 1, False, 5, True, False, 2),
-    BROWN:
+    mapcolor(BROWN):
         ('wooden planking', False, True, 20, 0.4, 0.1, False, 2, True, False, 9),
-    WHITE:
+    mapcolor(WHITE):
         ('snow', False, True, -5, 0, 1, False, 4, True, False, 12),
-    LIGHTBLUE:
+    mapcolor(LIGHTBLUE):
         ('water', False, False, 12, 0, 1, False, 25, True, False, 0),
-    BLUE:
+    mapcolor(BLUE):
         ('deep water', False, False, 8, 0, 1, False, 25, True, True, 1),
-    GREEN:
+    mapcolor(GREEN):
         ('grass', False, True, 20, 0.1, 0.3, False, 2, True, False, 5),
-    BLUEGREY:
+    mapcolor(BLUEGREY):
         ('marshland', False, True, 20, 0, 1, False, 20, True, False, 6),
-    CYAN:
+    mapcolor(CYAN):
         ('window', False, True, 20, 0, 1, False, 3, True, True, 8),
-    DARKGREEN:
+    mapcolor(DARKGREEN):
         ('forest', True, True, 20, 0.5, 0.1, False, 8, False, False, 10),
-    DARKYELLOW:
+    mapcolor(DARKYELLOW):
         ('sand', False, True, 20, 0, 1, False, 3, True, False, 11),
-    LIGHTYELLOW:
+    mapcolor(LIGHTYELLOW):
         ('paving', False, True, 20, 0, 1, False, 1, True, False, 3),
-    DARKPINK:
+    mapcolor(DARKPINK):
         ('floor', False, True, 20, 0.5, 0.05, True, 1, True, False, 4)
 }
 
 collectablet = {
-    WHITE: (0,),
-    MAGENTA: (0,),
-    YELLOW: (collectables.COIN,),
-    BROWN: (collectables.CHOCOLATE,),
-    RED: (collectables.DYNAMITE,)
+    mapcolor(WHITE): (0,),
+    mapcolor(MAGENTA): (0,),
+    mapcolor(YELLOW): (collectables.COIN,),
+    mapcolor(BROWN): (collectables.CHOCOLATE,),
+    mapcolor(RED): (collectables.DYNAMITE,)
 }
