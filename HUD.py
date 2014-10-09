@@ -128,9 +128,7 @@ class HUD:
         textbox = TextBox(fontsize, WHITE, False)
         if icon is not None:
             self.window.blit(icon, [(windowrect.size[axis]-icon.get_size()[axis])/2 for axis in [0,1]])
-            print windowrect
             windowrect.move_ip(0, icon.get_height()/2 + fontsize)
-            print windowrect
         textbox.draw(message, windowrect, surface=self.window)
 
     def endsplash(self, reason):

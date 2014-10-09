@@ -15,7 +15,7 @@ from MessageBox import MessageBox
 from World import World
 from WorldView import WorldView
 
-from colours import *
+from colors import *
 
 from keysettings import *
 import collectables
@@ -26,11 +26,29 @@ worlds = [['map/smallMap-ground.png', 'map/smallMap-collectables.png', 'Tiny Isl
           ['map/World7-ground.png', 'map/World7-collectables.png', 'World 7'],
           ['map/terrain.png', 'map/blank.png', 'a randomly generated world']]
 
-def handleevents(worldnumber):
+def loadworld(newnumber):
+    global hud
+    global world
+    global worldview
+    global worldnumber
+    print 'load', newnumber
+    if newnumber not in range(len(worlds)):
+        return False
+    worldnumber = newnumber
+    hud.loadingsplash("Loading next level: " + worlds[worldnumber][2])
+    pygame.display.update()
+    world = World(worlds[worldnumber][0], worlds[worldnumber][1])
+    window.fill(BLACK)
+    world.rendervisibletiles()
+    hud = HUD(world, window)
+    worldview = WorldView(world, window)
+    return True
+
+def handleevents():
     '''respond to user input'''
     global world
+    global worldnumber
     global window
-    global hud
     gameended = False
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -52,21 +70,9 @@ def handleevents(worldnumber):
             if event.key == RIGHT:
                 move_x += 1
             if event.key == pygame.K_1:
-                window.fill(BLACK)
-                worldnumber -= 1
-                hud.loadingsplash("Loading next level: " + worlds[worldnumber][2])
-                pygame.display.update()
-                world = World(worlds[worldnumber][0], worlds[worldnumber][1])
-                window.fill(BLACK)
-                hud = HUD(world, window)
+                loadworld(worldnumber - 1)
             if event.key == pygame.K_2:
-                window.fill(BLACK)
-                worldnumber += 1
-                hud.loadingsplash("Loading next level: " + worlds[worldnumber][2])
-                pygame.display.update()
-                world = World(worlds[worldnumber][0], worlds[worldnumber][1])
-                window.fill(BLACK)
-                hud = HUD(world, window)
+                loadworld(worldnumber + 1)
             world.moveplayer(move_x, move_y)
             if event.key == BLAST:
                 world.player.detonate(world.cellmap)
@@ -74,16 +80,8 @@ def handleevents(worldnumber):
             if world.player.score[collectables.CHOCOLATE] <= 0:
                 gameended = collectables.CHOCOLATE
             if world.player.score[collectables.COIN] == world.cellmap.origcoins:
-                window.fill(BLACK)
-                if worldnumber < len(worlds):
-                    hud.loadingsplash("Loading next level: " + worlds[worldnumber+1][2])
-                    pygame.display.update()
-                    worldnumber += 1
-                    world = World(worlds[worldnumber][0], worlds[worldnumber][1])
-                    hud = HUD(world, window)
-                else:
+                if not loadworld(worldnumber + 1):
                     gameended = collectables.COIN
-                world.rendervisibletiles()
     return gameended, worldnumber
 
 world = World(worlds[worldnumber][0], worlds[worldnumber][1])
@@ -100,7 +98,7 @@ messageboxregion = pygame.Rect(messageboxpadding, WINDOWSIZE[1]-messageboxheight
 gameended = False
 
 while not gameended:
-    gameended, worldnumber = handleevents(worldnumber)
+    gameended, worldnumber = handleevents()
     worldviewrect.width = window.get_width()-HUDWIDTH
     worldviewrect.height = window.get_height()
     hudrect.left = window.get_width()-HUDWIDTH
