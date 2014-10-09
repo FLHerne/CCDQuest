@@ -5,6 +5,7 @@
 import pygame
 import sys
 import time
+import json
 
 pygame.init()
 WINDOWSIZE = (800, 480)
@@ -21,10 +22,7 @@ from keysettings import *
 import collectables
 
 worldnumber = 0
-worlds = [['map/smallMap-ground.png', 'map/smallMap-collectables.png', 'Tiny Island'],
-          ['map/Labyrinth-ground.png', 'map/Labyrinth-collectables.png', 'the Maze'],
-          ['map/World7-ground.png', 'map/World7-collectables.png', 'World 7'],
-          ['map/terrain.png', 'map/blank.png', 'a randomly generated world']]
+worlds = json.load(open('map/maps.json'))
 
 def loadworld(newnumber):
     global hud
