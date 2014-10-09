@@ -5,6 +5,7 @@
 import pygame
 import sys
 import time
+import json
 
 pygame.init()
 WINDOWSIZE = (800, 480)
@@ -15,22 +16,37 @@ from MessageBox import MessageBox
 from World import World
 from WorldView import WorldView
 
-from colours import *
+from colors import *
 
 from keysettings import *
 import collectables
 
 worldnumber = 0
-worlds = [['map/smallMap-ground.png', 'map/smallMap-collectables.png', 'Tiny Island'],
-          ['map/Labyrinth-ground.png', 'map/Labyrinth-collectables.png', 'the Maze'],
-          ['map/World7-ground.png', 'map/World7-collectables.png', 'World 7'],
-          ['map/terrain.png', 'map/blank.png', 'a randomly generated world']]
+worlds = json.load(open('map/maps.json'))
 
-def handleevents(worldnumber):
+def loadworld(newnumber):
+    global hud
+    global world
+    global worldview
+    global worldnumber
+    print 'Load world', newnumber
+    if newnumber not in range(len(worlds)):
+        return False
+    worldnumber = newnumber
+    hud.loadingsplash("Loading next level: " + worlds[worldnumber][2])
+    pygame.display.update()
+    world = World(worlds[worldnumber][0], worlds[worldnumber][1])
+    world.rendervisibletiles()
+    window.fill(BLACK)
+    hud = HUD(world, window)
+    worldview = WorldView(world, window)
+    return True
+
+def handleevents():
     '''respond to user input'''
     global world
+    global worldnumber
     global window
-    global hud
     gameended = False
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -41,49 +57,21 @@ def handleevents(worldnumber):
             if size[0] >= 320 and size[1] >= 240:
                 window = pygame.display.set_mode(size, pygame.RESIZABLE)
         if event.type == pygame.KEYDOWN:
-            move_x = 0
-            move_y = 0
-            if event.key == UP:
-                move_y -= 1
-            if event.key == DOWN:
-                move_y += 1
-            if event.key == LEFT:
-                move_x -= 1
-            if event.key == RIGHT:
-                move_x += 1
-            if event.key == pygame.K_1:
-                window.fill(BLACK)
-                worldnumber -= 1
-                hud.loadingsplash("Loading next level: " + worlds[worldnumber][2])
-                pygame.display.update()
-                world = World(worlds[worldnumber][0], worlds[worldnumber][1])
-                window.fill(BLACK)
-                hud = HUD(world, window)
-            if event.key == pygame.K_2:
-                window.fill(BLACK)
-                worldnumber += 1
-                hud.loadingsplash("Loading next level: " + worlds[worldnumber][2])
-                pygame.display.update()
-                world = World(worlds[worldnumber][0], worlds[worldnumber][1])
-                window.fill(BLACK)
-                hud = HUD(world, window)
-            world.moveplayer(move_x, move_y)
             if event.key == BLAST:
                 world.player.detonate(world.cellmap)
+            if event.key in MOVEDIRS:
+                world.moveplayer(*MOVEDIRS[event.key])
+            else:
                 world.moveplayer(0, 0)
+            if event.key == pygame.K_1:
+                loadworld(worldnumber - 1)
+            if event.key == pygame.K_2:
+                loadworld(worldnumber + 1)
             if world.player.score[collectables.CHOCOLATE] <= 0:
                 gameended = collectables.CHOCOLATE
             if world.player.score[collectables.COIN] == world.cellmap.origcoins:
-                window.fill(BLACK)
-                if worldnumber < len(worlds):
-                    hud.loadingsplash("Loading next level: " + worlds[worldnumber+1][2])
-                    pygame.display.update()
-                    worldnumber += 1
-                    world = World(worlds[worldnumber][0], worlds[worldnumber][1])
-                    hud = HUD(world, window)
-                else:
+                if not loadworld(worldnumber + 1):
                     gameended = collectables.COIN
-                world.rendervisibletiles()
     return gameended, worldnumber
 
 world = World(worlds[worldnumber][0], worlds[worldnumber][1])
@@ -100,7 +88,7 @@ messageboxregion = pygame.Rect(messageboxpadding, WINDOWSIZE[1]-messageboxheight
 gameended = False
 
 while not gameended:
-    gameended, worldnumber = handleevents(worldnumber)
+    gameended, worldnumber = handleevents()
     worldviewrect.width = window.get_width()-HUDWIDTH
     worldviewrect.height = window.get_height()
     hudrect.left = window.get_width()-HUDWIDTH

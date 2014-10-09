@@ -74,7 +74,8 @@ class World:
             isvisible = False
             for ix in [0, 1]:
                 for iy in [0, 1]:
-                    if self.cellmap[dragon.position[0]+ix, dragon.position[1]+iy].visible:
+                    cell = self.cellmap[dragon.position[0]+ix, dragon.position[1]+iy]
+                    if cell.visible and not (self.cellmap[self.player.position].hasroof and (cell.hasroof or not cell.transparent)):
                         isvisible = True
             if isvisible:
                 offsetsprite = dragon.offsetsprite()

@@ -121,22 +121,25 @@ class HUD:
         self.chocwidget.draw(widgetareas[1], self.world.player.score[collectables.CHOCOLATE])
         self.coinwidget.draw(widgetareas[2], self.world.player.score[collectables.COIN])
 
-    def endsplash(self, reason):
+    def splash(self, message, fontsize=40, icon=None):
         '''Display a splash message across the entire window'''
-        def splash(message):
-            pygame.draw.rect(self.window, BLACK, self.window.get_rect())
-            textbox = TextBox(40, WHITE, False)
-            textbox.draw(message, self.window.get_rect(), surface=self.window)
+        windowrect = self.window.get_rect()
+        pygame.draw.rect(self.window, BLACK, windowrect)
+        textbox = TextBox(fontsize, WHITE, False)
+        if icon is not None:
+            self.window.blit(icon, [(windowrect.size[axis]-icon.get_size()[axis])/2 for axis in [0,1]])
+            windowrect.move_ip(0, icon.get_height()/2 + fontsize)
+        textbox.draw(message, windowrect, surface=self.window)
+
+    def endsplash(self, reason):
+        '''Display an explanation for the game ending'''
         if reason == collectables.CHOCOLATE:
-            splash("You ran out of chocolate!")
+            self.splash("You ran out of chocolate!")
         elif reason == collectables.COIN:
-            splash("You found all the coins!")
+            self.splash("You found all the coins!")
         else:
-            splash("What happened here?")
+            self.splash("What happened here?")
 
     def loadingsplash(self, description):
-        #pygame.draw.rect(self.window, BLACK, self.window.get_rect())
-        self.window.blit(hudimages.HourGlass, ((self.window.get_width()-hudimages.HourGlass.get_width())/2, (self.window.get_height()-hudimages.HourGlass.get_height())/2))
-        textbox = TextBox(25, WHITE, False)
-        textbox.draw(description, self.window.get_rect().move(0, hudimages.HourGlass.get_height()), surface=self.window)
-
+        '''Display a splash screen while a new world loads'''
+        self.splash(description, 25, hudimages.HourGlass)
