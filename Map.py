@@ -50,7 +50,7 @@ class Map():
             collectableitem = CellFiller.collectablet[collectable]
             if collectable == CellFiller.mapcolor(START):
                 self.startpos = (102, 105)
-            elif collectableitem == collectables.COIN:
+            elif collectableitem[0] == collectables.COIN:
                 self.origcoins += 1
             return list((0,0,0,0) + collectableitem + CellFiller.terraint[ground])
         procfunc = numpy.frompyfunc(createcell, 2, 1)
@@ -61,6 +61,7 @@ class Map():
                 tempval = tuple(temparr[x][y])
                 self.cellarray[x][y] = tempval
 
+        print self.startpos, self.origcoins
         print time.clock() - intime
 
     def __getitem__(self, coord):
