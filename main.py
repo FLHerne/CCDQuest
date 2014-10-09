@@ -31,7 +31,7 @@ def loadworld(newnumber):
     global world
     global worldview
     global worldnumber
-    print 'load', newnumber
+    print 'Load world', newnumber
     if newnumber not in range(len(worlds)):
         return False
     worldnumber = newnumber
@@ -39,7 +39,6 @@ def loadworld(newnumber):
     pygame.display.update()
     world = World(worlds[worldnumber][0], worlds[worldnumber][1])
     window.fill(BLACK)
-    world.rendervisibletiles()
     hud = HUD(world, window)
     worldview = WorldView(world, window)
     return True
@@ -59,23 +58,15 @@ def handleevents():
             if size[0] >= 320 and size[1] >= 240:
                 window = pygame.display.set_mode(size, pygame.RESIZABLE)
         if event.type == pygame.KEYDOWN:
-            move_x = 0
-            move_y = 0
-            if event.key == UP:
-                move_y -= 1
-            if event.key == DOWN:
-                move_y += 1
-            if event.key == LEFT:
-                move_x -= 1
-            if event.key == RIGHT:
-                move_x += 1
             if event.key == pygame.K_1:
                 loadworld(worldnumber - 1)
             if event.key == pygame.K_2:
                 loadworld(worldnumber + 1)
-            world.moveplayer(move_x, move_y)
             if event.key == BLAST:
                 world.player.detonate(world.cellmap)
+            if event.key in MOVEDIRS:
+                world.moveplayer(*MOVEDIRS[event.key])
+            else:
                 world.moveplayer(0, 0)
             if world.player.score[collectables.CHOCOLATE] <= 0:
                 gameended = collectables.CHOCOLATE
