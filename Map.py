@@ -13,11 +13,6 @@ class Map():
 
     def __init__(self, mapdict):
         '''Load the map from image files'''
-        groundimage = pygame.image.load(mapdict['terrainfile']).convert()
-        groundarray = pygame.surfarray.pixels2d(groundimage)
-        collectablesimage = pygame.image.load(mapdict['itemfile']).convert()
-        collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
-        self.size = list(groundimage.get_rect().size)
         self.startpos = tuple(mapdict['startpos'])
         self.origcoins = 0
         self.burningtiles = set()
@@ -44,8 +39,14 @@ class Map():
 
         if 'binaryfile' in mapdict:
             self.cellarray = numpy.load(mapdict['binaryfile'])
+            self.size = self.cellarray.shape
 
         else:
+            groundimage = pygame.image.load(mapdict['terrainfile']).convert()
+            groundarray = pygame.surfarray.pixels2d(groundimage)
+            collectablesimage = pygame.image.load(mapdict['itemfile']).convert()
+            collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
+            self.size = list(groundimage.get_rect().size)
             def createcell(ground, collectable):
                 return list((0,0,0,0) + CellFiller.collectablet[collectable] + CellFiller.terraint[ground])
             procfunc = numpy.frompyfunc(createcell, 2, 1)
