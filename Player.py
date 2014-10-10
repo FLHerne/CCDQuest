@@ -28,17 +28,17 @@ class Player:
         if abs(x) + abs(y) != 1:
             return False
         self.direction = (x, y)
-        if cellmap[self.position[0]+x, self.position[1]+y].solid and not FREEPLAYER:
+        if cellmap[self.position[0]+x, self.position[1]+y]['solid'] and not FREEPLAYER:
             self.score[collectables.CHOCOLATE] -= 50
             return False
         self.position = [(self.position[0]+x)%cellmap.size[0],
                          (self.position[1]+y)%cellmap.size[1]]
-        collectable = cellmap[self.position].collectableitem
-        if collectable != None:
+        collectable = cellmap[self.position]['collectableitem']
+        if collectable != 0:
             self.score[collectable] += collectables.value[collectable]
-        cellmap[self.position].collectableitem = None
+        cellmap[self.position]['collectableitem'] = 0
         if not FREEPLAYER:
-            self.score[collectables.CHOCOLATE] -= cellmap[self.position].difficulty
+            self.score[collectables.CHOCOLATE] -= cellmap[self.position]['difficulty']
         return True
 
     def sprite(self):
@@ -59,7 +59,7 @@ class Player:
                         Base = 0                            # how far horizontally or vertically the test ray is from the player
                         while (abs(Base) < self.visibility and
                             cellmap[self.position[0]+(Base if horizontal else 0),
-                                self.position[1]+(0 if horizontal else Base)].transparent):   # repeatedly test if a cell is transparent and within a bounding square
+                                self.position[1]+(0 if horizontal else Base)]['transparent']):   # repeatedly test if a cell is transparent and within a bounding square
                             #Base += Dir1       # FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
                             if horizontal:
                                 x = self.position[0] + Base
@@ -68,8 +68,8 @@ class Player:
                                 x = self.position[0]
                                 y = self.position[1] + Base
                             visible.add((x, y))
-                            cellmap[x, y].visible = True
-                            while cellmap[x, y].transparent and ((self.position[1]-y)**2) + ((self.position[0]-x)**2) <= self.visibility**2:  # test in bounding circle
+                            cellmap[x, y]['visible'] = True
+                            while cellmap[x, y]['transparent'] and ((self.position[1]-y)**2) + ((self.position[0]-x)**2) <= self.visibility**2:  # test in bounding circle
                                 if horizontal:                                                                      # move diagonally
                                     x += Dir1
                                     y += Dir2
@@ -85,13 +85,13 @@ class Player:
             '''Check visibility straight up, down, left and right'''
             for i in (-1, 1):                                                           # Horizontally left and right
                 X = 0                                                                   # start at the player
-                while cellmap[(X*i)+self.position[0], self.position[1]].transparent and X < self.visibility:     # if transparent and within bounding range
+                while cellmap[(X*i)+self.position[0], self.position[1]]['transparent'] and X < self.visibility:     # if transparent and within bounding range
                     visible.add(((X*i)+self.position[0], self.position[1]))
                     X += 1                                                              # move away from player
                 visible.add(((X*i)+self.position[0], self.position[1]))                 # make final cell visible
             for i in (-1, 1):                                                           # Repeat as above, but vertically
                 Y = 0
-                while cellmap[self.position[0], (Y*i)+self.position[1]].transparent and Y < self.visibility:
+                while cellmap[self.position[0], (Y*i)+self.position[1]]['transparent'] and Y < self.visibility:
                     visible.add((self.position[0], (Y*i)+self.position[1]))
                     Y += 1
                 visible.add((self.position[0], (Y*i)+self.position[1]))
@@ -104,7 +104,7 @@ class Player:
         '''Detonate carried explosives at player's location'''
         if self.score[collectables.DYNAMITE] <= 0:
             return
-        if not cellmap[self.position].destructable:
+        if not cellmap[self.position]['destructable']:
             return
         cellmap.detonate(self.position)
         self.score[collectables.DYNAMITE] -= 1

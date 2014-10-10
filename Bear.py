@@ -50,9 +50,9 @@ class Bear:
                     nbrpos[0] >= 2*self.pfmapsize or nbrpos[1] >= 2*self.pfmapsize or
                     nbrpos == (self.pfmapsize, self.pfmapsize)):
                     continue
-                newdist = curdist+cellmap[mapcoord(nbrpos)].difficulty
+                newdist = curdist+cellmap[mapcoord(nbrpos)]['difficulty']
                 if ((dijkstramap[nbrpos[0]][nbrpos[1]][0] <= newdist and dijkstramap[nbrpos[0]][nbrpos[1]][0] != 0) or
-                    cellmap[mapcoord(nbrpos)].solid):
+                    cellmap[mapcoord(nbrpos)]['solid']):
                     continue
                 dijkstramap[nbrpos[0]][nbrpos[1]] = [newdist, curpos, False]
                 heapq.heappush(openlist, (newdist, nbrpos))
@@ -71,7 +71,7 @@ class Bear:
             random.shuffle(poschange)
         newpos = ((self.position[0]+poschange[0]) % cellmap.size[0],
                   (self.position[1]+poschange[1]) % cellmap.size[1])
-        if cellmap[newpos].solid:
+        if cellmap[newpos]['solid']:
             return False
         self.direction = poschange[0] if abs(poschange[0]) else self.direction
         self.position = newpos

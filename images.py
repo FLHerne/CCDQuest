@@ -10,19 +10,21 @@ TILESIZE = 12
 # Images with transparency use convert_alpha().
 
 # Terrain sprites.
-Water = pygame.image.load("tiles/Water.png").convert()
-DeepWater = pygame.image.load("tiles/DeepWater.png").convert()
-Rock = pygame.image.load("tiles/Rock.png").convert()
-Paving = pygame.image.load("tiles/Paving.png").convert()
-Floor = pygame.image.load("tiles/Floor.png").convert()
-Grass = pygame.image.load("tiles/Grass.png").convert()
-Marsh = pygame.image.load("tiles/Marsh.png").convert()
-Wall = pygame.image.load("tiles/Wall.png").convert()
-Glass = pygame.image.load("tiles/Glass.png").convert()
-Wood = pygame.image.load("tiles/Wood.png").convert()
-Trees = pygame.image.load("tiles/Trees.png").convert()
-Sand = pygame.image.load("tiles/Sand.png").convert()
-Snow = pygame.image.load("tiles/Snow.png").convert()
+Terrain = [
+    pygame.image.load("tiles/Water.png").convert(),
+    pygame.image.load("tiles/DeepWater.png").convert(),
+    pygame.image.load("tiles/Rock.png").convert(),
+    pygame.image.load("tiles/Paving.png").convert(),
+    pygame.image.load("tiles/Floor.png").convert(),
+    pygame.image.load("tiles/Grass.png").convert(),
+    pygame.image.load("tiles/Marsh.png").convert(),
+    pygame.image.load("tiles/Wall.png").convert(),
+    pygame.image.load("tiles/Glass.png").convert(),
+    pygame.image.load("tiles/Wood.png").convert(),
+    pygame.image.load("tiles/Trees.png").convert(),
+    pygame.image.load("tiles/Sand.png").convert(),
+    pygame.image.load("tiles/Snow.png").convert()
+]
 
 # Overlays for unknown, non-visible, damaged or burning tiles.
 Unknown = pygame.image.load("tiles/Unknown.png").convert()
