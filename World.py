@@ -9,8 +9,8 @@ from Player import Player
 from colors import *
 
 class World:
-    def __init__(self, groundfile, collectablefile):
-        self.cellmap = Map(groundfile, collectablefile)
+    def __init__(self, mapdict):
+        self.cellmap = Map(mapdict)
         self.surface = pygame.Surface((self.cellmap.size[0]*TILESIZE, self.cellmap.size[1]*TILESIZE))
         self.surface.fill(BLACK)
         self.player = Player(self.cellmap.startpos)

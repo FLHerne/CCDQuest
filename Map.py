@@ -5,24 +5,21 @@ from colors import *
 import collectables
 import images
 import numpy
-import time
 
 class Map():
     '''Contains array of Cells and properties representing the map as a whole'''
     CELLDAMAGEDCOST = 5
     CELLBURNINGCOST = 200
 
-    def __init__(self, groundfile, collectablefile):
+    def __init__(self, mapdict):
         '''Load the map from image files'''
-        intime = time.clock()
-        print intime
         START = MAGENTA
-        groundimage = pygame.image.load(groundfile).convert()
+        groundimage = pygame.image.load(mapdict['terrainfile']).convert()
         groundarray = pygame.surfarray.pixels2d(groundimage)
-        collectablesimage = pygame.image.load(collectablefile).convert()
+        collectablesimage = pygame.image.load(mapdict['itemfile']).convert()
         collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
         self.size = list(groundimage.get_rect().size)
-        self.startpos = None
+        self.startpos = tuple(mapdict['startpos'])
         self.origcoins = 0
         self.burningtiles = set()
         self.crcount = 0
@@ -48,9 +45,7 @@ class Map():
 
         def createcell(ground, collectable):
             collectableitem = CellFiller.collectablet[collectable]
-            if collectable == CellFiller.mapcolor(START):
-                self.startpos = (102, 105)
-            elif collectableitem[0] == collectables.COIN:
+            if collectableitem[0] == collectables.COIN:
                 self.origcoins += 1
             return list((0,0,0,0) + collectableitem + CellFiller.terraint[ground])
         procfunc = numpy.frompyfunc(createcell, 2, 1)
@@ -60,9 +55,6 @@ class Map():
             for y in xrange(0, self.size[1]):
                 tempval = tuple(temparr[x][y])
                 self.cellarray[x][y] = tempval
-
-        print self.startpos, self.origcoins
-        print time.clock() - intime
 
     def __getitem__(self, coord):
         '''Get map item with [], wrapping'''

@@ -21,21 +21,21 @@ from colors import *
 from keysettings import *
 import collectables
 
-worldnumber = 0
-worlds = json.load(open('map/maps.json'))
+currentmap = 0
+maps = json.load(open('map/maps.json'))
 
-def loadworld(newnumber):
+def loadmap(newmap):
     global hud
     global world
     global worldview
-    global worldnumber
-    print 'Load world', newnumber
-    if newnumber not in range(len(worlds)):
+    global currentmap
+    print 'Load world', newmap
+    if newmap not in range(len(maps)):
         return False
-    worldnumber = newnumber
-    hud.loadingsplash("Loading next level: " + worlds[worldnumber][2])
+    currentmap = newmap
+    hud.loadingsplash("Loading next level: " + maps[currentmap]['name'])
     pygame.display.update()
-    world = World(worlds[worldnumber][0], worlds[worldnumber][1])
+    world = World(maps[currentmap])
     world.rendervisibletiles()
     window.fill(BLACK)
     hud = HUD(world, window)
@@ -45,7 +45,7 @@ def loadworld(newnumber):
 def handleevents():
     '''respond to user input'''
     global world
-    global worldnumber
+    global currentmap
     global window
     gameended = False
     for event in pygame.event.get():
@@ -64,17 +64,17 @@ def handleevents():
             else:
                 world.moveplayer(0, 0)
             if event.key == pygame.K_1:
-                loadworld(worldnumber - 1)
+                loadmap(currentmap - 1)
             if event.key == pygame.K_2:
-                loadworld(worldnumber + 1)
+                loadmap(currentmap + 1)
             if world.player.score[collectables.CHOCOLATE] <= 0:
                 gameended = collectables.CHOCOLATE
             if world.player.score[collectables.COIN] == world.cellmap.origcoins:
-                if not loadworld(worldnumber + 1):
+                if not loadmap(currentmap + 1):
                     gameended = collectables.COIN
-    return gameended, worldnumber
+    return gameended
 
-world = World(worlds[worldnumber][0], worlds[worldnumber][1])
+world = World(maps[currentmap])
 world.moveplayer(0, 0)
 HUDWIDTH = 92
 worldviewrect = pygame.Rect(0, 0, WINDOWSIZE[0]-HUDWIDTH, WINDOWSIZE[1])
@@ -88,7 +88,7 @@ messageboxregion = pygame.Rect(messageboxpadding, WINDOWSIZE[1]-messageboxheight
 gameended = False
 
 while not gameended:
-    gameended, worldnumber = handleevents()
+    gameended = handleevents()
     worldviewrect.width = window.get_width()-HUDWIDTH
     worldviewrect.height = window.get_height()
     hudrect.left = window.get_width()-HUDWIDTH
