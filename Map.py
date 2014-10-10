@@ -5,6 +5,7 @@ from colors import *
 import collectables
 import images
 import numpy
+import os.path
 
 class Map():
     '''Contains array of Cells and properties representing the map as a whole'''
@@ -37,7 +38,7 @@ class Map():
             ('image',           numpy.int8)
             ])
 
-        if 'binaryfile' in mapdict:
+        if 'binaryfile' in mapdict and os.path.isfile(mapdict['binaryfile']):
             self.cellarray = numpy.load(mapdict['binaryfile'])
             self.size = self.cellarray.shape
 
@@ -56,6 +57,9 @@ class Map():
                 for y in xrange(0, self.size[1]):
                     tempval = tuple(temparr[x][y])
                     self.cellarray[x][y] = tempval
+            if 'binaryfile' in mapdict:
+                print "Creating binary map file:", mapdict['binaryfile']
+                numpy.save(mapdict['binaryfile'], self.cellarray)
 
         self.origcoins = (self.cellarray['collectableitem'] == collectables.COIN).sum()
 
