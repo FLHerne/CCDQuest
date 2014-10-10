@@ -13,7 +13,6 @@ class Map():
 
     def __init__(self, mapdict):
         '''Load the map from image files'''
-        START = MAGENTA
         groundimage = pygame.image.load(mapdict['terrainfile']).convert()
         groundarray = pygame.surfarray.pixels2d(groundimage)
         collectablesimage = pygame.image.load(mapdict['itemfile']).convert()
@@ -43,18 +42,21 @@ class Map():
             ('image',           numpy.int8)
             ])
 
-        def createcell(ground, collectable):
-            collectableitem = CellFiller.collectablet[collectable]
-            if collectableitem[0] == collectables.COIN:
-                self.origcoins += 1
-            return list((0,0,0,0) + collectableitem + CellFiller.terraint[ground])
-        procfunc = numpy.frompyfunc(createcell, 2, 1)
-        temparr = procfunc(groundarray, collectablesarray)
-        self.cellarray = numpy.ndarray(self.size, dtype=celldtype)
-        for x in xrange(0, self.size[0]):
-            for y in xrange(0, self.size[1]):
-                tempval = tuple(temparr[x][y])
-                self.cellarray[x][y] = tempval
+        if 'binaryfile' in mapdict:
+            self.cellarray = numpy.load(mapdict['binaryfile'])
+
+        else:
+            def createcell(ground, collectable):
+                return list((0,0,0,0) + CellFiller.collectablet[collectable] + CellFiller.terraint[ground])
+            procfunc = numpy.frompyfunc(createcell, 2, 1)
+            temparr = procfunc(groundarray, collectablesarray)
+            self.cellarray = numpy.ndarray(self.size, dtype=celldtype)
+            for x in xrange(0, self.size[0]):
+                for y in xrange(0, self.size[1]):
+                    tempval = tuple(temparr[x][y])
+                    self.cellarray[x][y] = tempval
+
+        self.origcoins = (self.cellarray['collectableitem'] == collectables.COIN).sum()
 
     def __getitem__(self, coord):
         '''Get map item with [], wrapping'''

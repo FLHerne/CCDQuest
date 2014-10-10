@@ -2,24 +2,28 @@
     {
         "terrainfile": "map/smallMap-ground.png", 
         "itemfile":    "map/smallMap-collectables.png", 
+        "binaryfile":  "map/smallMap-ground.npy",
         "name":        "Tiny Island",
         "startpos":    [8,6]
     }, 
     {
         "terrainfile": "map/Labyrinth-ground.png", 
         "itemfile":    "map/Labyrinth-collectables.png", 
+        "binaryfile":  "map/Labyrinth-ground.npy",
         "name":        "the Maze",
         "startpos":    [49,49]
     },
     {
         "terrainfile": "map/World7-ground.png",
         "itemfile":    "map/World7-collectables.png",
+        "binaryfile":  "map//World7-ground.npy",
         "name":        "World 7",
         "startpos":    [41,30]
     },
     {
         "terrainfile": "map/terrain.png",
         "itemfile":    "map/blank.png",
+        "binaryfile":  "map/terrain.npy",
         "name":        "a randomly generated world",
         "startpos":    [512,512]
     }
