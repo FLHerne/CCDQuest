@@ -25,7 +25,7 @@ class Map():
             ('explored',        numpy.bool_),
             ('visible',         numpy.bool_),
             ('collectableitem', numpy.int8),
-            ('name',            numpy.str_),
+            ('name',           (numpy.str_, 19)),
             ('top',             numpy.bool_),
             ('destructable',    numpy.bool_),
             ('temperature',     numpy.int8),
