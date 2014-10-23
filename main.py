@@ -26,6 +26,7 @@ maps = json.load(open('map/maps.json'))
 
 def loadmap(newmap):
     global hud
+    global messagebox
     global world
     global worldview
     global currentmap
@@ -36,6 +37,7 @@ def loadmap(newmap):
     hud.loadingsplash("Loading next level: " + maps[currentmap]['name'])
     pygame.display.update()
     world = World(maps[currentmap])
+    messagebox.mgolist = world.bears
     world.rendervisibletiles()
     window.fill(BLACK)
     hud = HUD(world, window)
@@ -81,7 +83,7 @@ worldviewrect = pygame.Rect(0, 0, WINDOWSIZE[0]-HUDWIDTH, WINDOWSIZE[1])
 worldview = WorldView(world, window)
 hudrect = pygame.Rect(WINDOWSIZE[0]-HUDWIDTH, 0, HUDWIDTH, WINDOWSIZE[1])
 hud = HUD(world, window)
-messagebox = MessageBox(window)
+messagebox = MessageBox(window, world.bears)
 messageboxheight = 25
 messageboxpadding = 15
 messageboxregion = pygame.Rect(messageboxpadding, WINDOWSIZE[1]-messageboxheight-messageboxpadding, WINDOWSIZE[0]-HUDWIDTH-messageboxpadding, messageboxheight)
@@ -97,6 +99,7 @@ while not gameended:
     messageboxregion.top = window.get_height()-messageboxheight-messageboxpadding
     messageboxregion.width = window.get_width()-(HUDWIDTH+(2*messageboxpadding))
     string = "The quick brown fox jumped over the lazy dog"
+    messagebox.update()
     messagebox.draw(messageboxregion, string)
     hud.draw(hudrect, scrollpos)
     if gameended:
