@@ -8,12 +8,12 @@ class MessageBox:
     def __init__(self, window, mgolist):
         self.window = window
         self.textbox = TextBox(20, BLACK, False)
-        self.string = ""
+        self.string = None
         self.mgolist = mgolist
 
     def draw(self, region, string):
         '''Draw the message box'''
-        if self.string != "":
+        if self.string != None:
             region = pygame.Rect(region)
 
             textsurface = self.textbox.draw(self.string, region, (True, True))
@@ -33,7 +33,7 @@ class MessageBox:
     def update(self):
         highestpriority = 0
         highestprioritymgo = None
-        self.string = "string unset"
+        #self.string = "string unset"
         if len(self.mgolist) > 0:
             for mgo in self.mgolist:
                 currentpriority = mgo.messagepriority()
@@ -44,4 +44,4 @@ class MessageBox:
                 self.string = highestprioritymgo.string()
                 highestprioritymgo.mdnotify()
         if len(self.mgolist) == 0:
-            self.string = "No bears"
+            self.string = None

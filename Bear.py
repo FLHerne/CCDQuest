@@ -12,7 +12,7 @@ class Bear:
         self.detectionrange = 18
         self.hunting = False
         self.newhunt = False
-        self.message = ""
+        self.message = None
 
     def huntplayer(self, playerpos, cellmap):
         '''Find the best direction to move towards the player'''
@@ -73,8 +73,9 @@ class Bear:
         if not poschange: 
             poschange = [0, random.randint(-1,1)]
             random.shuffle(poschange)
-        if poschange and not self.newhunt:
+        elif not self.newhunt:
             self.newhunt = True
+            self.message = ""
         else:
             self.newhunt = False
         newpos = ((self.position[0]+poschange[0]) % cellmap.size[0],
@@ -89,7 +90,7 @@ class Bear:
         return images.BearRight if self.direction > 0 else images.BearLeft
         
     def messagepriority(self):
-        if self.message != "":
+        if self.message != None:
             return 1
         else:
             return 0
@@ -103,4 +104,4 @@ class Bear:
         #    return "The bear has nothing to say"
 
     def mdnotify(self):
-        self.message = "Bear message canceled"
+        self.message = None
