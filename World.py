@@ -28,7 +28,7 @@ class World:
                     break
             return created
 
-        self.bears = placeBears(int(self.cellmap.size[0] * self.cellmap.size[1]/1000))
+        self.bears = placeBears(int(self.cellmap.size[0] * self.cellmap.size[1]/3000))
 
         def placeDragons(number):
             '''Randomly add dragons to the map'''
