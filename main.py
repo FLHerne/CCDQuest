@@ -38,6 +38,7 @@ def loadmap(newmap):
     pygame.display.update()
     world = World(maps[currentmap])
     messagebox.mgolist = world.bears
+    messagebox.string = None
     world.rendervisibletiles()
     window.fill(BLACK)
     hud = HUD(world, window)
