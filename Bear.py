@@ -66,12 +66,12 @@ class Bear:
             curpos = dijkstramap[curpos[0]][curpos[1]][1]
         return [curpos[0]-self.pfmapsize,
                 curpos[1]-self.pfmapsize]
-                
+
     def move(self, playerpos, cellmap):
         '''Move towards the player, or in a random direction'''
         poschange = self.huntplayer(playerpos, cellmap)
         self.hunting = poschange
-        if not poschange: 
+        if not poschange:
             poschange = [0, random.randint(-1,1)]
             random.shuffle(poschange)
         if self.hunting:
@@ -95,11 +95,11 @@ class Bear:
 
     def sprite(self):
         return images.BearRight if self.direction > 0 else images.BearLeft
-        
+
     def suggestmessage(self, string, priority):
         if priority > self.message[1]:
             self.message = [string, priority]
-        
+
     def messagepriority(self):
         return self.message[1]
 
