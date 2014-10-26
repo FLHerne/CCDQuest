@@ -11,8 +11,9 @@ class Bear:
         self.pfmapsize = 32
         self.detectionrange = 18
         self.hunting = False
+        self.washunting = False
         self.newhunt = False
-        self.message = None
+        self.message = [None, 0]
 
     def huntplayer(self, playerpos, cellmap):
         '''Find the best direction to move towards the player'''
@@ -65,7 +66,7 @@ class Bear:
             curpos = dijkstramap[curpos[0]][curpos[1]][1]
         return [curpos[0]-self.pfmapsize,
                 curpos[1]-self.pfmapsize]
-
+                
     def move(self, playerpos, cellmap):
         '''Move towards the player, or in a random direction'''
         poschange = self.huntplayer(playerpos, cellmap)
@@ -73,11 +74,17 @@ class Bear:
         if not poschange: 
             poschange = [0, random.randint(-1,1)]
             random.shuffle(poschange)
-        elif not self.newhunt:
-            self.newhunt = True
-            self.message = ""
-        else:
-            self.newhunt = False
+        if self.hunting:
+            self.washunting = True
+            if self.newhunt:
+                self.newhunt = False
+                self.suggestmessage("You are being chased by a bear", 1)
+            else:
+                self.newhunt = True
+                self.suggestmessage("A bear catches sight of you", 2)
+        elif self.washunting:
+            self.washunting = False
+            self.suggestmessage("The bear has forggotten about you", 1)
         newpos = ((self.position[0]+poschange[0]) % cellmap.size[0],
                   (self.position[1]+poschange[1]) % cellmap.size[1])
         if cellmap[newpos]['solid']:
@@ -89,19 +96,15 @@ class Bear:
     def sprite(self):
         return images.BearRight if self.direction > 0 else images.BearLeft
         
+    def suggestmessage(self, string, priority):
+        if priority > self.message[1]:
+            self.message = [string, priority]
+        
     def messagepriority(self):
-        if self.message != None:
-            return 1
-        else:
-            return 0
+        return self.message[1]
 
     def string(self):
-        if self.newhunt:
-            self.message = "A bear has caught sight of you"
-        return self.message
-        #    return "A bear has caught sight of you"
-        #else:
-        #    return "The bear has nothing to say"
+        return self.message[0]
 
     def mdnotify(self):
-        self.message = None
+        self.message = [None, 0]
