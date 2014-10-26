@@ -3,5 +3,5 @@
 *.py~
 *.md~
 .gitignore~
-.kate-swp
-.json~
+*.kate-swp
+*.json~
