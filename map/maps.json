@@ -29,7 +29,7 @@
     },
     {
         "terrainfile": "map/terrain.png",
-        "itemfile":    "map/blank.png",
+        "itemfile":    "map/blank1024.png",
         "name":        "A randomly generated world",
         "startpos":    [512,512]
     }
