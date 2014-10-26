@@ -33,15 +33,13 @@ class MessageBox:
     def update(self):
         highestpriority = 0
         highestprioritymgo = None
-        #self.string = "string unset"
         if len(self.mgolist) > 0:
             for mgo in self.mgolist:
-                currentpriority = mgo.messagepriority()
-                if currentpriority > highestpriority:
-                    highestpriority = currentpriority
+                if mgo.message[1] > highestpriority:
+                    highestpriority = mgo.message[1]
                     highestprioritymgo = mgo
-            if highestprioritymgo != None:
-                self.string = highestprioritymgo.string()
+            if highestprioritymgo != None and highestprioritymgo.message[0] != None:
+                self.string = highestprioritymgo.message[0]
                 highestprioritymgo.mdnotify()
-        if len(self.mgolist) == 0:
+        else:
             self.string = None
