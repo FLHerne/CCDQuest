@@ -10,9 +10,7 @@ class Bear:
         self.speed = 0.7    # Chance of moving per turn, max 1, min 0
         self.pfmapsize = 32
         self.detectionrange = 18
-        self.hunting = False
         self.washunting = False
-        self.newhunt = False
         self.message = [None, 0]
 
     def huntplayer(self, playerpos, cellmap):
@@ -70,21 +68,18 @@ class Bear:
     def move(self, playerpos, cellmap):
         '''Move towards the player, or in a random direction'''
         poschange = self.huntplayer(playerpos, cellmap)
-        self.hunting = poschange
-        if not poschange:
-            poschange = [0, random.randint(-1,1)]
-            random.shuffle(poschange)
-        if self.hunting:
-            self.washunting = True
-            if self.newhunt:
-                self.newhunt = False
+        if poschange:
+            if self.washunting:
                 self.suggestmessage("You are being chased by a bear", 1)
             else:
-                self.newhunt = True
                 self.suggestmessage("A bear catches sight of you", 2)
-        elif self.washunting:
-            self.washunting = False
-            self.suggestmessage("The bear has forgotten about you", 1)
+            self.washunting = True
+        else:
+            if self.washunting:
+                self.washunting = False
+                self.suggestmessage("The bear has forgotten about you", 1)
+            poschange = [0, random.randint(-1,1)]
+            random.shuffle(poschange)
         newpos = ((self.position[0]+poschange[0]) % cellmap.size[0],
                   (self.position[1]+poschange[1]) % cellmap.size[1])
         if cellmap[newpos]['solid']:
