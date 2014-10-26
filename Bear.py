@@ -15,8 +15,6 @@ class Bear:
 
     def huntplayer(self, playerpos, cellmap):
         '''Find the best direction to move towards the player'''
-        if random.random() > self.speed:
-            return False
         def mindist(a, b, size):
             '''Distance between two values accounting for world wrapping'''
             return min((b-a)%size,(a-b)%size)
@@ -80,8 +78,11 @@ class Bear:
                 self.suggestmessage("The bear has forgotten about you", 1)
             poschange = [0, random.randint(-1,1)]
             random.shuffle(poschange)
-        newpos = ((self.position[0]+poschange[0]) % cellmap.size[0],
-                  (self.position[1]+poschange[1]) % cellmap.size[1])
+        if random.random() > self.speed:
+            newpos = ((self.position[0]+poschange[0]) % cellmap.size[0],
+                    (self.position[1]+poschange[1]) % cellmap.size[1])
+        else:
+            newpos = self.position
         if cellmap[newpos]['solid']:
             return False
         self.direction = poschange[0] if abs(poschange[0]) else self.direction
