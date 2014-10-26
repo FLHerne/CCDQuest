@@ -96,11 +96,5 @@ class Bear:
         if priority > self.message[1]:
             self.message = [string, priority]
 
-    def messagepriority(self):
-        return self.message[1]
-
-    def string(self):
-        return self.message[0]
-
     def mdnotify(self):
         self.message = [None, 0]
