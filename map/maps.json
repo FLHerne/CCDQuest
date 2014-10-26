@@ -21,10 +21,10 @@
         "startpos":    [41,30]
     },
     {
-        "terrainfile": "map/terrain.png",
-        "itemfile":    "map/blank.png",
-        "binaryfile":  "map/terrain.npy",
+        "terrainfile": "map/terrain-roads.png",
+        "itemfile":    "map/blank256.png",
+        "binaryfile":  "map/terrain-roads.npy",
         "name":        "a randomly generated world",
-        "startpos":    [512,512]
+        "startpos":    [155,175]
     }
 ]
