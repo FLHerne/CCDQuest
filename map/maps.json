@@ -10,7 +10,7 @@
         "terrainfile": "map/Labyrinth-ground.png", 
         "itemfile":    "map/Labyrinth-collectables.png", 
         "binaryfile":  "map/Labyrinth-ground.npy",
-        "name":        "the Maze",
+        "name":        "The Maze",
         "startpos":    [49,49]
     },
     {
@@ -24,7 +24,13 @@
         "terrainfile": "map/terrain-roads.png",
         "itemfile":    "map/blank256.png",
         "binaryfile":  "map/terrain-roads.npy",
-        "name":        "a randomly generated world",
+        "name":        "A randomly generated world with roads",
         "startpos":    [155,175]
+    },
+    {
+        "terrainfile": "map/terrain.png",
+        "itemfile":    "map/blank.png",
+        "name":        "A randomly generated world",
+        "startpos":    [512,512]
     }
 ]
