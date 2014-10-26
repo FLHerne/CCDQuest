@@ -84,7 +84,7 @@ class Bear:
                 self.suggestmessage("A bear catches sight of you", 2)
         elif self.washunting:
             self.washunting = False
-            self.suggestmessage("The bear has forggotten about you", 1)
+            self.suggestmessage("The bear has forgotten about you", 1)
         newpos = ((self.position[0]+poschange[0]) % cellmap.size[0],
                   (self.position[1]+poschange[1]) % cellmap.size[1])
         if cellmap[newpos]['solid']:
