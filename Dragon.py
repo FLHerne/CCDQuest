@@ -11,6 +11,8 @@ class Dragon:
         '''Create new dragon in position'''
         self.position = position
         self.direction = UPLEFT
+        self.hunting = False
+        self.message = [None, 0]
 
     def move(self, playerpos, cellmap):
         '''Fly toward the player if nearby, or continue in same direction'''
@@ -32,11 +34,14 @@ class Dragon:
             fronttiles = [addtuple(self.position, self.direction, i) for i in range(1,4)]
             for tile in fronttiles:
                 if tile == tuple(playerpos):
+                    self.suggestmessage("The dragon breaths a jet of fire towards you", 5)
                     for tile in fronttiles:
                         cellmap.ignite(tile, forceignite=True)
                     break
 
+        washunting = self.hunting
         if not cellmap[playerpos]['top'] and not cellmap[playerpos]['hasroof'] and random.random() < Dragon.speed:
+            self.hunting = True
             offset = tileoffset(self.position, playerpos, cellmap.size)
             if offset[0]**2 + offset[1]**1 <= Dragon.detectionrange**2:
                 newdirection = list(self.direction)
@@ -49,6 +54,16 @@ class Dragon:
                 elif cmp(offset[1], 0) != cmp(newdirection[1], 0):
                     newdirection[1] = -self.direction[1]
                 self.direction = tuple(newdirection)
+        else:
+            self.hunting = False
+        if self.hunting:
+            if washunting:
+                self.suggestmessage("You are being hunted down by a dragon", 2)
+            else:
+                self.suggestmessage("A dragon begins to chase you", 3)
+        else:
+            if washunting:
+                self.suggestmessage("The dragon starts to fly away", 1)
 
         self.position = ((self.position[0]+self.direction[0]) % cellmap.size[0],
                          (self.position[1]+self.direction[1]) % cellmap.size[1])
@@ -57,3 +72,10 @@ class Dragon:
     def offsetsprite(self):
         '''Returns sprite plus offset in tiles'''
         return images.DragonRed[self.direction], [-1 if axis == 1 else 0 for axis in self.direction]
+        
+    def suggestmessage(self, string, priority):
+        if priority > self.message[1]:
+            self.message = [string, priority]
+
+    def mdnotify(self):
+        self.message = [None, 0]

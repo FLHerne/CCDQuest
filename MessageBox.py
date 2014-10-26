@@ -11,7 +11,7 @@ class MessageBox:
         self.string = None
         self.mgolist = mgolist
 
-    def draw(self, region, string):
+    def draw(self, region):
         '''Draw the message box'''
         if self.string != None:
             region = pygame.Rect(region)

@@ -84,7 +84,6 @@ class Bear:
 
         washunting = self.hunting
         self.hunting = chaseplayer()
-        print 'hunting', self.hunting
         if self.hunting:
             # Move in direction of player, or randomly if no path found.
             poschange = self.directiontoplayer(playerpos, cellmap) or randommove()
@@ -98,7 +97,6 @@ class Bear:
             if washunting:
                 self.suggestmessage("The bear has lost interest in you", 1)
 
-        print 'poschange', poschange
         self.direction = poschange[0] if abs(poschange[0]) else self.direction
         newpos = ((self.position[0]+poschange[0]) % cellmap.size[0],
                   (self.position[1]+poschange[1]) % cellmap.size[1])

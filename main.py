@@ -37,7 +37,7 @@ def loadmap(newmap):
     hud.loadingsplash("Loading next level: " + maps[currentmap]['name'])
     pygame.display.update()
     world = World(maps[currentmap])
-    messagebox.mgolist = world.bears
+    messagebox.mgolist = world.bears + world.dragons
     messagebox.string = None
     world.rendervisibletiles()
     window.fill(BLACK)
@@ -75,6 +75,7 @@ def handleevents():
             if world.player.score[collectables.COIN] == world.cellmap.origcoins:
                 if not loadmap(currentmap + 1):
                     gameended = collectables.COIN
+            messagebox.update()
     return gameended
 
 world = World(maps[currentmap])
@@ -99,9 +100,7 @@ while not gameended:
     scrollpos = worldview.draw(worldviewrect, world, window)
     messageboxregion.top = window.get_height()-messageboxheight-messageboxpadding
     messageboxregion.width = window.get_width()-(HUDWIDTH+(2*messageboxpadding))
-    string = "The quick brown fox jumped over the lazy dog"
-    messagebox.update()
-    messagebox.draw(messageboxregion, string)
+    messagebox.draw(messageboxregion)
     hud.draw(hudrect, scrollpos)
     if gameended:
         hud.endsplash(gameended)
