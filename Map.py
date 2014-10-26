@@ -1,54 +1,119 @@
 import pygame
 import random
-from Cell import *
+import CellFiller
 from colors import *
 import collectables
+import images
+import numpy
+import os.path
 
 class Map():
     '''Contains array of Cells and properties representing the map as a whole'''
-    def index(self, coord):
-        return (int(coord[0] % self.size[0] * self.size[0]) + coord[1] % self.size[1])
+    CELLDAMAGEDCOST = 5
+    CELLBURNINGCOST = 200
 
-    def __init__(self, groundfile, collectablefile):
+    def __init__(self, mapdict):
         '''Load the map from image files'''
-        START = MAGENTA
-        groundimage = pygame.image.load(groundfile)
-        groundmap = pygame.PixelArray(groundimage)
-        collectablesimage = pygame.image.load(collectablefile)
-        collectablesmap = pygame.PixelArray(collectablesimage)
-        self.size = list(groundimage.get_rect().size)
-        self.startpos = None
+        self.startpos = tuple(mapdict['startpos'])
         self.origcoins = 0
         self.burningtiles = set()
+        self.crcount = 0
 
-        self.cellarray = []
-        for x in xrange(0, self.size[0]):
-            for y in xrange(0, self.size[1]):
-                groundcolour = groundimage.unmap_rgb(groundmap[x, y])
-                collectablecolour = collectablesimage.unmap_rgb(collectablesmap[x, y])
-                self.cellarray.append(Cell(groundcolour, collectablecolour))
-                if collectablecolour == START:
-                    self.startpos = (x, y)
-                elif self[x, y].collectableitem == collectables.COIN:
-                    self.origcoins += 1
+        celldtype = numpy.dtype([
+            ('damaged',         numpy.bool_),
+            ('burning',         numpy.bool_),
+            ('explored',        numpy.bool_),
+            ('visible',         numpy.bool_),
+            ('collectableitem', numpy.int8),
+            ('name',           (numpy.str_, 19)),
+            ('top',             numpy.bool_),
+            ('destructable',    numpy.bool_),
+            ('temperature',     numpy.int8),
+            ('fireignitechance',numpy.float),
+            ('fireoutchance',   numpy.float),
+            ('hasroof',         numpy.bool_),
+            ('difficulty',      numpy.int8),
+            ('transparent',     numpy.bool_),
+            ('solid',           numpy.bool_),
+            ('image',           numpy.int8)
+            ])
+
+        if 'binaryfile' in mapdict and os.path.isfile(mapdict['binaryfile']):
+            self.cellarray = numpy.load(mapdict['binaryfile'])
+            self.size = self.cellarray.shape
+
+        else:
+            groundimage = pygame.image.load(mapdict['terrainfile']).convert()
+            groundarray = pygame.surfarray.pixels2d(groundimage)
+            collectablesimage = pygame.image.load(mapdict['itemfile']).convert()
+            collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
+            self.size = list(groundimage.get_rect().size)
+            def createcell(ground, collectable):
+                return list((0,0,0,0) + CellFiller.collectablet[collectable] + CellFiller.terraint[ground])
+            procfunc = numpy.frompyfunc(createcell, 2, 1)
+            temparr = procfunc(groundarray, collectablesarray)
+            self.cellarray = numpy.ndarray(self.size, dtype=celldtype)
+            for x in xrange(0, self.size[0]):
+                for y in xrange(0, self.size[1]):
+                    tempval = tuple(temparr[x][y])
+                    self.cellarray[x][y] = tempval
+            if 'binaryfile' in mapdict:
+                print "Creating binary map file:", mapdict['binaryfile']
+                numpy.save(mapdict['binaryfile'], self.cellarray)
+
+        self.origcoins = (self.cellarray['collectableitem'] == collectables.COIN).sum()
 
     def __getitem__(self, coord):
         '''Get map item with [], wrapping'''
-        return self.cellarray[self.index(coord)]
+        return self.cellarray[coord[0]%self.size[0]][coord[1]%self.size[1]]
 
     def __setitem__(self, coord, value):
         '''Set map item with [], wrapping'''
-        self.cellarray[self.index(coord)] = value
+        self.cellarray[coord[0]%self.size[0]][coord[1]%self.size[1]] = value
+
+    def draw(self, drawSurface, coord):
+        '''Blit cell graphics to the specified surface'''
+        DrawPos = (coord[0]*images.TILESIZE, coord[1]*images.TILESIZE)
+        cell = self[coord]
+        if not cell['explored']:
+            drawSurface.blit(images.Unknown, DrawPos)
+            return
+        drawSurface.blit(images.Terrain[cell['image']], DrawPos)
+        if cell['damaged']:
+            drawSurface.blit(images.Damaged, DrawPos)
+        if cell['collectableitem'] != 0:
+            drawSurface.blit(images.Collectables[cell['collectableitem']], DrawPos)
+        if cell['burning']:
+            drawSurface.blit(images.Burning, DrawPos)
+        if not cell['visible']:
+            drawSurface.blit(images.NonVisible, DrawPos)
+
+    def destroy(self, coord):
+        '''Change cell attributes to reflect destruction'''
+        cell = self[coord]
+        if not cell['destructable']:
+            return False
+        cell['damaged'] = True
+        cell['hasroof'] = False
+        cell['name'] = "shattered debris"
+        cell['collectableitem'] = 0
+        cell['top'] = False
+        cell['fireignitechance'] = 0
+        cell['fireoutchance'] = 1
+        cell['transparent'] = True
+        cell['solid'] = False
+        cell['difficulty'] += Map.CELLDAMAGEDCOST
+        return True
 
     def ignite(self, coord, multiplier=1, forceignite=False):
         '''Start a fire at coord, with chance cell.firestartchance * multiplier'''
         cell = self[coord]
-        if cell.collectableitem == collectables.DYNAMITE:
+        if cell['collectableitem'] == collectables.DYNAMITE:
             self.detonate(coord)
-        if forceignite or random.random() < cell.fireignitechance * multiplier:
-            cell.burning = True
-            if cell.fireignitechance > 0:
-                cell.destroy()
+        if forceignite or random.random() < cell['fireignitechance'] * multiplier:
+            cell['burning'] = True
+            if cell['fireignitechance'] > 0:
+                self.destroy(coord)
             self.burningtiles.add((coord[0]%self.size[0], coord[1]%self.size[1]))
             return True
         return False
@@ -56,13 +121,13 @@ class Map():
     def detonate(self, coord):
         '''Set off an explosion at coord'''
         def blam(epicentre):
-            self[epicentre].collectableitem = None
+            self[epicentre]['collectableitem'] = 0
             for dx in (-1, 0, 1):
                 for dy in (-1, 0, 1):
                     curpos = (epicentre[0]+dx, epicentre[1]+dy)
                     if not self.ignite(curpos, multiplier=3):
-                        self[curpos].destroy()
-        if not self[coord].destructable:
+                        self.destroy(curpos)
+        if not self[coord]['destructable']:
             return False
         blam(coord)
         return True
@@ -73,6 +138,6 @@ class Map():
             cell = self[tile]
             for nbrpos in [(tile[0]-1, tile[1]), (tile[0], tile[1]-1), (tile[0]+1, tile[1]), (tile[0], tile[1]+1)]:
                 self.ignite(nbrpos)
-            if random.random() < cell.fireoutchance:
-                cell.burning = False
+            if random.random() < cell['fireoutchance']:
+                cell['burning'] = False
                 self.burningtiles.remove(tile)

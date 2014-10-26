@@ -1,22 +1,36 @@
 [
-    [
-        "map/smallMap-ground.png", 
-        "map/smallMap-collectables.png", 
-        "Tiny Island"
-    ], 
-    [
-        "map/Labyrinth-ground.png", 
-        "map/Labyrinth-collectables.png", 
-        "the Maze"
-    ],
-    [
-        "map/World7-ground.png",
-        "map/World7-collectables.png",
-        "World 7"
-    ],
-    [
-        "map/terrain.png",
-        "map/blank.png",
-        "a randomly generated world"
-    ]
+    {
+        "terrainfile": "map/smallMap-ground.png", 
+        "itemfile":    "map/smallMap-collectables.png", 
+        "binaryfile":  "map/smallMap-ground.npy",
+        "name":        "Tiny Island",
+        "startpos":    [8,6]
+    }, 
+    {
+        "terrainfile": "map/Labyrinth-ground.png", 
+        "itemfile":    "map/Labyrinth-collectables.png", 
+        "binaryfile":  "map/Labyrinth-ground.npy",
+        "name":        "The Maze",
+        "startpos":    [49,49]
+    },
+    {
+        "terrainfile": "map/World7-ground.png",
+        "itemfile":    "map/World7-collectables.png",
+        "binaryfile":  "map//World7-ground.npy",
+        "name":        "World 7",
+        "startpos":    [41,30]
+    },
+    {
+        "terrainfile": "map/terrain-roads.png",
+        "itemfile":    "map/blank256.png",
+        "binaryfile":  "map/terrain-roads.npy",
+        "name":        "A randomly generated world with roads",
+        "startpos":    [155,175]
+    },
+    {
+        "terrainfile": "map/terrain.png",
+        "itemfile":    "map/blank1024.png",
+        "name":        "A randomly generated world",
+        "startpos":    [512,512]
+    }
 ]
