@@ -38,7 +38,12 @@ Terrain = [
         pygame.image.load("tiles/Trees8.png").convert(),
     ],
     [pygame.image.load("tiles/Sand.png").convert(),],
-    [pygame.image.load("tiles/Snow.png").convert(),]
+    [
+        pygame.image.load("tiles/Snow1.png").convert(),
+        pygame.image.load("tiles/Snow2.png").convert(),
+        pygame.image.load("tiles/Snow3.png").convert(),
+        pygame.image.load("tiles/Snow4.png").convert(),
+    ]
 ]
 
 # Overlays for unknown, non-visible, damaged or burning tiles.
