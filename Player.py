@@ -107,6 +107,7 @@ class Player:
             return
         if not cellmap[self.position]['destructable']:
             return
+        self.suggestmessage("You detonate some dynamite", 4)
         cellmap.detonate(self.position)
         self.score[collectables.DYNAMITE] -= 1
         
