@@ -36,7 +36,7 @@ class Map():
             ('transparent',     numpy.bool_),
             ('solid',           numpy.bool_),
             ('image',           numpy.int8),
-            ('random',           numpy.int8)
+            ('random',          numpy.int8)
             ])
 
         if 'binaryfile' in mapdict and os.path.isfile(mapdict['binaryfile']):
@@ -79,6 +79,7 @@ class Map():
         if not cell['explored']:
             drawSurface.blit(images.Unknown, DrawPos)
             return
+        sprite = images.Terrain[cell['image'][Cell['random']%len[images.Terrain[cell['image']]]]]
         drawSurface.blit(images.Terrain[cell['image']], DrawPos)
         if cell['damaged']:
             drawSurface.blit(images.Damaged, DrawPos)
