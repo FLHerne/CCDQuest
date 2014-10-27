@@ -37,7 +37,7 @@ def loadmap(newmap):
     hud.loadingsplash("Loading next level: " + maps[currentmap]['name'])
     pygame.display.update()
     world = World(maps[currentmap])
-    messagebox.mgolist = world.bears + world.dragons
+    messagebox.mgolist = world.bears + world.dragons + world.signs
     messagebox.string = None
     world.rendervisibletiles()
     window.fill(BLACK)

@@ -1,6 +1,6 @@
 import images
 
-class Dragon:
+class Sign:
 
     def __init__(self, position, string):
         '''Create new sign in position'''
@@ -11,15 +11,16 @@ class Dragon:
 
     def update(self, playerpos, cellmap):
         '''DOCSTRING NEEDED HERE'''
-        if position = playerpos:
+        if self.position == playerpos:
             self.suggestmessage(self.string, 50)
 
     def sprite(self):
-        return images.BearRight if self.direction > 0 else images.BearLeft
+        return images.Sign
 
     def suggestmessage(self, string, priority):
         if priority > self.message[1]:
             self.message = [string, priority]
+            print "suggesting message"
 
     def mdnotify(self):
         self.message = [None, 0]

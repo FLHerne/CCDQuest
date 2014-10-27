@@ -4,6 +4,7 @@ import collectables
 from images import TILESIZE
 from Bear import Bear
 from Dragon import Dragon
+from Sign import Sign
 from Map import Map
 from Player import Player
 from colors import *
@@ -27,7 +28,6 @@ class World:
                 if len(created) == number:
                     break
             return created
-
         self.bears = placeBears(int(self.cellmap.size[0] * self.cellmap.size[1]/3000))
 
         def placeDragons(number):
@@ -38,6 +38,12 @@ class World:
                 created.append(Dragon(pos))
             return created
         self.dragons = placeDragons(int(self.cellmap.size[0] * self.cellmap.size[1]/50000))
+        
+        def placeSigns():
+            created = []
+            created.append(Sign([6, 5], "This is a sign"))
+            return created
+        self.signs = placeSigns()
 
     def rendervisibletiles(self):
         for x in range(self.player.position[0]-self.player.visibility-1, self.player.position[0]+self.player.visibility+2):
@@ -68,6 +74,11 @@ class World:
             bear.move(self.player.position, self.cellmap)
             if self.cellmap[bear.position]['visible'] and not  self.cellmap[bear.position]['top']:
                 self.surface.blit(bear.sprite(), (bear.position[0]*TILESIZE, bear.position[1]*TILESIZE))
+
+        for sign in self.signs:
+            sign.update(self.player.position, self.cellmap)
+            if not self.cellmap[sign.position]['top']:
+                self.surface.blit(sign.sprite(), (sign.position[0]*TILESIZE, sign.position[1]*TILESIZE))
 
         for dragon in self.dragons:
             isvisible = False
