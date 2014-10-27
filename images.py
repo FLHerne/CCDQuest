@@ -42,7 +42,12 @@ Terrain = [
         pygame.image.load("tiles/Trees7.png").convert(),
         pygame.image.load("tiles/Trees8.png").convert(),
     ],
-    [pygame.image.load("tiles/Sand.png").convert(),],
+    [
+        pygame.image.load("tiles/Sand1.png").convert(),
+        pygame.image.load("tiles/Sand2.png").convert(),
+        pygame.image.load("tiles/Sand3.png").convert(),
+        pygame.image.load("tiles/Sand4.png").convert(),
+    ],
     [
         pygame.image.load("tiles/Snow1.png").convert(),
         pygame.image.load("tiles/Snow2.png").convert(),
