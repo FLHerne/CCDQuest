@@ -1,5 +1,5 @@
 from images import TILESIZE
-from colours import *
+from colors import *
 import pygame
 
 class WorldView:
@@ -27,9 +27,9 @@ class WorldView:
                 self.scrollpos[axis] = (self.scrollpos[axis]+(max(dr[0],min(dr[-1],pq))-pq)/2) % world.surface.get_size()[axis]
 
         def blitworld():
-            oldclip = window.get_clip()
             if drawregion.size < region.size:
                 pygame.draw.rect(window, BLACK, region)
+            oldclip = window.get_clip()
             window.set_clip(drawregion)
             for tx in [self.scrollpos[0]-world.surface.get_width(), self.scrollpos[0], self.scrollpos[0]+world.surface.get_width()]:
                 tx += drawregion.left
