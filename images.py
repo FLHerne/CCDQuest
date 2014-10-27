@@ -16,16 +16,27 @@ Terrain = [
     [pygame.image.load("tiles/Rock.png").convert(),],
     [pygame.image.load("tiles/Paving.png").convert(),],
     [pygame.image.load("tiles/Floor.png").convert(),],
-    [pygame.image.load("tiles/Grass1.png").convert(),
-     pygame.image.load("tiles/Grass2.png").convert(),
-     pygame.image.load("tiles/Grass3.png").convert(),
-     pygame.image.load("tiles/Grass4.png").convert(),
-     pygame.image.load("tiles/Grass5.png").convert()],
+    [
+        pygame.image.load("tiles/Grass1.png").convert(),
+        pygame.image.load("tiles/Grass2.png").convert(),
+        pygame.image.load("tiles/Grass3.png").convert(),
+        pygame.image.load("tiles/Grass4.png").convert(),
+        pygame.image.load("tiles/Grass5.png").convert()
+    ],
     [pygame.image.load("tiles/Marsh.png").convert(),],
     [pygame.image.load("tiles/Wall.png").convert(),],
     [pygame.image.load("tiles/Glass.png").convert(),],
     [pygame.image.load("tiles/Wood.png").convert(),],
-    [pygame.image.load("tiles/Trees.png").convert(),],
+    [
+        pygame.image.load("tiles/Trees1.png").convert(),
+        pygame.image.load("tiles/Trees2.png").convert(),
+        pygame.image.load("tiles/Trees3.png").convert(),
+        pygame.image.load("tiles/Trees4.png").convert(),
+        pygame.image.load("tiles/Trees5.png").convert(),
+        pygame.image.load("tiles/Trees6.png").convert(),
+        pygame.image.load("tiles/Trees7.png").convert(),
+        pygame.image.load("tiles/Trees8.png").convert(),
+    ],
     [pygame.image.load("tiles/Sand.png").convert(),],
     [pygame.image.load("tiles/Snow.png").convert(),]
 ]
