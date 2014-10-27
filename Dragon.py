@@ -41,9 +41,9 @@ class Dragon:
 
         washunting = self.hunting
         if not cellmap[playerpos]['top'] and not cellmap[playerpos]['hasroof'] and random.random() < Dragon.speed:
-            self.hunting = True
             offset = tileoffset(self.position, playerpos, cellmap.size)
             if offset[0]**2 + offset[1]**1 <= Dragon.detectionrange**2:
+                self.hunting = True
                 newdirection = list(self.direction)
                 if abs(offset[0]) > abs(offset[1]):
                     newdirection[0] = cmp(offset[0], 0)
