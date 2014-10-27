@@ -50,7 +50,7 @@ class Map():
             collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
             self.size = list(groundimage.get_rect().size)
             def createcell(ground, collectable):
-                return list((0,0,0,0) + CellFiller.collectablet[collectable] + CellFiller.terraint[ground] + tuple(random.randint(0, 255)))
+                return list((0,0,0,0) + CellFiller.collectablet[collectable] + CellFiller.terraint[ground] + (random.randint(0, 255),))
             procfunc = numpy.frompyfunc(createcell, 2, 1)
             temparr = procfunc(groundarray, collectablesarray)
             self.cellarray = numpy.ndarray(self.size, dtype=celldtype)
@@ -79,8 +79,10 @@ class Map():
         if not cell['explored']:
             drawSurface.blit(images.Unknown, DrawPos)
             return
-        sprite = images.Terrain[cell['image'][Cell['random']%len[images.Terrain[cell['image']]]]]
-        drawSurface.blit(images.Terrain[cell['image']], DrawPos)
+        spritelist = images.Terrain[cell['image']]
+        spritelistindex = (cell['random']%len(spritelist))
+        sprite = spritelist[spritelistindex]
+        drawSurface.blit(sprite, DrawPos)
         if cell['damaged']:
             drawSurface.blit(images.Damaged, DrawPos)
         if cell['collectableitem'] != 0:
