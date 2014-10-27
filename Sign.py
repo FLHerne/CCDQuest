@@ -5,7 +5,6 @@ class Sign:
     def __init__(self, position, string):
         '''Create new sign in position'''
         self.position = position
-        self.hunting = False
         self.string = string
         self.message = [None, 0]
 
