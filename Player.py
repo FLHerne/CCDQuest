@@ -37,6 +37,7 @@ class Player:
         collectable = cellmap[self.position]['collectableitem']
         if collectable != 0:
             self.score[collectable] += collectables.value[collectable]
+            self.suggestmessage("You pick up " + collectables.name[collectable], 4)
         cellmap[self.position]['collectableitem'] = 0
         if not FREEPLAYER:
             self.score[collectables.CHOCOLATE] -= cellmap[self.position]['difficulty']
