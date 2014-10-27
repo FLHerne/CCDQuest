@@ -33,6 +33,7 @@ class MessageBox:
     def update(self):
         highestpriority = 0
         highestprioritymgo = None
+        self.string = None
         if len(self.mgolist) > 0:
             for mgo in self.mgolist:
                 if mgo.message[1] > highestpriority:
