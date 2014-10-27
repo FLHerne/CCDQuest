@@ -72,3 +72,5 @@ DragonRed = {
     DOWNLEFT: DragonRedDownLeft,
     DOWNRIGHT: DragonRedDownRight
 }
+
+Sign = pygame.image.load("tiles/Sign.png").convert_alpha()
