@@ -7,6 +7,7 @@ class Sign:
         self.position = position
         self.string = string
         self.message = [None, 0]
+        self.visible = False
 
     def update(self, playerpos, cellmap):
         '''DOCSTRING NEEDED HERE'''
@@ -22,3 +23,8 @@ class Sign:
 
     def mdnotify(self):
         self.message = [None, 0]
+        
+    def visiblenotify(self, visible):
+        if visible and not self.visible:
+            self.suggestmessage("You see a sign in the distance", 1)
+        self.visible = visible
