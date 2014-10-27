@@ -22,6 +22,7 @@ class Player:
             collectables.CHOCOLATE: 10000,
             collectables.DYNAMITE: 15
         }
+        self.message = [None, 0]
 
     def move(self, x, y, cellmap):
         '''Move if possible, update collectable levels accordingly'''
@@ -108,3 +109,10 @@ class Player:
             return
         cellmap.detonate(self.position)
         self.score[collectables.DYNAMITE] -= 1
+        
+    def suggestmessage(self, string, priority):
+        if priority > self.message[1]:
+            self.message = [string, priority]
+
+    def mdnotify(self):
+        self.message = [None, 0]
