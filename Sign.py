@@ -20,7 +20,6 @@ class Sign:
     def suggestmessage(self, string, priority):
         if priority > self.message[1]:
             self.message = [string, priority]
-            print "suggesting message"
 
     def mdnotify(self):
         self.message = [None, 0]
