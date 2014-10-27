@@ -35,7 +35,8 @@ class Map():
             ('difficulty',      numpy.int8),
             ('transparent',     numpy.bool_),
             ('solid',           numpy.bool_),
-            ('image',           numpy.int8)
+            ('image',           numpy.int8),
+            ('random',           numpy.int8)
             ])
 
         if 'binaryfile' in mapdict and os.path.isfile(mapdict['binaryfile']):
@@ -49,7 +50,7 @@ class Map():
             collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
             self.size = list(groundimage.get_rect().size)
             def createcell(ground, collectable):
-                return list((0,0,0,0) + CellFiller.collectablet[collectable] + CellFiller.terraint[ground])
+                return list((0,0,0,0) + CellFiller.collectablet[collectable] + CellFiller.terraint[ground] + tuple(random.randint(0, 255)))
             procfunc = numpy.frompyfunc(createcell, 2, 1)
             temparr = procfunc(groundarray, collectablesarray)
             self.cellarray = numpy.ndarray(self.size, dtype=celldtype)
