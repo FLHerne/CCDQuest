@@ -13,7 +13,12 @@ TILESIZE = 12
 Terrain = [
     [pygame.image.load("tiles/Water.png").convert(),],
     [pygame.image.load("tiles/DeepWater.png").convert(),],
-    [pygame.image.load("tiles/Rock.png").convert(),],
+    [
+        pygame.image.load("tiles/Rock1.png").convert(),
+        pygame.image.load("tiles/Rock2.png").convert(),
+        pygame.image.load("tiles/Rock3.png").convert(),
+        pygame.image.load("tiles/Rock4.png").convert(),
+    ],
     [pygame.image.load("tiles/Paving.png").convert(),],
     [pygame.image.load("tiles/Floor.png").convert(),],
     [
