@@ -12,7 +12,7 @@ class Sign:
     def update(self, playerpos, cellmap):
         '''DOCSTRING NEEDED HERE'''
         if self.position == playerpos:
-            self.suggestmessage(self.string, 50)
+            self.suggestmessage("The sign reads: " + self.string, 50)
 
     def sprite(self):
         return images.Sign
