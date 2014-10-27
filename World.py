@@ -41,7 +41,7 @@ class World:
         
         def placeSigns():
             created = []
-            created.append(Sign([6, 5], "This is a sign"))
+            created.append(Sign([6, 5], "Please do not throw stones at this sign!"))
             return created
         self.signs = placeSigns()
 
