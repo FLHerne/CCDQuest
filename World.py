@@ -77,7 +77,7 @@ class World:
 
         for sign in self.signs:
             sign.update(self.player.position, self.cellmap)
-            if not self.cellmap[sign.position]['top']:
+            if self.cellmap[sign.position]['explored'] and not self.cellmap[sign.position]['top']:
                 self.surface.blit(sign.sprite(), (sign.position[0]*TILESIZE, sign.position[1]*TILESIZE))
 
         for dragon in self.dragons:
