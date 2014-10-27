@@ -1,0 +1,7 @@
+{
+    "name":        "A large randomly generated world",
+    "terrainfile": "terrain.png",
+    "itemfile":    "collectables.png",
+    "binaryfile":  "map.npy",
+    "startpos":    [512,512]
+}

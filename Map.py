@@ -38,14 +38,14 @@ class Map():
             ('image',           numpy.int8)
             ])
 
-        if 'binaryfile' in mapdict and os.path.isfile(mapdict['binaryfile']):
-            self.cellarray = numpy.load(mapdict['binaryfile'])
+        if 'binaryfile' in mapdict and os.path.isfile('map/'+mapdict['dir']+'/'+mapdict['binaryfile']):
+            self.cellarray = numpy.load('map/'+mapdict['dir']+'/'+mapdict['binaryfile'])
             self.size = self.cellarray.shape
 
         else:
-            groundimage = pygame.image.load(mapdict['terrainfile']).convert()
+            groundimage = pygame.image.load('map/'+mapdict['dir']+'/'+mapdict['terrainfile']).convert()
             groundarray = pygame.surfarray.pixels2d(groundimage)
-            collectablesimage = pygame.image.load(mapdict['itemfile']).convert()
+            collectablesimage = pygame.image.load('map/'+mapdict['dir']+'/'+mapdict['itemfile']).convert()
             collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
             self.size = list(groundimage.get_rect().size)
             def createcell(ground, collectable):
@@ -58,8 +58,8 @@ class Map():
                     tempval = tuple(temparr[x][y])
                     self.cellarray[x][y] = tempval
             if 'binaryfile' in mapdict:
-                print "Creating binary map file:", mapdict['binaryfile']
-                numpy.save(mapdict['binaryfile'], self.cellarray)
+                print "Creating binary map file:", 'map/'+mapdict['dir']+'/'+mapdict['binaryfile']
+                numpy.save('map/'+mapdict['dir']+'/'+mapdict['binaryfile'], self.cellarray)
 
         self.origcoins = (self.cellarray['collectableitem'] == collectables.COIN).sum()
 

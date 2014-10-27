@@ -1,0 +1,7 @@
+{
+    "name":        "Tiny Island",
+    "terrainfile": "terrain.png",
+    "itemfile":    "collectables.png",
+    "binaryfile":  "map.npy",
+    "startpos":    [8,6]
+}
