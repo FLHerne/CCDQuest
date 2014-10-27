@@ -5,6 +5,7 @@
 import pygame
 import sys
 import time
+import os
 import json
 import ConfigParser
 
@@ -23,7 +24,6 @@ from keysettings import *
 import collectables
 
 currentmap = 0
-#maps = json.load(open('map/maps.json'))
 maps = []
 
 mainconfig = ConfigParser.RawConfigParser()
@@ -32,7 +32,7 @@ if not loaded or not mainconfig.has_section("maps"):
     print "Config error!"
     sys.exit(1)
 for im in mainconfig.items("maps"):
-    descfilename = "map/"+im[1]+"/mapdesc.json"
+    descfilename = os.path.join('map', im[1], 'mapdesc.json')
     try:
         imfile = open(descfilename)
     except:
@@ -58,7 +58,7 @@ def loadmap(newmap):
     global world
     global worldview
     global currentmap
-    print 'Load world', newmap, maps[newmap]['name']
+    print 'Load world', newmap
     if newmap not in range(len(maps)):
         return False
     currentmap = newmap
