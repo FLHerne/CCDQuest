@@ -72,12 +72,14 @@ class Map():
         '''Set map item with [], wrapping'''
         self.cellarray[coord[0]%self.size[0]][coord[1]%self.size[1]] = value
 
-    def draw(self, drawSurface, coord):
+    def draw(self, drawSurface, coord, layer):
         '''Blit cell graphics to the specified surface'''
         Drawx = coord[0]*images.TILESIZE
         Drawy = coord[1]*images.TILESIZE
         DrawPos = (Drawx, Drawy)
         cell = self[coord]
+        if not cell['top'] == layer:
+            return
         if not cell['explored']:
             drawSurface.blit(images.Unknown, DrawPos)
             return

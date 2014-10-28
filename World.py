@@ -56,7 +56,10 @@ class World:
                 cell['visible'] = True
         for x in range(self.player.position[0]-self.player.visibility-2, self.player.position[0]+self.player.visibility+3):
             for y in range(self.player.position[1]-self.player.visibility-2, self.player.position[1]+self.player.visibility+3):
-                self.cellmap.draw(self.surface, (x%self.cellmap.size[0], y%self.cellmap.size[1]))
+                self.cellmap.draw(self.surface, (x%self.cellmap.size[0], y%self.cellmap.size[1]), False)
+        for x in range(self.player.position[0]-self.player.visibility-2, self.player.position[0]+self.player.visibility+3):
+            for y in range(self.player.position[1]-self.player.visibility-2, self.player.position[1]+self.player.visibility+3):
+                self.cellmap.draw(self.surface, (x%self.cellmap.size[0], y%self.cellmap.size[1]), True)
         if not self.cellmap[self.player.position]['top']:
             self.surface.blit(self.player.sprite(), (self.player.position[0]*TILESIZE, self.player.position[1]*TILESIZE))
 
