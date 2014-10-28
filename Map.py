@@ -16,6 +16,9 @@ class Map():
     def __init__(self, mapdict):
         '''Load the map from image files'''
         self.startpos = tuple(mapdict['startpos'])
+        self.signdefs = []
+        if 'signs' in mapdict:
+            self.signdefs = mapdict['signs']
         self.origcoins = 0
         self.burningtiles = set()
         self.crcount = 0

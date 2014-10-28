@@ -1,7 +1,7 @@
 import images
 
 class Sign:
-
+    '''Sign that displays message when walked over'''
     def __init__(self, position, string):
         '''Create new sign in position'''
         self.position = position
@@ -23,7 +23,7 @@ class Sign:
 
     def mdnotify(self):
         self.message = [None, 0]
-        
+
     def visiblenotify(self, visible):
         if visible and not self.visible:
             self.suggestmessage("You see a sign in the distance", 1)

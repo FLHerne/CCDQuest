@@ -38,10 +38,11 @@ class World:
                 created.append(Dragon(pos))
             return created
         self.dragons = placeDragons(int(self.cellmap.size[0] * self.cellmap.size[1]/50000))
-        
+
         def placeSigns():
             created = []
-            created.append(Sign([6, 5], "Please do not throw stones at this sign!"))
+            for signdef in self.cellmap.signdefs:
+                created.append(Sign(*signdef))
             return created
         self.signs = placeSigns()
 

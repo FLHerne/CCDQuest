@@ -3,5 +3,9 @@
     "terrainfile": "terrain.png",
     "itemfile":    "collectables.png",
     "binaryfile":  "map.npy",
-    "startpos":    [8,6]
+    "startpos":    [8,6],
+    "signs":       [
+    [[7,3],"Welcome to Tiny Island!"],
+    [[6,6],"Warning: unstable sign"]
+    ]
 }
