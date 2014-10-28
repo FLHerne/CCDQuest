@@ -3,5 +3,17 @@
     "terrainfile": "terrain.png",
     "itemfile":    "collectables.png",
     "binaryfile":  "map.npy",
-    "startpos":    [41,30]
+    "startpos":    [41,30],
+    "signs":       [
+    [[39,23],"No Swimming"],
+    [[63,39],"The stone circle"],
+    [[141,26],"Summit: 96m above sea level"],
+    [[73,59],"Private: keep out"],
+    [[68,57],"Beware of the dog"],
+    [[80,86],"No Fishing"],
+    [[108,83],"Welcome to the docks"],
+    [[121,92],"Dynamite store - Fire Hazard!"],
+    [[102,110],"Deep, dark wood - Here Be Dragons!"],
+    [[64,106],"An Englishman's home is his castle"]
+    ]
 }
