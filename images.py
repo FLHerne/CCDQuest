@@ -11,7 +11,12 @@ TILESIZE = 12
 
 # Terrain sprites.
 Terrain = [
-    [pygame.image.load("tiles/Water.png").convert(),],
+    [
+        pygame.image.load("tiles/Water1.png").convert(),
+        pygame.image.load("tiles/Water2.png").convert(),
+        pygame.image.load("tiles/Water3.png").convert(),
+        pygame.image.load("tiles/Water4.png").convert(),
+    ],
     [pygame.image.load("tiles/DeepWater.png").convert(),],
     [
         pygame.image.load("tiles/Rock1.png").convert(),
