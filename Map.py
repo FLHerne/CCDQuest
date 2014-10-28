@@ -74,7 +74,9 @@ class Map():
 
     def draw(self, drawSurface, coord):
         '''Blit cell graphics to the specified surface'''
-        DrawPos = (coord[0]*images.TILESIZE, coord[1]*images.TILESIZE)
+        Drawx = coord[0]*images.TILESIZE
+        Drawy = coord[1]*images.TILESIZE
+        DrawPos = (Drawx, Drawy)
         cell = self[coord]
         if not cell['explored']:
             drawSurface.blit(images.Unknown, DrawPos)
@@ -82,7 +84,9 @@ class Map():
         spritelist = images.Terrain[cell['image']]
         spritelistindex = (cell['random']%len(spritelist))
         sprite = spritelist[spritelistindex]
-        drawSurface.blit(sprite, DrawPos)
+        Drawxoffset = (images.TILESIZE-sprite.get_width())/2
+        Drawyoffset = (images.TILESIZE-sprite.get_height())/2
+        drawSurface.blit(sprite, (Drawx+Drawxoffset, Drawy+Drawyoffset))
         if cell['damaged']:
             drawSurface.blit(images.Damaged, DrawPos)
         if cell['collectableitem'] != 0:
