@@ -14,6 +14,13 @@ class Sign:
         if self.position == playerpos:
             self.suggestmessage("The sign reads: " + self.string, 50)
 
+        if cellmap[self.position]['visible']:
+            if not self.visible:
+                self.suggestmessage("You see a sign in the distance", 1)
+            self.visible = True
+        else:
+            self.visible = False
+
     def sprite(self):
         return images.Sign
 
@@ -23,8 +30,3 @@ class Sign:
 
     def mdnotify(self):
         self.message = [None, 0]
-
-    def visiblenotify(self, visible):
-        if visible and not self.visible:
-            self.suggestmessage("You see a sign in the distance", 1)
-        self.visible = visible
