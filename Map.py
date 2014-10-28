@@ -36,7 +36,8 @@ class Map():
             ('difficulty',      numpy.int8),
             ('transparent',     numpy.bool_),
             ('solid',           numpy.bool_),
-            ('image',           numpy.int8)
+            ('image',           numpy.int8),
+            ('random',          numpy.int8)
             ])
 
         terrainfilepath = os.path.join('map', mapdict['dir'], mapdict['terrainfile'])
@@ -49,7 +50,7 @@ class Map():
 
         binaryfilepath = None
         if 'binaryfile' in mapdict:
-            os.path.join('map', mapdict['dir'], mapdict['binaryfile'])
+            binaryfilepath = os.path.join('map', mapdict['dir'], mapdict['binaryfile'])
         if  (binaryfilepath and os.path.isfile(binaryfilepath) and
              os.path.getmtime(binaryfilepath) >= os.path.getmtime(terrainfilepath) and
              os.path.getmtime(binaryfilepath) >= os.path.getmtime(itemfilepath)):
@@ -63,7 +64,7 @@ class Map():
             collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
             self.size = list(groundimage.get_rect().size)
             def createcell(ground, collectable):
-                return list((0,0,0,0) + CellFiller.collectablet[collectable] + CellFiller.terraint[ground])
+                return list((0,0,0,0) + CellFiller.collectablet[collectable] + CellFiller.terraint[ground] + (random.randint(0, 255),))
             procfunc = numpy.frompyfunc(createcell, 2, 1)
             temparr = procfunc(groundarray, collectablesarray)
             self.cellarray = numpy.ndarray(self.size, dtype=celldtype)
@@ -92,7 +93,10 @@ class Map():
         if not cell['explored']:
             drawSurface.blit(images.Unknown, DrawPos)
             return
-        drawSurface.blit(images.Terrain[cell['image']], DrawPos)
+        spritelist = images.Terrain[cell['image']]
+        spritelistindex = (cell['random']%len(spritelist))
+        sprite = spritelist[spritelistindex]
+        drawSurface.blit(sprite, DrawPos)
         if cell['damaged']:
             drawSurface.blit(images.Damaged, DrawPos)
         if cell['collectableitem'] != 0:

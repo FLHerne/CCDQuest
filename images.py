@@ -11,19 +11,49 @@ TILESIZE = 12
 
 # Terrain sprites.
 Terrain = [
-    pygame.image.load("tiles/Water.png").convert(),
-    pygame.image.load("tiles/DeepWater.png").convert(),
-    pygame.image.load("tiles/Rock.png").convert(),
-    pygame.image.load("tiles/Paving.png").convert(),
-    pygame.image.load("tiles/Floor.png").convert(),
-    pygame.image.load("tiles/Grass.png").convert(),
-    pygame.image.load("tiles/Marsh.png").convert(),
-    pygame.image.load("tiles/Wall.png").convert(),
-    pygame.image.load("tiles/Glass.png").convert(),
-    pygame.image.load("tiles/Wood.png").convert(),
-    pygame.image.load("tiles/Trees.png").convert(),
-    pygame.image.load("tiles/Sand.png").convert(),
-    pygame.image.load("tiles/Snow.png").convert()
+    [pygame.image.load("tiles/Water.png").convert(),],
+    [pygame.image.load("tiles/DeepWater.png").convert(),],
+    [
+        pygame.image.load("tiles/Rock1.png").convert(),
+        pygame.image.load("tiles/Rock2.png").convert(),
+        pygame.image.load("tiles/Rock3.png").convert(),
+        pygame.image.load("tiles/Rock4.png").convert(),
+    ],
+    [pygame.image.load("tiles/Paving.png").convert(),],
+    [pygame.image.load("tiles/Floor.png").convert(),],
+    [
+        pygame.image.load("tiles/Grass1.png").convert(),
+        pygame.image.load("tiles/Grass2.png").convert(),
+        pygame.image.load("tiles/Grass3.png").convert(),
+        pygame.image.load("tiles/Grass4.png").convert(),
+        pygame.image.load("tiles/Grass5.png").convert()
+    ],
+    [pygame.image.load("tiles/Marsh.png").convert(),],
+    [pygame.image.load("tiles/Wall.png").convert(),],
+    [pygame.image.load("tiles/Glass.png").convert(),],
+    [pygame.image.load("tiles/Wood.png").convert(),],
+    [
+        pygame.image.load("tiles/Trees1.png").convert(),
+        pygame.image.load("tiles/Trees2.png").convert(),
+        pygame.image.load("tiles/Trees3.png").convert(),
+        pygame.image.load("tiles/Trees4.png").convert(),
+        pygame.image.load("tiles/Trees5.png").convert(),
+        pygame.image.load("tiles/Trees6.png").convert(),
+        pygame.image.load("tiles/Trees7.png").convert(),
+        pygame.image.load("tiles/Trees8.png").convert(),
+    ],
+    [
+        pygame.image.load("tiles/Sand1.png").convert(),
+        pygame.image.load("tiles/Sand2.png").convert(),
+        pygame.image.load("tiles/Sand3.png").convert(),
+        pygame.image.load("tiles/Sand4.png").convert(),
+    ],
+    [
+        pygame.image.load("tiles/Snow1.png").convert(),
+        pygame.image.load("tiles/Snow2.png").convert(),
+        pygame.image.load("tiles/Snow3.png").convert(),
+        pygame.image.load("tiles/Snow4.png").convert(),
+    ]
 ]
 
 # Overlays for unknown, non-visible, damaged or burning tiles.
