@@ -1,6 +1,7 @@
 import pygame
 import images
 from images import TILESIZE
+import MGO
 import collectables
 from colors import *
 from directions import *
@@ -8,45 +9,56 @@ from directions import *
 # Remove solidity and movement cost for testing
 FREEPLAYER = False
 
-class Player:
+class Player(MGO.GEMGO):
     '''The player, exploring the grid-based world'''
-    def __init__(self, position):
+    def __init__(self, position, cellmap):
         '''Initialise instance variables'''
-        self.animcounter = 0
+        super(Player, self).__init__(position, cellmap)
         self.color = MAGENTA
         self.visibility = 15
-        self.position = list(position)
         self.direction = RIGHT
         self.score = {
             collectables.COIN: 0,
             collectables.CHOCOLATE: 10000,
             collectables.DYNAMITE: 15
         }
-        self.message = [None, 0]
 
-    def move(self, x, y, cellmap):
-        '''Move if possible, update collectable levels accordingly'''
-        if abs(x) + abs(y) != 1:
-            return False
-        self.direction = (x, y)
-        if cellmap[self.position[0]+x, self.position[1]+y]['solid'] and not FREEPLAYER:
-            self.score[collectables.CHOCOLATE] -= 50
-            return False
-        self.position = [(self.position[0]+x)%cellmap.size[0],
-                         (self.position[1]+y)%cellmap.size[1]]
-        collectable = cellmap[self.position]['collectableitem']
-        if collectable != 0:
-            self.score[collectable] += collectables.value[collectable]
-            self.suggestmessage("You pick up " + collectables.name[collectable], 4)
-        cellmap[self.position]['collectableitem'] = 0
-        if not FREEPLAYER:
-            self.score[collectables.CHOCOLATE] -= cellmap[self.position]['difficulty']
-        return True
+    def update(self, playerpos):
+        pass
 
     def sprite(self):
         return images.Player[self.direction]
 
-    def visible_tiles(self, cellmap):
+    def move(self, x, y):
+        '''Move if possible, update collectable levels accordingly'''
+        if abs(x) + abs(y) != 1:
+            return False
+        self.direction = (x, y)
+        if self.cellmap[self.position[0]+x, self.position[1]+y]['solid'] and not FREEPLAYER:
+            self.score[collectables.CHOCOLATE] -= 50
+            return False
+        self.position = [(self.position[0]+x)%self.cellmap.size[0],
+                         (self.position[1]+y)%self.cellmap.size[1]]
+        collectable = self.cellmap[self.position]['collectableitem']
+        if collectable != 0:
+            self.score[collectable] += collectables.value[collectable]
+            self._suggestmessage("You pick up " + collectables.name[collectable], 4)
+        self.cellmap[self.position]['collectableitem'] = 0
+        if not FREEPLAYER:
+            self.score[collectables.CHOCOLATE] -= self.cellmap[self.position]['difficulty']
+        return True
+
+    def detonate(self):
+        '''Detonate carried explosives at player's location'''
+        if self.score[collectables.DYNAMITE] <= 0:
+            return
+        if not self.cellmap[self.position]['destructable']:
+            return
+        self.suggestmessage("You detonate some dynamite", 4)
+        self.cellmap.detonate(self.position)
+        self.score[collectables.DYNAMITE] -= 1
+
+    def visible_tiles(self):
         '''Calculate and return the set of tiles visible to player'''
         visible = set()
 
@@ -60,7 +72,7 @@ class Player:
                     for Dir2 in (-1, 1):                    # final division into octants
                         Base = 0                            # how far horizontally or vertically the test ray is from the player
                         while (abs(Base) < self.visibility and
-                            cellmap[self.position[0]+(Base if horizontal else 0),
+                            self.cellmap[self.position[0]+(Base if horizontal else 0),
                                 self.position[1]+(0 if horizontal else Base)]['transparent']):   # repeatedly test if a cell is transparent and within a bounding square
                             #Base += Dir1       # FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
                             if horizontal:
@@ -70,8 +82,8 @@ class Player:
                                 x = self.position[0]
                                 y = self.position[1] + Base
                             visible.add((x, y))
-                            cellmap[x, y]['visible'] = True
-                            while cellmap[x, y]['transparent'] and ((self.position[1]-y)**2) + ((self.position[0]-x)**2) <= self.visibility**2:  # test in bounding circle
+                            self.cellmap[x, y]['visible'] = True
+                            while self.cellmap[x, y]['transparent'] and ((self.position[1]-y)**2) + ((self.position[0]-x)**2) <= self.visibility**2:  # test in bounding circle
                                 if horizontal:                                                                      # move diagonally
                                     x += Dir1
                                     y += Dir2
@@ -87,13 +99,13 @@ class Player:
             '''Check visibility straight up, down, left and right'''
             for i in (-1, 1):                                                           # Horizontally left and right
                 X = 0                                                                   # start at the player
-                while cellmap[(X*i)+self.position[0], self.position[1]]['transparent'] and X < self.visibility:     # if transparent and within bounding range
+                while self.cellmap[(X*i)+self.position[0], self.position[1]]['transparent'] and X < self.visibility:     # if transparent and within bounding range
                     visible.add(((X*i)+self.position[0], self.position[1]))
                     X += 1                                                              # move away from player
                 visible.add(((X*i)+self.position[0], self.position[1]))                 # make final cell visible
             for i in (-1, 1):                                                           # Repeat as above, but vertically
                 Y = 0
-                while cellmap[self.position[0], (Y*i)+self.position[1]]['transparent'] and Y < self.visibility:
+                while self.cellmap[self.position[0], (Y*i)+self.position[1]]['transparent'] and Y < self.visibility:
                     visible.add((self.position[0], (Y*i)+self.position[1]))
                     Y += 1
                 visible.add((self.position[0], (Y*i)+self.position[1]))
@@ -101,20 +113,3 @@ class Player:
         diagonalcheck()
         crosscheck()
         return visible
-
-    def detonate(self, cellmap):
-        '''Detonate carried explosives at player's location'''
-        if self.score[collectables.DYNAMITE] <= 0:
-            return
-        if not cellmap[self.position]['destructable']:
-            return
-        self.suggestmessage("You detonate some dynamite", 4)
-        cellmap.detonate(self.position)
-        self.score[collectables.DYNAMITE] -= 1
-        
-    def suggestmessage(self, string, priority):
-        if priority > self.message[1]:
-            self.message = [string, priority]
-
-    def mdnotify(self):
-        self.message = [None, 0]

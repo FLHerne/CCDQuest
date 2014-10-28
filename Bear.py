@@ -1,33 +1,33 @@
 import random
 import images
+import MGO
 
 def mindist(a, b, size):
     '''Distance between two values accounting for world wrapping'''
     return min((b-a)%size,(a-b)%size)
 
-class Bear:
+class Bear(MGO.GEMGO):
     '''Harmless animal that follows the player'''
-    def __init__(self, position):
+    def __init__(self, position, cellmap):
         '''Create bear at position'''
-        self.position = list(position)
+        super(Bear, self).__init__(position, cellmap)
         self.direction = -1 # Left
         self.speed = 0.7    # Chance of moving per turn, max 1, min 0
         self.pfmapsize = 32
         self.detectionrange = 18
         self.hunting = False
-        self.message = [None, 0]
 
-    def directiontoplayer(self, playerpos, cellmap):
+    def directiontoplayer(self, playerpos):
         '''Find the best direction to move towards the player'''
-        if (mindist(playerpos[0], self.position[0], cellmap.size[0]) > self.pfmapsize or
-            mindist(playerpos[1], self.position[1], cellmap.size[1]) > self.pfmapsize):
+        if (mindist(playerpos[0], self.position[0], self.cellmap.size[0]) > self.pfmapsize or
+            mindist(playerpos[1], self.position[1], self.cellmap.size[1]) > self.pfmapsize):
             # Player is outside pathfinder area
             return False
 
         def mapcoord(pfcoord):
             '''Get map coordinate from pathfinder one'''
-            return ((self.position[0] + pfcoord[0] - self.pfmapsize) % cellmap.size[0],
-                    (self.position[1] + pfcoord[1] - self.pfmapsize) % cellmap.size[1])
+            return ((self.position[0] + pfcoord[0] - self.pfmapsize) % self.cellmap.size[0],
+                    (self.position[1] + pfcoord[1] - self.pfmapsize) % self.cellmap.size[1])
 
         foundtarget = False
         dijkstramap = [[[0, (self.pfmapsize, self.pfmapsize), False] for x in xrange(2*self.pfmapsize)] for x in xrange(2*self.pfmapsize)]
@@ -51,9 +51,9 @@ class Bear:
                     nbrpos[0] >= 2*self.pfmapsize or nbrpos[1] >= 2*self.pfmapsize or
                     nbrpos == (self.pfmapsize, self.pfmapsize)):
                     continue
-                newdist = curdist+cellmap[mapcoord(nbrpos)]['difficulty']
+                newdist = curdist+self.cellmap[mapcoord(nbrpos)]['difficulty']
                 if ((dijkstramap[nbrpos[0]][nbrpos[1]][0] <= newdist and dijkstramap[nbrpos[0]][nbrpos[1]][0] != 0) or
-                    cellmap[mapcoord(nbrpos)]['solid']):
+                    self.cellmap[mapcoord(nbrpos)]['solid']):
                     continue
                 dijkstramap[nbrpos[0]][nbrpos[1]] = [newdist, curpos, False]
                 heapq.heappush(openlist, (newdist, nbrpos))
@@ -64,11 +64,11 @@ class Bear:
         return [curpos[0]-self.pfmapsize,
                 curpos[1]-self.pfmapsize]
 
-    def move(self, playerpos, cellmap):
+    def update(self, playerpos):
         def chaseplayer():
             '''Decide whether to chase the player'''
-            if (mindist(playerpos[0], self.position[0], cellmap.size[0])**2 +
-                mindist(playerpos[1], self.position[1], cellmap.size[1])**2) > self.detectionrange**2:
+            if (mindist(playerpos[0], self.position[0], self.cellmap.size[0])**2 +
+                mindist(playerpos[1], self.position[1], self.cellmap.size[1])**2) > self.detectionrange**2:
                 # Can't see/smell/hear (?) player
                 return False
             if random.random() > self.speed:
@@ -86,32 +86,25 @@ class Bear:
         self.hunting = chaseplayer()
         if self.hunting:
             # Move in direction of player, or randomly if no path found.
-            poschange = self.directiontoplayer(playerpos, cellmap) or randommove()
+            poschange = self.directiontoplayer(playerpos) or randommove()
             if washunting:
-                self.suggestmessage("You are being chased by a bear", 1)
+                self._suggestmessage("You are being chased by a bear", 1)
             else:
-                self.suggestmessage("A bear starts chasing you", 2)
+                self._suggestmessage("A bear starts chasing you", 2)
         else:
             # Move randomly.
             poschange = randommove()
             if washunting:
-                self.suggestmessage("The bear has lost interest in you", 1)
+                self._suggestmessage("The bear has lost interest in you", 1)
 
         self.direction = poschange[0] if abs(poschange[0]) else self.direction
-        newpos = ((self.position[0]+poschange[0]) % cellmap.size[0],
-                  (self.position[1]+poschange[1]) % cellmap.size[1])
+        newpos = ((self.position[0]+poschange[0]) % self.cellmap.size[0],
+                  (self.position[1]+poschange[1]) % self.cellmap.size[1])
 
-        if cellmap[newpos]['solid']:
+        if self.cellmap[newpos]['solid']:
             return False
         self.position = newpos
         return True
 
     def sprite(self):
         return images.BearRight if self.direction > 0 else images.BearLeft
-
-    def suggestmessage(self, string, priority):
-        if priority > self.message[1]:
-            self.message = [string, priority]
-
-    def mdnotify(self):
-        self.message = [None, 0]

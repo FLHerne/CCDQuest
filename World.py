@@ -14,7 +14,7 @@ class World:
         self.cellmap = Map(mapdict)
         self.surface = pygame.Surface((self.cellmap.size[0]*TILESIZE, self.cellmap.size[1]*TILESIZE))
         self.surface.fill(BLACK)
-        self.player = Player(self.cellmap.startpos)
+        self.player = Player(self.cellmap.startpos, self.cellmap)
 
         def placeBears(number):
             '''Randomly add bears to the map'''
@@ -24,7 +24,7 @@ class World:
                 attempt = (random.randint(0, self.cellmap.size[0]-1), random.randint(0, self.cellmap.size[1]-1))
                 if self.cellmap[attempt]['name'] not in ['grass', 'forest', 'rocky ground']:
                     continue
-                created.append(Bear(attempt))
+                created.append(Bear(attempt, self.cellmap))
                 if len(created) == number:
                     break
             return created
@@ -35,14 +35,14 @@ class World:
             created = []
             for i in xrange(number):
                 pos = (random.randint(0, self.cellmap.size[0]-1), random.randint(0, self.cellmap.size[1]-1))
-                created.append(Dragon(pos))
+                created.append(Dragon(pos, self.cellmap))
             return created
         self.dragons = placeDragons(int(self.cellmap.size[0] * self.cellmap.size[1]/50000))
 
         def placeSigns():
             created = []
             for signdef in self.cellmap.signdefs:
-                created.append(Sign(*signdef))
+                created.append(Sign(signdef[1], signdef[0], self.cellmap))
             return created
         self.signs = placeSigns()
 
@@ -50,7 +50,7 @@ class World:
         for x in range(self.player.position[0]-self.player.visibility-1, self.player.position[0]+self.player.visibility+2):
             for y in range(self.player.position[1]-self.player.visibility-1, self.player.position[1]+self.player.visibility+2):
                 self.cellmap[x, y]['visible'] = False
-        for tile in self.player.visible_tiles(self.cellmap):
+        for tile in self.player.visible_tiles():
             cell = self.cellmap[tile]
             cell['explored'] = True
             if cell['transparent'] or list(tile) != self.player.position:
@@ -67,20 +67,20 @@ class World:
     def moveplayer(self, x, y):
         '''Move the player by (x, y), move other fauna, update world surface around player'''
         self.cellmap.update()
-        self.player.move(x, y, self.cellmap)
+        self.player.move(x, y)
 
         for dragon in self.dragons:
-            dragon.move(self.player.position, self.cellmap)
+            dragon.update(self.player.position)
 
         self.rendervisibletiles()
 
         for bear in self.bears:
-            bear.move(self.player.position, self.cellmap)
+            bear.update(self.player.position)
             if self.cellmap[bear.position]['visible'] and not  self.cellmap[bear.position]['top']:
                 self.surface.blit(bear.sprite(), (bear.position[0]*TILESIZE, bear.position[1]*TILESIZE))
 
         for sign in self.signs:
-            sign.update(self.player.position, self.cellmap)
+            sign.update(self.player.position)
             if self.cellmap[sign.position]['explored'] and not self.cellmap[sign.position]['top']:
                 self.surface.blit(sign.sprite(), (sign.position[0]*TILESIZE, sign.position[1]*TILESIZE))
 
