@@ -38,10 +38,11 @@ class World:
                 created.append(Dragon(pos))
             return created
         self.dragons = placeDragons(int(self.cellmap.size[0] * self.cellmap.size[1]/50000))
-        
+
         def placeSigns():
             created = []
-            created.append(Sign([6, 5], "Please do not throw stones at this sign!"))
+            for signdef in self.cellmap.signdefs:
+                created.append(Sign(*signdef))
             return created
         self.signs = placeSigns()
 
@@ -82,7 +83,6 @@ class World:
             sign.update(self.player.position, self.cellmap)
             if self.cellmap[sign.position]['explored'] and not self.cellmap[sign.position]['top']:
                 self.surface.blit(sign.sprite(), (sign.position[0]*TILESIZE, sign.position[1]*TILESIZE))
-            sign.visiblenotify(self.cellmap[sign.position]['visible'])
 
         for dragon in self.dragons:
             isvisible = False

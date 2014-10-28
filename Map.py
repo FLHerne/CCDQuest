@@ -6,6 +6,7 @@ import collectables
 import images
 import numpy
 import os.path
+import sys
 
 class Map():
     '''Contains array of Cells and properties representing the map as a whole'''
@@ -15,6 +16,9 @@ class Map():
     def __init__(self, mapdict):
         '''Load the map from image files'''
         self.startpos = tuple(mapdict['startpos'])
+        self.signdefs = []
+        if 'signs' in mapdict:
+            self.signdefs = mapdict['signs']
         self.origcoins = 0
         self.burningtiles = set()
         self.crcount = 0
@@ -39,14 +43,27 @@ class Map():
             ('random',          numpy.int8)
             ])
 
-        if 'binaryfile' in mapdict and os.path.isfile(mapdict['binaryfile']):
-            self.cellarray = numpy.load(mapdict['binaryfile'])
+        terrainfilepath = os.path.join('map', mapdict['dir'], mapdict['terrainfile'])
+        itemfilepath = os.path.join('map', mapdict['dir'], mapdict['itemfile'])
+        for filepath in terrainfilepath, itemfilepath:
+            if not os.path.isfile(filepath):
+                print "Failed to load map:"
+                print filepath, "is not a file"
+                sys.exit(1)
+
+        binaryfilepath = None
+        if 'binaryfile' in mapdict:
+            binaryfilepath = os.path.join('map', mapdict['dir'], mapdict['binaryfile'])
+        if  (binaryfilepath and os.path.isfile(binaryfilepath) and
+             os.path.getmtime(binaryfilepath) >= os.path.getmtime(terrainfilepath) and
+             os.path.getmtime(binaryfilepath) >= os.path.getmtime(itemfilepath)):
+            self.cellarray = numpy.load(binaryfilepath)
             self.size = self.cellarray.shape
 
         else:
-            groundimage = pygame.image.load(mapdict['terrainfile']).convert()
+            groundimage = pygame.image.load(terrainfilepath).convert()
             groundarray = pygame.surfarray.pixels2d(groundimage)
-            collectablesimage = pygame.image.load(mapdict['itemfile']).convert()
+            collectablesimage = pygame.image.load(itemfilepath).convert()
             collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
             self.size = list(groundimage.get_rect().size)
             def createcell(ground, collectable):
@@ -58,9 +75,9 @@ class Map():
                 for y in xrange(0, self.size[1]):
                     tempval = tuple(temparr[x][y])
                     self.cellarray[x][y] = tempval
-            if 'binaryfile' in mapdict:
-                print "Creating binary map file:", mapdict['binaryfile']
-                numpy.save(mapdict['binaryfile'], self.cellarray)
+            if binaryfilepath:
+                print "Creating binary map file:", binaryfilepath
+                numpy.save(binaryfilepath, self.cellarray)
 
         self.origcoins = (self.cellarray['collectableitem'] == collectables.COIN).sum()
 

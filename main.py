@@ -5,7 +5,9 @@
 import pygame
 import sys
 import time
+import os
 import json
+import ConfigParser
 
 pygame.init()
 WINDOWSIZE = (800, 480)
@@ -22,7 +24,33 @@ from keysettings import *
 import collectables
 
 currentmap = 0
-maps = json.load(open('map/maps.json'))
+maps = []
+
+mainconfig = ConfigParser.RawConfigParser()
+loaded = mainconfig.read("CCDQuest.cfg")
+if not loaded or not mainconfig.has_section("maps"):
+    print "Config error!"
+    sys.exit(1)
+for im in mainconfig.items("maps"):
+    descfilename = os.path.join('map', im[1], 'mapdesc.json')
+    try:
+        imfile = open(descfilename)
+    except:
+        print "Unable to load map", im[0]+":"
+        print "File", descfilename, "unreadable or missing"
+        continue
+    try:
+        newmap = json.load(imfile)
+    except ValueError as err:
+        print "Unable to load map", im[0]+":"
+        print err
+        continue
+    imfile.close()
+    newmap['dir'] = im[1]
+    maps.append(newmap)
+if not len(maps):
+    print "No loadable maps!"
+    sys.exit(1)
 
 def loadmap(newmap):
     global hud
