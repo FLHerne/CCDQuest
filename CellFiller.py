@@ -25,7 +25,7 @@ terraint = {
     mapcolor(CYAN):
         ('window', False, True, 20, 0, 1, False, 3, True, True, 8, 255),
     mapcolor(DARKGREEN):
-        ('forest', True, True, 20, 0.5, 0.1, False, 8, False, False, 255, 10),
+        ('forest', True, True, 20, 0.5, 0.1, False, 8, False, False, 5, 10),
     mapcolor(DARKYELLOW):
         ('sand', False, True, 20, 0, 1, False, 3, True, False, 11, 255),
     mapcolor(LIGHTYELLOW):
