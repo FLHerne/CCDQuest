@@ -58,7 +58,7 @@ class Player(MGO.GEMGO):
             return
         if not self.cellmap[self.position]['destructable']:
             return
-        self.suggestmessage("You detonate some dynamite", 4)
+        self._suggestmessage("You detonate some dynamite", 4)
         self.cellmap.detonate(self.position)
         self.score[collectables.DYNAMITE] -= 1
 
