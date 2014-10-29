@@ -67,7 +67,7 @@ def loadmap(newmap):
     world = World(maps[currentmap])
     messagebox.mgolist = world.gemgos
     messagebox.string = None
-    world.rendervisibletiles()
+    world.moveplayer(0, 0)
     window.fill(BLACK)
     hud = HUD(world, window)
     worldview = WorldView(world, window)

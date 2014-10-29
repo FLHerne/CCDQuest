@@ -30,9 +30,12 @@ class World:
             if cell['transparent'] or list(tile) != self.player.position:
                 cell['visible'] = True
         sprites = extrasprites
+        drawntiles = set()
         for x in range(self.player.position[0]-self.player.visibility-5, self.player.position[0]+self.player.visibility+6):
             for y in range(self.player.position[1]-self.player.visibility-5, self.player.position[1]+self.player.visibility+6):
-                sprites += self.cellmap.sprites((x%self.cellmap.size[0], y%self.cellmap.size[1]))
+                if (x%self.cellmap.size[0],y%self.cellmap.size[0]) not in drawntiles:
+                    drawntiles.add((x%self.cellmap.size[0],y%self.cellmap.size[0]))
+                sprites += self.cellmap.sprites((x, y))
         sprites.sort(key=lambda x: x[2])
         for sprite in sprites:
             self.surface.blit(sprite[0], sprite[1])
