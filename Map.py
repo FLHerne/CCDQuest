@@ -133,6 +133,7 @@ class Map():
         cell['transparent'] = True
         cell['solid'] = False
         cell['difficulty'] += Map.CELLDAMAGEDCOST
+        cell['topimage'] = 255
         return True
 
     def ignite(self, coord, multiplier=1, forceignite=False):
