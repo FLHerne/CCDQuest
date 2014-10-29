@@ -96,7 +96,7 @@ class World:
                 
         for pixie in self.pixies:
             pixie.update(self.player.position, self.cellmap)
-            if self.cellmap[pixie.position]['explored'] and not self.cellmap[pixie.position]['top']:
+            if self.cellmap[pixie.position]['visible'] and not self.cellmap[pixie.position]['top']:
                 self.surface.blit(pixie.sprite(), (pixie.position[0]*TILESIZE, pixie.position[1]*TILESIZE))
 
         for dragon in self.dragons:

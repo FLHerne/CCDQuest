@@ -3,14 +3,13 @@ import random
 
 class Pixie:
     '''Pixie that says things when walked to'''
-    def __init__(self, position, phrase):
+    def __init__(self, position, phrasebook):
         '''Create new pixie in position'''
         self.position = position
         self.direction = -1 # Left
-        self.phrase = phrase
+        self.phrasebook = phrasebook
         self.message = [None, 0]
         self.visible = False
-        print "pixie inited"
 
     def update(self, playerpos, cellmap):
         '''DOCSTRING NEEDED HERE'''
@@ -20,13 +19,12 @@ class Pixie:
         for testx in (ppx-1, ppx, ppx+1):
             for testy in (ppy-1, ppy, ppy+1):
                 if self.position == (testx, testy):
-                    self.suggestmessage("The pixie says: " + self.phrase, 50)
-                    print "pixiemessage triggered"
+                    phrase = self.phrasebook[random.randint(0, len(self.phrasebook)-1)]
+                    self.suggestmessage("Pixie: " + phrase, 50)
 
         if cellmap[self.position]['visible']:
             if not self.visible:
                 self.suggestmessage("You see a pixie in the distance", 1)
-                print "pixie seen"
             self.visible = True
         else:
             self.visible = True
@@ -39,7 +37,6 @@ class Pixie:
             random.shuffle(move)
             return move
 
-        print "pixie moved"
         poschange = randommove()
 
         self.direction = poschange[0] if abs(poschange[0]) else self.direction
