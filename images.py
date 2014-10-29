@@ -109,3 +109,4 @@ DragonRed = {
 }
 
 Sign = pygame.image.load("tiles/Sign.png").convert_alpha()
+Pixie = pygame.image.load("tiles/Pixie.png").convert_alpha()

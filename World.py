@@ -4,6 +4,7 @@ import collectables
 from images import TILESIZE
 from Bear import Bear
 from Dragon import Dragon
+from Pixie import Pixie
 from Sign import Sign
 from Map import Map
 from Player import Player
@@ -45,6 +46,15 @@ class World:
                 created.append(Sign(*signdef))
             return created
         self.signs = placeSigns()
+        
+        def placePixies():
+            print "placing pixies"
+            created = []
+            for pixiedef in self.cellmap.pixiedefs:
+                created.append(Pixie(*pixiedef))
+                print "Loaded a pixie"
+            return created
+        self.pixies = placePixies()
 
     def rendervisibletiles(self):
         for x in range(self.player.position[0]-self.player.visibility-1, self.player.position[0]+self.player.visibility+2):
@@ -83,6 +93,11 @@ class World:
             sign.update(self.player.position, self.cellmap)
             if self.cellmap[sign.position]['explored'] and not self.cellmap[sign.position]['top']:
                 self.surface.blit(sign.sprite(), (sign.position[0]*TILESIZE, sign.position[1]*TILESIZE))
+                
+        for pixie in self.pixies:
+            pixie.update(self.player.position, self.cellmap)
+            if self.cellmap[pixie.position]['explored'] and not self.cellmap[pixie.position]['top']:
+                self.surface.blit(pixie.sprite(), (pixie.position[0]*TILESIZE, pixie.position[1]*TILESIZE))
 
         for dragon in self.dragons:
             isvisible = False

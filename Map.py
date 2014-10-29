@@ -19,6 +19,9 @@ class Map():
         self.signdefs = []
         if 'signs' in mapdict:
             self.signdefs = mapdict['signs']
+        self.pixiedefs = []
+        if 'pixies' in mapdict:
+            self.pixiedefs = mapdict['pixies']
         self.origcoins = 0
         self.burningtiles = set()
         self.crcount = 0

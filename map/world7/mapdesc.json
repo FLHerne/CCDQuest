@@ -15,5 +15,8 @@
     [[121,92],"Dynamite store - Fire Hazard!"],
     [[102,110],"Deep, dark wood - Here Be Dragons!"],
     [[64,106],"An Englishman's home is his castle"]
+    ],
+    "pixies":       [
+    [[50,50],"Hello! I'm a pixie!"]
     ]
 }
