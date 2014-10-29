@@ -31,7 +31,7 @@ class Player(MGO.GEMGO):
         pass
 
     def sprite(self):
-        return images.Player[self.direction], (0,0)
+        return images.Player[self.direction], self._pixelpos(), 0
 
     def move(self, x, y):
         '''Move if possible, update collectable levels accordingly'''

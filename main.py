@@ -89,7 +89,7 @@ def handleevents():
                 window = pygame.display.set_mode(size, pygame.RESIZABLE)
         if event.type == pygame.KEYDOWN:
             if event.key == BLAST:
-                world.player.detonate(world.cellmap)
+                world.player.detonate()
             if event.key in MOVEDIRS:
                 world.moveplayer(*MOVEDIRS[event.key])
             else:

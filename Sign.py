@@ -29,4 +29,7 @@ class Sign(MGO.GEMGO):
             self.visible = False
 
     def sprite(self):
-        return images.Sign, (0,0)
+        if self.cellmap[self.position]['explored']:
+            return images.Sign, self._pixelpos(), -1
+        else:
+            return None

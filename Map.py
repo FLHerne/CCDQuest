@@ -39,7 +39,8 @@ class Map():
             ('difficulty',      numpy.int8),
             ('transparent',     numpy.bool_),
             ('solid',           numpy.bool_),
-            ('image',           numpy.int8),
+            ('groundimage',     numpy.uint8),
+            ('topimage',        numpy.uint8),
             ('random',          numpy.int8)
             ])
 
@@ -89,31 +90,33 @@ class Map():
         '''Set map item with [], wrapping'''
         self.cellarray[coord[0]%self.size[0]][coord[1]%self.size[1]] = value
 
-    def draw(self, drawSurface, coord, layer):
-        '''Blit cell graphics to the specified surface'''
-        Drawx = coord[0]*images.TILESIZE
-        Drawy = coord[1]*images.TILESIZE
-        DrawPos = (Drawx, Drawy)
+    def sprites(self, coord):
+        sprites = []
+        def addsprite(sprite, layer):
+            sprites.append((sprite,
+                            (coord[0]*images.TILESIZE + (images.TILESIZE-sprite.get_width())/2,
+                             coord[1]*images.TILESIZE + (images.TILESIZE-sprite.get_height())/2),
+                            layer))
         cell = self[coord]
-        if not cell['top'] == layer:
-            return
         if not cell['explored']:
-            drawSurface.blit(images.Unknown, DrawPos)
-            return
-        spritelist = images.Terrain[cell['image']]
-        spritelistindex = (cell['random']%len(spritelist))
-        sprite = spritelist[spritelistindex]
-        Drawxoffset = (images.TILESIZE-sprite.get_width())/2
-        Drawyoffset = (images.TILESIZE-sprite.get_height())/2
-        drawSurface.blit(sprite, (Drawx+Drawxoffset, Drawy+Drawyoffset))
+            addsprite(images.Unknown, -10)
+            return sprites
+        for image in cell['groundimage'], cell['topimage']:
+            if image == 255:
+                continue
+            spritelist = images.Terrain[image]
+            spritelistindex = (cell['random']%len(spritelist))
+            sprite = spritelist[spritelistindex]
+            addsprite(sprite, -10)
         if cell['damaged']:
-            drawSurface.blit(images.Damaged, DrawPos)
+            addsprite(images.Damaged, -9)
         if cell['collectableitem'] != 0:
-            drawSurface.blit(images.Collectables[cell['collectableitem']], DrawPos)
+            addsprite(images.Collectables[cell['collectableitem']], -8)
         if cell['burning']:
-            drawSurface.blit(images.Burning, DrawPos)
+            addsprite(images.Burning, -9)
         if not cell['visible']:
-            drawSurface.blit(images.NonVisible, DrawPos)
+            addsprite(images.NonVisible, 50)
+        return sprites
 
     def destroy(self, coord):
         '''Change cell attributes to reflect destruction'''

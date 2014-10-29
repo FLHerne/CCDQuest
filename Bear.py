@@ -109,4 +109,7 @@ class Bear(MGO.GEMGO):
         return True
 
     def sprite(self):
-        return images.BearRight if self.direction > 0 else images.BearLeft, (2,2)
+        if self.cellmap[self.position]['visible']:
+            return (images.BearRight if self.direction > 0 else images.BearLeft), self._pixelpos(2,2), 1
+        else:
+            return None

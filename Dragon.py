@@ -70,4 +70,16 @@ class Dragon(MGO.GEMGO):
         flameplayer()
 
     def sprite(self):
-        return images.DragonRed[self.direction], [-images.TILESIZE if axis == 1 else 0 for axis in self.direction]
+        isvisible = False
+        for ix in [0, 1]:
+            for iy in [0, 1]:
+                cell = self.cellmap[self.position[0]+ix, self.position[1]+iy]
+                if cell['visible']:
+                    #and not (self.cellmap[self.player.position]['hasroof'] and (cell['hasroof'] or not cell['transparent'])):
+                    isvisible = True
+        if isvisible:
+            return (images.DragonRed[self.direction],
+                    self._pixelpos(-images.TILESIZE if axis == 1 else 0 for axis in self.direction),
+                    20)
+        else:
+            return None

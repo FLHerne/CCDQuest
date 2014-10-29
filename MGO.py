@@ -1,4 +1,5 @@
 import random
+import images
 
 class MGO(object):
     def __init__(self):
@@ -31,6 +32,9 @@ class GEMGO(MGO):
     def update(self, playerpos, cellmap):
         pass
 
-
     def sprite(self):
-        pass
+        return None
+
+    def _pixelpos(self, offset=(0,0)):
+        return (self.position[0]*images.TILESIZE + offset[0],
+                self.position[1]*images.TILESIZE + offset[1])
