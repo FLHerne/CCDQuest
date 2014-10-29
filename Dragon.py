@@ -5,6 +5,7 @@ import MGO
 
 class Dragon(MGO.GEMGO):
     '''Harmless flying thing that follows the player'''
+    PER_TILE = 1/10000
     detectionrange = 18
     speed = 0.8
 
@@ -68,6 +69,5 @@ class Dragon(MGO.GEMGO):
                          (self.position[1]+self.direction[1]) % self.cellmap.size[1])
         flameplayer()
 
-    def offsetsprite(self):
-        '''Returns sprite plus offset in tiles'''
-        return images.DragonRed[self.direction], [-1 if axis == 1 else 0 for axis in self.direction]
+    def sprite(self):
+        return images.DragonRed[self.direction], [-images.TILESIZE if axis == 1 else 0 for axis in self.direction]

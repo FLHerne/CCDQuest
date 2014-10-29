@@ -9,6 +9,13 @@ class Sign(MGO.GEMGO):
         self.string = string
         self.visible = False
 
+    @classmethod
+    def place(cls, cellmap):
+        created = []
+        for signdef in cellmap.signdefs:
+            created.append(cls(signdef[1], signdef[0], cellmap))
+        return created
+
     def update(self, playerpos):
         '''Display message if becoming visible or trodden on'''
         if self.position == playerpos:
@@ -22,4 +29,4 @@ class Sign(MGO.GEMGO):
             self.visible = False
 
     def sprite(self):
-        return images.Sign
+        return images.Sign, (0,0)

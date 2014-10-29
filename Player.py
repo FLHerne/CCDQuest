@@ -23,11 +23,15 @@ class Player(MGO.GEMGO):
             collectables.DYNAMITE: 15
         }
 
+    @classmethod
+    def place(cls, cellmap):
+        return [cls(cellmap.startpos, cellmap)]
+
     def update(self, playerpos):
         pass
 
     def sprite(self):
-        return images.Player[self.direction]
+        return images.Player[self.direction], (0,0)
 
     def move(self, x, y):
         '''Move if possible, update collectable levels accordingly'''
