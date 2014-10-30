@@ -94,10 +94,10 @@ class Map():
 
     def sprites(self, coord):
         sprites = []
-        def addsprite(sprite, layer):
-            sprites.append((sprite,
-                            (coord[0]*images.TILESIZE + (images.TILESIZE-sprite.get_width())/2,
-                             coord[1]*images.TILESIZE + (images.TILESIZE-sprite.get_height())/2),
+        def addsprite(image, layer):
+            sprites.append((image,
+                            (coord[0]*images.TILESIZE + (images.TILESIZE-image.get_width())/2,
+                             coord[1]*images.TILESIZE + (images.TILESIZE-image.get_height())/2),
                             layer))
         cell = self[coord]
         if not cell['explored']:
@@ -109,13 +109,13 @@ class Map():
             spritelist = images.Terrain[imagelayer[0]]
             spritelistindex = (cell['random']%len(spritelist))
             sprite = spritelist[spritelistindex]
-            addsprite(sprite, imagelayer[1])
+            addsprite(sprite[1], imagelayer[1]+sprite[0])
         if cell['damaged']:
-            addsprite(images.Damaged, -9)
+            addsprite(images.Damaged, -2)
         if cell['collectableitem'] != 0:
-            addsprite(images.Collectables[cell['collectableitem']], -8)
+            addsprite(images.Collectables[cell['collectableitem']], -1)
         if cell['burning']:
-            addsprite(images.Burning, -9)
+            addsprite(images.Burning, -1)
         if not cell['visible']:
             addsprite(images.NonVisible, 50)
         return sprites
