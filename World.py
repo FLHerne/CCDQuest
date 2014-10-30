@@ -38,7 +38,9 @@ class World:
                     sprites += self.cellmap.sprites((x, y))
         sprites.sort(key=lambda x: x[2])
         for sprite in sprites:
-            self.surface.blit(sprite[0], sprite[1])
+            for tx in [sprite[1][0]-self.cellmap.size[0], sprite[1][0], sprite[1][0]+self.cellmap.size[0]]:
+                for ty in [sprite[1][0]-self.cellmap.size[0], sprite[1][0], sprite[1][0]+self.cellmap.size[0]]:
+                    self.surface.blit(sprite[0], (tx, ty))
 
     def moveplayer(self, x, y):
         '''Move the player by (x, y), move other fauna, update world surface around player'''
