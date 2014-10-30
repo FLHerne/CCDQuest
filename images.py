@@ -90,7 +90,6 @@ TerrainSprites = [
 TerrainIndex = {}
 for index in range(0, len(TerrainSprites)):
     entry = TerrainSprites[index]
-    print entry[0], ':'
     TerrainIndex[entry[0]] = index
     entry.pop(0)
     TerrainSprites[index] = (len(TerrainSprites)/2-index, entry)
