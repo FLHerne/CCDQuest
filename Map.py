@@ -106,10 +106,10 @@ class Map():
         for imagelayer in (cell['groundimage'], -10), (cell['topimage'], 10):
             if imagelayer[0] == 255:
                 continue
-            spritelist = images.Terrain[imagelayer[0]]
-            spritelistindex = (cell['random']%len(spritelist))
-            sprite = spritelist[spritelistindex]
-            addsprite(sprite[1], imagelayer[1]+sprite[0])
+            offsetspritelist = images.TerrainSprites[imagelayer[0]]
+            spritelistindex = (cell['random']%len(offsetspritelist[1]))
+            sprite = offsetspritelist[1][spritelistindex]
+            addsprite(sprite, imagelayer[1]+offsetspritelist[0])
         if cell['damaged']:
             addsprite(images.Damaged, -2)
         if cell['collectableitem'] != 0:
