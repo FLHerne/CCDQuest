@@ -12,7 +12,7 @@ class Map():
     '''Contains array of Cells and properties representing the map as a whole'''
     CELLDAMAGEDCOST = 5
     CELLBURNINGCOST = 200
-    dirtycache = False
+    DIRTYCACHE = False
 
     def __init__(self, mapdict):
         '''Load the map from image files'''
@@ -59,7 +59,7 @@ class Map():
         if  (binaryfilepath and os.path.isfile(binaryfilepath) and
              os.path.getmtime(binaryfilepath) >= os.path.getmtime(terrainfilepath) and
              os.path.getmtime(binaryfilepath) >= os.path.getmtime(itemfilepath) and
-             not Map.dirtycache):
+             not Map.DIRTYCACHE):
             self.cellarray = numpy.load(binaryfilepath)
             self.size = self.cellarray.shape
 

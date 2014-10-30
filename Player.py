@@ -6,11 +6,10 @@ import collectables
 from colors import *
 from directions import *
 
-# Remove solidity and movement cost for testing
-FREEPLAYER = False
-
 class Player(MGO.GEMGO):
     '''The player, exploring the grid-based world'''
+    FREEPLAYER = False
+
     def __init__(self, position, cellmap):
         '''Initialise instance variables'''
         super(Player, self).__init__(position, cellmap)
@@ -38,7 +37,7 @@ class Player(MGO.GEMGO):
         if abs(x) + abs(y) != 1:
             return False
         self.direction = (x, y)
-        if self.cellmap[self.position[0]+x, self.position[1]+y]['solid'] and not FREEPLAYER:
+        if self.cellmap[self.position[0]+x, self.position[1]+y]['solid'] and not Player.FREEPLAYER:
             self.score[collectables.CHOCOLATE] -= 50
             return False
         self.position = [(self.position[0]+x)%self.cellmap.size[0],
@@ -48,7 +47,7 @@ class Player(MGO.GEMGO):
             self.score[collectable] += collectables.value[collectable]
             self._suggestmessage("You pick up " + collectables.name[collectable], 4)
         self.cellmap[self.position]['collectableitem'] = 0
-        if not FREEPLAYER:
+        if not Player.FREEPLAYER:
             self.score[collectables.CHOCOLATE] -= self.cellmap[self.position]['difficulty']
         return True
 

@@ -16,6 +16,7 @@ window = pygame.display.set_mode(WINDOWSIZE, pygame.RESIZABLE)
 from HUD import HUD
 from MessageBox import MessageBox
 from Map import Map
+from Player import Player
 from World import World
 from WorldView import WorldView
 
@@ -32,11 +33,19 @@ loaded = mainconfig.read("CCDQuest.cfg")
 if not loaded or not mainconfig.has_section("maps"):
     print "Config error!"
     sys.exit(1)
-if mainconfig.has_section("settings") and mainconfig.has_option("settings", "dirtycache"):
-    try:
-        Map.dirtycache = mainconfig.getboolean("settings", "dirtycache")
-    except ValueError:
-        print "Invalid value for 'dirtycache'"
+if mainconfig.has_section("settings"):
+    if mainconfig.has_option("settings", "dirtycache"):
+        try:
+            Map.DIRTYCACHE = mainconfig.getboolean("settings", "dirtycache")
+        except ValueError:
+            print "Invalid value for 'dirtycache'"
+    if mainconfig.has_option("settings", "freeplayer"):
+        try:
+            Player.FREEPLAYER = mainconfig.getboolean("settings", "freeplayer")
+            print 'gotvalue', mainconfig.getboolean("settings", "freeplayer")
+            print Player.FREEPLAYER
+        except ValueError:
+            print "Invalid value for 'freeplayer'"
 for im in mainconfig.items("maps"):
     descfilename = os.path.join('map', im[1], 'mapdesc.json')
     try:
