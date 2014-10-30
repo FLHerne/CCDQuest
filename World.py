@@ -35,7 +35,7 @@ class World:
             for y in range(self.player.position[1]-self.player.visibility-5, self.player.position[1]+self.player.visibility+6):
                 if (x%self.cellmap.size[0],y%self.cellmap.size[1]) not in drawntiles:
                     drawntiles.add((x%self.cellmap.size[0],y%self.cellmap.size[1]))
-                sprites += self.cellmap.sprites((x, y))
+                    sprites += self.cellmap.sprites((x, y))
         sprites.sort(key=lambda x: x[2])
         for sprite in sprites:
             self.surface.blit(sprite[0], sprite[1])
