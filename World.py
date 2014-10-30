@@ -38,8 +38,8 @@ class World:
                     sprites += self.cellmap.sprites((x, y))
         sprites.sort(key=lambda x: x[2])
         for sprite in sprites:
-            for tx in [sprite[1][0]-self.cellmap.size[0], sprite[1][0], sprite[1][0]+self.cellmap.size[0]]:
-                for ty in [sprite[1][0]-self.cellmap.size[0], sprite[1][0], sprite[1][0]+self.cellmap.size[0]]:
+            for tx in [sprite[1][0]-self.surface.get_width(), sprite[1][0], sprite[1][0]+self.surface.get_width()]:
+                for ty in [sprite[1][1]-self.surface.get_height(), sprite[1][1], sprite[1][1]+self.surface.get_height()]:
                     self.surface.blit(sprite[0], (tx, ty))
 
     def moveplayer(self, x, y):
