@@ -30,18 +30,18 @@ TerrainSprites = [
         pygame.image.load("tiles/Trees8.png").convert_alpha(),
     ],
     [
+        'snow',
+        pygame.image.load("tiles/Snow1.png").convert_alpha(),
+        pygame.image.load("tiles/Snow2.png").convert_alpha(),
+        pygame.image.load("tiles/Snow3.png").convert_alpha(),
+        pygame.image.load("tiles/Snow4.png").convert_alpha(),
+    ],
+    [
         'rock',
         pygame.image.load("tiles/Rock1.png").convert(),
         pygame.image.load("tiles/Rock2.png").convert(),
         pygame.image.load("tiles/Rock3.png").convert(),
         pygame.image.load("tiles/Rock4.png").convert(),
-    ],
-    [
-        'snow',
-        pygame.image.load("tiles/Snow1.png").convert(),
-        pygame.image.load("tiles/Snow2.png").convert(),
-        pygame.image.load("tiles/Snow3.png").convert(),
-        pygame.image.load("tiles/Snow4.png").convert(),
     ],
     [
         'floor',
