@@ -65,10 +65,10 @@ TerrainSprites = [
     ],
     [
         'sand',
-        pygame.image.load("tiles/Sand1.png").convert(),
-        pygame.image.load("tiles/Sand2.png").convert(),
-        pygame.image.load("tiles/Sand3.png").convert(),
-        pygame.image.load("tiles/Sand4.png").convert(),
+        pygame.image.load("tiles/Sand1.png").convert_alpha(),
+        pygame.image.load("tiles/Sand2.png").convert_alpha(),
+        pygame.image.load("tiles/Sand3.png").convert_alpha(),
+        pygame.image.load("tiles/Sand4.png").convert_alpha(),
     ],
     [
         'marsh',
@@ -76,10 +76,10 @@ TerrainSprites = [
     ],
     [
         'water',
-        pygame.image.load("tiles/Water1.png").convert(),
-        pygame.image.load("tiles/Water2.png").convert(),
-        pygame.image.load("tiles/Water3.png").convert(),
-        pygame.image.load("tiles/Water4.png").convert(),
+        pygame.image.load("tiles/Water1.png").convert_alpha(),
+        pygame.image.load("tiles/Water2.png").convert_alpha(),
+        pygame.image.load("tiles/Water3.png").convert_alpha(),
+        pygame.image.load("tiles/Water4.png").convert_alpha(),
     ],
     [
         'deepwater',
