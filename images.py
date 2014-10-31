@@ -73,7 +73,10 @@ TerrainSprites = [
     ],
     [
         'marsh',
-        pygame.image.load("tiles/Marsh.png").convert(),
+        pygame.image.load("tiles/Marsh1.png").convert(),
+        pygame.image.load("tiles/Marsh2.png").convert(),
+        pygame.image.load("tiles/Marsh3.png").convert(),
+        pygame.image.load("tiles/Marsh4.png").convert()
     ],
     [
         'water',
