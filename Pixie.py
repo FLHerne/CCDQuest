@@ -2,21 +2,19 @@ import images
 import random
 import MGO
 
-class Pixie:
+class Pixie(MGO.GEMGO):
     '''Pixie that says things when walked to'''
     def __init__(self, phrasebook, position, cellmap):
         '''Create new pixie in position'''
-        super(Sign, self).__init__(position, cellmap)
-        self.position = position
+        super(Pixie, self).__init__(position, cellmap)
         self.direction = -1 # Left
         self.phrasebook = phrasebook
-        self.message = [None, 0]
         self.visible = False
         
     @classmethod
     def place(cls, cellmap):
         created = []
-        for signdef in cellmap.pixiedefs:
+        for pixiedef in cellmap.pixiedefs:
             created.append(cls(pixiedef[1], pixiedef[0], cellmap))
         return created
 
