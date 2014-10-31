@@ -105,7 +105,7 @@ class Map():
                             layer))
         cell = self.cellarray[coord[0]][coord[1]]
         if not cell['explored']:
-            addsprite(images.Unknown, -10)
+            addsprite(images.Unknown, -20)
             return sprites
         def pickrandomsprite(spritelist):
             return spritelist[cell['random']%len(spritelist)]
