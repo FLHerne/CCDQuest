@@ -46,7 +46,7 @@ TerrainSprites = [
     ],
     [
         'floor',
-        pygame.image.load("tiles/Floor.png").convert(),
+        pygame.image.load("tiles/Floor1.png").convert(),
     ],
     [
         'grass',
