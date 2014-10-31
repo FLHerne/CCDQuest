@@ -27,11 +27,11 @@ class Pixie(MGO.GEMGO):
             for testy in (ppy-1, ppy, ppy+1):
                 if self.position == (testx, testy):
                     phrase = self.phrasebook[random.randint(0, len(self.phrasebook)-1)]
-                    self.suggestmessage("Pixie: " + phrase, 50)
+                    self._suggestmessage("Pixie: " + phrase, 50)
 
         if self.cellmap[self.position]['visible']:
             if not self.visible:
-                self.suggestmessage("You see a pixie in the distance", 1)
+                self._suggestmessage("You see a pixie in the distance", 1)
             self.visible = True
         else:
             self.visible = True
