@@ -57,7 +57,11 @@ class Pixie(MGO.GEMGO):
 
     def sprite(self):
         if self.cellmap[self.position]['visible']:
-            return images.Pixie, self._pixelpos(), -1
+            if random.getrandbits(1):
+                return images.PixieLeft, self._pixelpos(), -1
+            else:
+                return images.PixieRight, self._pixelpos(), -1
+
         else:
             return None
 

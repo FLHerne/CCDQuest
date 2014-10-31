@@ -142,4 +142,6 @@ DragonRed = {
 }
 
 Sign = pygame.image.load("tiles/Sign.png").convert_alpha()
-Pixie = pygame.image.load("tiles/Pixie.png").convert_alpha()
+PixieLeft = pygame.image.load("tiles/Pixie.png").convert_alpha()
+PixieRight = pygame.transform.flip(PixieLeft, True, False)
+
