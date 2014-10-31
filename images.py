@@ -38,10 +38,10 @@ TerrainSprites = [
     ],
     [
         'rock',
-        pygame.image.load("tiles/Rock1.png").convert(),
-        pygame.image.load("tiles/Rock2.png").convert(),
-        pygame.image.load("tiles/Rock3.png").convert(),
-        pygame.image.load("tiles/Rock4.png").convert(),
+        pygame.image.load("tiles/Rock1.png").convert_alpha(),
+        pygame.image.load("tiles/Rock2.png").convert_alpha(),
+        pygame.image.load("tiles/Rock3.png").convert_alpha(),
+        pygame.image.load("tiles/Rock4.png").convert_alpha(),
     ],
     [
         'floor',
