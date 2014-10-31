@@ -18,5 +18,6 @@ else:
         pygame.K_a: LEFT,
         pygame.K_d: RIGHT
     }
+MOVEDIRS[pygame.K_f] = 'autofollow'
 
 BLAST = pygame.K_SPACE

@@ -52,6 +52,22 @@ class Player(MGO.GEMGO):
             self.score[collectables.CHOCOLATE] -= self.cellmap[self.position]['difficulty']
         return True
 
+    def autofollow(self):
+        def subtuple(a, b):
+            return (a[0]-b[0], a[1]-b[1])
+        oldpos = subtuple(self.position, self.direction)
+        if self.cellmap[oldpos]['name'] not in ['wooden planking', 'paving']:
+            return False
+        pathnbrs = []
+        for nbrpos in [(self.position[0]-1, self.position[1]), (self.position[0], self.position[1]-1), (self.position[0]+1, self.position[1]), (self.position[0], self.position[1]+1)]:
+            if (nbrpos == oldpos) or (self.cellmap[nbrpos]['name'] not in ['wooden planking', 'paving']):
+                continue
+            pathnbrs.append(nbrpos)
+        if len(pathnbrs) != 1:
+            return False
+        self.move(*subtuple(pathnbrs[0], self.position))
+        return True
+
     def detonate(self):
         '''Detonate carried explosives at player's location'''
         if self.score[collectables.DYNAMITE] <= 0:
