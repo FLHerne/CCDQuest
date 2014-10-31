@@ -102,10 +102,17 @@ NonVisible = pygame.image.load("tiles/NonVisible.png").convert_alpha()
 
 # These two can be randomly chosen
 Damaged = [
-    pygame.image.load("tiles/Damaged.png").convert_alpha()
+    pygame.image.load("tiles/Damaged1.png").convert_alpha(),
+    pygame.image.load("tiles/Damaged2.png").convert_alpha(),
+    pygame.image.load("tiles/Damaged3.png").convert_alpha(),
+    pygame.image.load("tiles/Damaged4.png").convert_alpha()
+
 ]
 Burning = [
-    pygame.image.load("tiles/Fire.png").convert_alpha()
+    pygame.image.load("tiles/Fire1.png").convert_alpha(),
+    pygame.image.load("tiles/Fire2.png").convert_alpha(),
+    pygame.image.load("tiles/Fire3.png").convert_alpha(),
+    pygame.image.load("tiles/Fire4.png").convert_alpha()
 ]
 
 # Overlays for tiles with collectables.
