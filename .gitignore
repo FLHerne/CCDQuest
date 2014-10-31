@@ -5,3 +5,5 @@
 .gitignore~
 *.kate-swp
 *.json~
+*.npy
+
