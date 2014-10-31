@@ -15,102 +15,47 @@ class World:
         self.cellmap = Map(mapdict)
         self.surface = pygame.Surface((self.cellmap.size[0]*TILESIZE, self.cellmap.size[1]*TILESIZE))
         self.surface.fill(BLACK)
-        self.player = Player(self.cellmap.startpos)
 
-        def placeBears(number):
-            '''Randomly add bears to the map'''
-            max_attempts = 20 * number
-            created = []
-            for i in xrange(max_attempts):
-                attempt = (random.randint(0, self.cellmap.size[0]-1), random.randint(0, self.cellmap.size[1]-1))
-                if self.cellmap[attempt]['name'] not in ['grass', 'forest', 'rocky ground']:
-                    continue
-                created.append(Bear(attempt))
-                if len(created) == number:
-                    break
-            return created
-        self.bears = placeBears(int(self.cellmap.size[0] * self.cellmap.size[1]/3000))
+        self.gemgos = []
+        for gemgo in Player, Bear, Dragon, Sign:
+            self.gemgos += gemgo.place(self.cellmap)
+        self.player = filter(lambda x: isinstance(x, Player), self.gemgos)[0]
 
-        def placeDragons(number):
-            '''Randomly add dragons to the map'''
-            created = []
-            for i in xrange(number):
-                pos = (random.randint(0, self.cellmap.size[0]-1), random.randint(0, self.cellmap.size[1]-1))
-                created.append(Dragon(pos))
-            return created
-        self.dragons = placeDragons(int(self.cellmap.size[0] * self.cellmap.size[1]/50000))
-
-        def placeSigns():
-            created = []
-            for signdef in self.cellmap.signdefs:
-                created.append(Sign(*signdef))
-            return created
-        self.signs = placeSigns()
-        
-        def placePixies():
-            print "placing pixies"
-            created = []
-            for pixiedef in self.cellmap.pixiedefs:
-                created.append(Pixie(*pixiedef))
-                print "Loaded a pixie"
-            return created
-        self.pixies = placePixies()
-
-    def rendervisibletiles(self):
+    def rendervisibletiles(self, extrasprites=[]):
         for x in range(self.player.position[0]-self.player.visibility-1, self.player.position[0]+self.player.visibility+2):
             for y in range(self.player.position[1]-self.player.visibility-1, self.player.position[1]+self.player.visibility+2):
                 self.cellmap[x, y]['visible'] = False
-        for tile in self.player.visible_tiles(self.cellmap):
+        for tile in self.player.visible_tiles():
             cell = self.cellmap[tile]
             cell['explored'] = True
             if cell['transparent'] or list(tile) != self.player.position:
                 cell['visible'] = True
+        sprites = extrasprites
+        drawntiles = set()
         for x in range(self.player.position[0]-self.player.visibility-5, self.player.position[0]+self.player.visibility+6):
             for y in range(self.player.position[1]-self.player.visibility-5, self.player.position[1]+self.player.visibility+6):
-                self.cellmap.draw(self.surface, (x%self.cellmap.size[0], y%self.cellmap.size[1]), False)
-        for x in range(self.player.position[0]-self.player.visibility-5, self.player.position[0]+self.player.visibility+6):
-            for y in range(self.player.position[1]-self.player.visibility-5, self.player.position[1]+self.player.visibility+6):
-                self.cellmap.draw(self.surface, (x%self.cellmap.size[0], y%self.cellmap.size[1]), True)
-        if not self.cellmap[self.player.position]['top']:
-            self.surface.blit(self.player.sprite(), (self.player.position[0]*TILESIZE, self.player.position[1]*TILESIZE))
+                if (x%self.cellmap.size[0],y%self.cellmap.size[1]) not in drawntiles:
+                    drawntiles.add((x%self.cellmap.size[0],y%self.cellmap.size[1]))
+                    sprites += self.cellmap.sprites((x, y))
+        sprites.sort(key=lambda x: x[2])
+        for sprite in sprites:
+            for tx in [sprite[1][0]-self.surface.get_width(), sprite[1][0], sprite[1][0]+self.surface.get_width()]:
+                for ty in [sprite[1][1]-self.surface.get_height(), sprite[1][1], sprite[1][1]+self.surface.get_height()]:
+                    self.surface.blit(sprite[0], (tx, ty))
 
     def moveplayer(self, x, y):
         '''Move the player by (x, y), move other fauna, update world surface around player'''
         self.cellmap.update()
-        self.player.move(x, y, self.cellmap)
+        self.player.move(x, y)
 
-        for dragon in self.dragons:
-            dragon.move(self.player.position, self.cellmap)
+        gemgosprites = []
+        for gemgo in self.gemgos:
+            gemgo.update(self.player.position)
+            sprite = gemgo.sprite()
+            if sprite is not None:
+                gemgosprites.append(sprite)
 
-        self.rendervisibletiles()
-
-        for bear in self.bears:
-            bear.move(self.player.position, self.cellmap)
-            if self.cellmap[bear.position]['visible'] and not  self.cellmap[bear.position]['top']:
-                self.surface.blit(bear.sprite(), (bear.position[0]*TILESIZE, bear.position[1]*TILESIZE))
-
-        for sign in self.signs:
-            sign.update(self.player.position, self.cellmap)
-            if self.cellmap[sign.position]['explored'] and not self.cellmap[sign.position]['top']:
-                self.surface.blit(sign.sprite(), (sign.position[0]*TILESIZE, sign.position[1]*TILESIZE))
-                
-        for pixie in self.pixies:
-            pixie.update(self.player.position, self.cellmap)
-            if self.cellmap[pixie.position]['visible'] and not self.cellmap[pixie.position]['top']:
-                self.surface.blit(pixie.sprite(), (pixie.position[0]*TILESIZE, pixie.position[1]*TILESIZE))
-
-        for dragon in self.dragons:
-            isvisible = False
-            for ix in [0, 1]:
-                for iy in [0, 1]:
-                    cell = self.cellmap[dragon.position[0]+ix, dragon.position[1]+iy]
-                    if cell['visible'] and not (self.cellmap[self.player.position]['hasroof'] and (cell['hasroof'] or not cell['transparent'])):
-                        isvisible = True
-            if isvisible:
-                offsetsprite = dragon.offsetsprite()
-                blitpos = ((dragon.position[0]+offsetsprite[1][0])*TILESIZE,
-                           (dragon.position[1]+offsetsprite[1][1])*TILESIZE)
-                self.surface.blit(offsetsprite[0], blitpos)
+        self.rendervisibletiles(gemgosprites)
 
         if tuple(self.player.position) in self.cellmap.burningtiles:
             self.player.score[collectables.CHOCOLATE] -= Map.CELLBURNINGCOST

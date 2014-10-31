@@ -15,6 +15,10 @@ window = pygame.display.set_mode(WINDOWSIZE, pygame.RESIZABLE)
 
 from HUD import HUD
 from MessageBox import MessageBox
+from Map import Map
+from Bear import Bear
+from Dragon import Dragon
+from Player import Player
 from World import World
 from WorldView import WorldView
 
@@ -31,6 +35,33 @@ loaded = mainconfig.read("CCDQuest.cfg")
 if not loaded or not mainconfig.has_section("maps"):
     print "Config error!"
     sys.exit(1)
+if mainconfig.has_section("settings"):
+    if mainconfig.has_option("settings", "dirtycache"):
+        try:
+            Map.DIRTYCACHE = mainconfig.getboolean("settings", "dirtycache")
+        except ValueError:
+            print "Invalid value for 'dirtycache'"
+    if mainconfig.has_option("settings", "freeplayer"):
+        try:
+            Player.FREEPLAYER = mainconfig.getboolean("settings", "freeplayer")
+        except ValueError:
+            print "Invalid value for 'freeplayer'"
+    if mainconfig.has_option("settings", "xrayvision"):
+        try:
+            Player.XRAYVISION = mainconfig.getboolean("settings", "xrayvision")
+        except ValueError:
+            print "Invalid value for 'xrayvision'"
+if mainconfig.has_section("fauna"):
+    if mainconfig.has_option("fauna", "tiles_per_bear"):
+        try:
+            Bear.PER_TILE = 1/mainconfig.getfloat("fauna", "tiles_per_bear")
+        except ValueError:
+            print "Invalid value for 'tiles_per_bear'"
+    if mainconfig.has_option("fauna", "tiles_per_dragon"):
+        try:
+            Dragon.PER_TILE = 1/mainconfig.getfloat("fauna", "tiles_per_dragon")
+        except ValueError:
+            print "Invalid value for 'tiles_per_dragon'"
 for im in mainconfig.items("maps"):
     descfilename = os.path.join('map', im[1], 'mapdesc.json')
     try:
@@ -65,9 +96,11 @@ def loadmap(newmap):
     hud.loadingsplash("Loading next level: " + maps[currentmap]['name'])
     pygame.display.update()
     world = World(maps[currentmap])
-    messagebox.mgolist = world.bears + world.dragons + world.signs + world.pixies + [world.player,]
+
+    messagebox.mgolist = world.gemgos
+
     messagebox.string = None
-    world.rendervisibletiles()
+    world.moveplayer(0, 0)
     window.fill(BLACK)
     hud = HUD(world, window)
     worldview = WorldView(world, window)
@@ -89,7 +122,7 @@ def handleevents():
                 window = pygame.display.set_mode(size, pygame.RESIZABLE)
         if event.type == pygame.KEYDOWN:
             if event.key == BLAST:
-                world.player.detonate(world.cellmap)
+                world.player.detonate()
             if event.key in MOVEDIRS:
                 world.moveplayer(*MOVEDIRS[event.key])
             else:
@@ -113,7 +146,9 @@ worldviewrect = pygame.Rect(0, 0, WINDOWSIZE[0]-HUDWIDTH, WINDOWSIZE[1])
 worldview = WorldView(world, window)
 hudrect = pygame.Rect(WINDOWSIZE[0]-HUDWIDTH, 0, HUDWIDTH, WINDOWSIZE[1])
 hud = HUD(world, window)
-messagebox = MessageBox(window, world.bears + world.dragons + world.signs + world.pixies + [world.player,])
+
+messagebox = MessageBox(window, world.gemgos)
+
 messageboxheight = 25
 messageboxpadding = 15
 messageboxregion = pygame.Rect(messageboxpadding, WINDOWSIZE[1]-messageboxheight-messageboxpadding, WINDOWSIZE[0]-HUDWIDTH-messageboxpadding, messageboxheight)

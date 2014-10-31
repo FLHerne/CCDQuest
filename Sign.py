@@ -1,32 +1,35 @@
 import images
+import MGO
 
-class Sign:
+class Sign(MGO.GEMGO):
     '''Sign that displays message when walked over'''
-    def __init__(self, position, string):
+    def __init__(self, string, position, cellmap):
         '''Create new sign in position'''
-        self.position = position
+        super(Sign, self).__init__(position, cellmap)
         self.string = string
-        self.message = [None, 0]
         self.visible = False
 
-    def update(self, playerpos, cellmap):
-        '''DOCSTRING NEEDED HERE'''
-        if self.position == playerpos:
-            self.suggestmessage("The sign reads: " + self.string, 50)
+    @classmethod
+    def place(cls, cellmap):
+        created = []
+        for signdef in cellmap.signdefs:
+            created.append(cls(signdef[1], signdef[0], cellmap))
+        return created
 
-        if cellmap[self.position]['visible']:
+    def update(self, playerpos):
+        '''Display message if becoming visible or trodden on'''
+        if self.position == playerpos:
+            self._suggestmessage("The sign reads: " + self.string, 50)
+
+        if self.cellmap[self.position]['visible']:
             if not self.visible:
-                self.suggestmessage("You see a sign in the distance", 1)
+                self._suggestmessage("You see a sign in the distance", 1)
             self.visible = True
         else:
             self.visible = False
 
     def sprite(self):
-        return images.Sign
-
-    def suggestmessage(self, string, priority):
-        if priority > self.message[1]:
-            self.message = [string, priority]
-
-    def mdnotify(self):
-        self.message = [None, 0]
+        if self.cellmap[self.position]['explored']:
+            return images.Sign, self._pixelpos(), -1
+        else:
+            return None

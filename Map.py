@@ -12,6 +12,7 @@ class Map():
     '''Contains array of Cells and properties representing the map as a whole'''
     CELLDAMAGEDCOST = 5
     CELLBURNINGCOST = 200
+    DIRTYCACHE = False
 
     def __init__(self, mapdict):
         '''Load the map from image files'''
@@ -42,7 +43,8 @@ class Map():
             ('difficulty',      numpy.int8),
             ('transparent',     numpy.bool_),
             ('solid',           numpy.bool_),
-            ('image',           numpy.int8),
+            ('groundimage',     numpy.uint8),
+            ('topimage',        numpy.uint8),
             ('random',          numpy.int8)
             ])
 
@@ -59,7 +61,8 @@ class Map():
             binaryfilepath = os.path.join('map', mapdict['dir'], mapdict['binaryfile'])
         if  (binaryfilepath and os.path.isfile(binaryfilepath) and
              os.path.getmtime(binaryfilepath) >= os.path.getmtime(terrainfilepath) and
-             os.path.getmtime(binaryfilepath) >= os.path.getmtime(itemfilepath)):
+             os.path.getmtime(binaryfilepath) >= os.path.getmtime(itemfilepath) and
+             not Map.DIRTYCACHE):
             self.cellarray = numpy.load(binaryfilepath)
             self.size = self.cellarray.shape
 
@@ -92,31 +95,34 @@ class Map():
         '''Set map item with [], wrapping'''
         self.cellarray[coord[0]%self.size[0]][coord[1]%self.size[1]] = value
 
-    def draw(self, drawSurface, coord, layer):
-        '''Blit cell graphics to the specified surface'''
-        Drawx = coord[0]*images.TILESIZE
-        Drawy = coord[1]*images.TILESIZE
-        DrawPos = (Drawx, Drawy)
-        cell = self[coord]
-        if not cell['top'] == layer:
-            return
+    def sprites(self, coord):
+        coord = (coord[0]%self.size[0], coord[1]%self.size[1])
+        sprites = []
+        def addsprite(image, layer):
+            sprites.append((image,
+                            (coord[0]*images.TILESIZE + (images.TILESIZE-image.get_width())/2,
+                             coord[1]*images.TILESIZE + (images.TILESIZE-image.get_height())/2),
+                            layer))
+        cell = self.cellarray[coord[0]][coord[1]]
         if not cell['explored']:
-            drawSurface.blit(images.Unknown, DrawPos)
-            return
-        spritelist = images.Terrain[cell['image']]
-        spritelistindex = (cell['random']%len(spritelist))
-        sprite = spritelist[spritelistindex]
-        Drawxoffset = (images.TILESIZE-sprite.get_width())/2
-        Drawyoffset = (images.TILESIZE-sprite.get_height())/2
-        drawSurface.blit(sprite, (Drawx+Drawxoffset, Drawy+Drawyoffset))
+            addsprite(images.Unknown, -10)
+            return sprites
+        for imagelayer in (cell['groundimage'], -10), (cell['topimage'], 10):
+            if imagelayer[0] == 255:
+                continue
+            offsetspritelist = images.TerrainSprites[imagelayer[0]]
+            spritelistindex = (cell['random']%len(offsetspritelist[1]))
+            sprite = offsetspritelist[1][spritelistindex]
+            addsprite(sprite, imagelayer[1]+offsetspritelist[0])
         if cell['damaged']:
-            drawSurface.blit(images.Damaged, DrawPos)
+            addsprite(images.Damaged, -2)
         if cell['collectableitem'] != 0:
-            drawSurface.blit(images.Collectables[cell['collectableitem']], DrawPos)
+            addsprite(images.Collectables[cell['collectableitem']], -1)
         if cell['burning']:
-            drawSurface.blit(images.Burning, DrawPos)
+            addsprite(images.Burning, -1)
         if not cell['visible']:
-            drawSurface.blit(images.NonVisible, DrawPos)
+            addsprite(images.NonVisible, 50)
+        return sprites
 
     def destroy(self, coord):
         '''Change cell attributes to reflect destruction'''
@@ -133,6 +139,7 @@ class Map():
         cell['transparent'] = True
         cell['solid'] = False
         cell['difficulty'] += Map.CELLDAMAGEDCOST
+        cell['topimage'] = 255
         return True
 
     def ignite(self, coord, multiplier=1, forceignite=False):
