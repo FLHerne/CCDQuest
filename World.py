@@ -17,7 +17,7 @@ class World:
         self.surface.fill(BLACK)
 
         self.gemgos = []
-        for gemgo in Player, Bear, Dragon, Sign:
+        for gemgo in Player, Bear, Dragon, Sign, Pixie:
             self.gemgos += gemgo.place(self.cellmap)
         self.player = filter(lambda x: isinstance(x, Player), self.gemgos)[0]
 
