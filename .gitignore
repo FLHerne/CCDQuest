@@ -6,4 +6,4 @@
 *.kate-swp
 *.json~
 *.npy
-
+*.cfg~
