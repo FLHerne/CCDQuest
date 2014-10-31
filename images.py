@@ -99,8 +99,14 @@ for index in range(0, len(TerrainSprites)):
 # Overlays for unknown, non-visible, damaged or burning tiles.
 Unknown = pygame.image.load("tiles/Unknown.png").convert()
 NonVisible = pygame.image.load("tiles/NonVisible.png").convert_alpha()
-Damaged = pygame.image.load("tiles/Damaged.png").convert_alpha()
-Burning = pygame.image.load("tiles/Fire.png").convert_alpha()
+
+# These two can be randomly chosen
+Damaged = [
+    pygame.image.load("tiles/Damaged.png").convert_alpha()
+]
+Burning = [
+    pygame.image.load("tiles/Fire.png").convert_alpha()
+]
 
 # Overlays for tiles with collectables.
 Coin = pygame.image.load("tiles/Coin.png").convert_alpha()

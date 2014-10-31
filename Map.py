@@ -107,19 +107,19 @@ class Map():
         if not cell['explored']:
             addsprite(images.Unknown, -10)
             return sprites
+        def pickrandomsprite(spritelist):
+            return spritelist[cell['random']%len(spritelist)]
         for imagelayer in (cell['groundimage'], -10), (cell['topimage'], 10):
             if imagelayer[0] == 255:
                 continue
             offsetspritelist = images.TerrainSprites[imagelayer[0]]
-            spritelistindex = (cell['random']%len(offsetspritelist[1]))
-            sprite = offsetspritelist[1][spritelistindex]
-            addsprite(sprite, imagelayer[1]+offsetspritelist[0])
+            addsprite(pickrandomsprite(offsetspritelist[1]), imagelayer[1]+offsetspritelist[0])
         if cell['damaged']:
-            addsprite(images.Damaged, -2)
+            addsprite(pickrandomsprite(images.Damaged), -2)
         if cell['collectableitem'] != 0:
             addsprite(images.Collectables[cell['collectableitem']], -1)
         if cell['burning']:
-            addsprite(images.Burning, -1)
+            addsprite(pickrandomsprite(images.Burning), -1)
         if not cell['visible']:
             addsprite(images.NonVisible, 50)
         return sprites
