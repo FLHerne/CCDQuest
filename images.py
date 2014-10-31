@@ -59,6 +59,7 @@ TerrainSprites = [
     [
         'planks',
         pygame.image.load("tiles/Wood.png").convert(),
+        pygame.image.load("tiles/Wood1.png").convert()
     ],
     [
         'paving',
