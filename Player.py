@@ -9,6 +9,7 @@ from directions import *
 class Player(MGO.GEMGO):
     '''The player, exploring the grid-based world'''
     FREEPLAYER = False
+    XRAYVISION = False
 
     def __init__(self, position, cellmap):
         '''Initialise instance variables'''
@@ -65,6 +66,11 @@ class Player(MGO.GEMGO):
         '''Calculate and return the set of tiles visible to player'''
         visible = set()
 
+        def square():
+            for ix in range(self.position[0]-self.visibility, self.position[0]+self.visibility+1):
+                for iy in range(self.position[1]-self.visibility, self.position[1]+self.visibility+1):
+                    visible.add((ix, iy))
+
         def diagonalcheck():
             '''Test visibility along (offset) diagonals away from player'''
             x = self.position[0]
@@ -113,6 +119,9 @@ class Player(MGO.GEMGO):
                     Y += 1
                 visible.add((self.position[0], (Y*i)+self.position[1]))
 
-        diagonalcheck()
-        crosscheck()
+        if Player.XRAYVISION:
+            square()
+        else:
+            diagonalcheck()
+            crosscheck()
         return visible

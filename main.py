@@ -42,10 +42,13 @@ if mainconfig.has_section("settings"):
     if mainconfig.has_option("settings", "freeplayer"):
         try:
             Player.FREEPLAYER = mainconfig.getboolean("settings", "freeplayer")
-            print 'gotvalue', mainconfig.getboolean("settings", "freeplayer")
-            print Player.FREEPLAYER
         except ValueError:
             print "Invalid value for 'freeplayer'"
+    if mainconfig.has_option("settings", "xrayvision"):
+        try:
+            Player.XRAYVISION = mainconfig.getboolean("settings", "xrayvision")
+        except ValueError:
+            print "Invalid value for 'xrayvision'"
 for im in mainconfig.items("maps"):
     descfilename = os.path.join('map', im[1], 'mapdesc.json')
     try:
