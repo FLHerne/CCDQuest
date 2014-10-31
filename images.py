@@ -49,11 +49,11 @@ TerrainSprites = [
     ],
     [
         'grass',
-        pygame.image.load("tiles/Grass1.png").convert(),
-        pygame.image.load("tiles/Grass2.png").convert(),
-        pygame.image.load("tiles/Grass3.png").convert(),
-        pygame.image.load("tiles/Grass4.png").convert(),
-        pygame.image.load("tiles/Grass5.png").convert()
+        pygame.image.load("tiles/Grass1.png").convert_alpha(),
+        pygame.image.load("tiles/Grass2.png").convert_alpha(),
+        pygame.image.load("tiles/Grass3.png").convert_alpha(),
+        pygame.image.load("tiles/Grass4.png").convert_alpha(),
+        pygame.image.load("tiles/Grass5.png").convert_alpha()
     ],
     [
         'planks',
