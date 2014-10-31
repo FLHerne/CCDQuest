@@ -1,5 +1,6 @@
 import pygame
 import collectables
+from colors import MAGENTA
 from directions import *
 
 '''Load and convert all in-game images'''
@@ -20,28 +21,28 @@ TerrainSprites = [
     ],
     [
         'tree',
-        pygame.image.load("tiles/Trees1.png").convert_alpha(),
-        pygame.image.load("tiles/Trees2.png").convert_alpha(),
-        pygame.image.load("tiles/Trees3.png").convert_alpha(),
-        pygame.image.load("tiles/Trees4.png").convert_alpha(),
-        pygame.image.load("tiles/Trees5.png").convert_alpha(),
-        pygame.image.load("tiles/Trees6.png").convert_alpha(),
-        pygame.image.load("tiles/Trees7.png").convert_alpha(),
-        pygame.image.load("tiles/Trees8.png").convert_alpha(),
+        pygame.image.load("tiles/Trees1.png").convert(),
+        pygame.image.load("tiles/Trees2.png").convert(),
+        pygame.image.load("tiles/Trees3.png").convert(),
+        pygame.image.load("tiles/Trees4.png").convert(),
+        pygame.image.load("tiles/Trees5.png").convert(),
+        pygame.image.load("tiles/Trees6.png").convert(),
+        pygame.image.load("tiles/Trees7.png").convert(),
+        pygame.image.load("tiles/Trees8.png").convert(),
     ],
     [
         'snow',
-        pygame.image.load("tiles/Snow1.png").convert_alpha(),
-        pygame.image.load("tiles/Snow2.png").convert_alpha(),
-        pygame.image.load("tiles/Snow3.png").convert_alpha(),
-        pygame.image.load("tiles/Snow4.png").convert_alpha(),
+        pygame.image.load("tiles/Snow1.png").convert(),
+        pygame.image.load("tiles/Snow2.png").convert(),
+        pygame.image.load("tiles/Snow3.png").convert(),
+        pygame.image.load("tiles/Snow4.png").convert(),
     ],
     [
         'rock',
-        pygame.image.load("tiles/Rock1.png").convert_alpha(),
-        pygame.image.load("tiles/Rock2.png").convert_alpha(),
-        pygame.image.load("tiles/Rock3.png").convert_alpha(),
-        pygame.image.load("tiles/Rock4.png").convert_alpha(),
+        pygame.image.load("tiles/Rock1.png").convert(),
+        pygame.image.load("tiles/Rock2.png").convert(),
+        pygame.image.load("tiles/Rock3.png").convert(),
+        pygame.image.load("tiles/Rock4.png").convert(),
     ],
     [
         'floor',
@@ -49,11 +50,11 @@ TerrainSprites = [
     ],
     [
         'grass',
-        pygame.image.load("tiles/Grass1.png").convert_alpha(),
-        pygame.image.load("tiles/Grass2.png").convert_alpha(),
-        pygame.image.load("tiles/Grass3.png").convert_alpha(),
-        pygame.image.load("tiles/Grass4.png").convert_alpha(),
-        pygame.image.load("tiles/Grass5.png").convert_alpha()
+        pygame.image.load("tiles/Grass1.png").convert(),
+        pygame.image.load("tiles/Grass2.png").convert(),
+        pygame.image.load("tiles/Grass3.png").convert(),
+        pygame.image.load("tiles/Grass4.png").convert(),
+        pygame.image.load("tiles/Grass5.png").convert()
     ],
     [
         'planks',
@@ -65,10 +66,10 @@ TerrainSprites = [
     ],
     [
         'sand',
-        pygame.image.load("tiles/Sand1.png").convert_alpha(),
-        pygame.image.load("tiles/Sand2.png").convert_alpha(),
-        pygame.image.load("tiles/Sand3.png").convert_alpha(),
-        pygame.image.load("tiles/Sand4.png").convert_alpha(),
+        pygame.image.load("tiles/Sand1.png").convert(),
+        pygame.image.load("tiles/Sand2.png").convert(),
+        pygame.image.load("tiles/Sand3.png").convert(),
+        pygame.image.load("tiles/Sand4.png").convert(),
     ],
     [
         'marsh',
@@ -76,10 +77,10 @@ TerrainSprites = [
     ],
     [
         'water',
-        pygame.image.load("tiles/Water1.png").convert_alpha(),
-        pygame.image.load("tiles/Water2.png").convert_alpha(),
-        pygame.image.load("tiles/Water3.png").convert_alpha(),
-        pygame.image.load("tiles/Water4.png").convert_alpha(),
+        pygame.image.load("tiles/Water1.png").convert(),
+        pygame.image.load("tiles/Water2.png").convert(),
+        pygame.image.load("tiles/Water3.png").convert(),
+        pygame.image.load("tiles/Water4.png").convert(),
     ],
     [
         'deepwater',
@@ -92,6 +93,7 @@ for index in range(0, len(TerrainSprites)):
     entry = TerrainSprites[index]
     TerrainIndex[entry[0]] = index
     entry.pop(0)
+    map(lambda x: x.set_colorkey(MAGENTA, pygame.RLEACCEL), entry)
     TerrainSprites[index] = (len(TerrainSprites)/2-index, entry)
 
 # Overlays for unknown, non-visible, damaged or burning tiles.
