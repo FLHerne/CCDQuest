@@ -1,19 +1,28 @@
 import images
 import random
+import MGO
 
 class Pixie:
     '''Pixie that says things when walked to'''
-    def __init__(self, position, phrasebook):
+    def __init__(self, phrasebook, position, cellmap):
         '''Create new pixie in position'''
+        super(Sign, self).__init__(position, cellmap)
         self.position = position
         self.direction = -1 # Left
         self.phrasebook = phrasebook
         self.message = [None, 0]
         self.visible = False
+        
+    @classmethod
+    def place(cls, cellmap):
+        created = []
+        for signdef in cellmap.pixiedefs:
+            created.append(cls(pixiedef[1], pixiedef[0], cellmap))
+        return created
 
-    def update(self, playerpos, cellmap):
+    def update(self, playerpos):
         '''DOCSTRING NEEDED HERE'''
-        self.move(playerpos, cellmap)
+        self.move(playerpos, self.cellmap)
         ppx = playerpos[0]
         ppy = playerpos[1]
         for testx in (ppx-1, ppx, ppx+1):
@@ -22,7 +31,7 @@ class Pixie:
                     phrase = self.phrasebook[random.randint(0, len(self.phrasebook)-1)]
                     self.suggestmessage("Pixie: " + phrase, 50)
 
-        if cellmap[self.position]['visible']:
+        if self.cellmap[self.position]['visible']:
             if not self.visible:
                 self.suggestmessage("You see a pixie in the distance", 1)
             self.visible = True
@@ -49,11 +58,10 @@ class Pixie:
         return True
 
     def sprite(self):
-        return images.Pixie
+        if self.cellmap[self.position]['visible']:
+            return images.Pixie, self._pixelpos(), -1
+        else:
+            return None
 
-    def suggestmessage(self, string, priority):
-        if priority > self.message[1]:
-            self.message = [string, priority]
 
-    def mdnotify(self):
-        self.message = [None, 0]
+
