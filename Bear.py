@@ -8,7 +8,7 @@ def mindist(a, b, size):
 
 class Bear(MGO.GEMGO):
     '''Harmless animal that follows the player'''
-    PER_TILE = 1/3000
+    PER_TILE = 1/float(2000)
 
     def __init__(self, position, cellmap):
         '''Create bear at position'''
@@ -110,6 +110,6 @@ class Bear(MGO.GEMGO):
 
     def sprite(self):
         if self.cellmap[self.position]['visible']:
-            return (images.BearRight if self.direction > 0 else images.BearLeft), self._pixelpos(2,2), 1
+            return (images.BearRight if self.direction > 0 else images.BearLeft), self._pixelpos((2,2)), 1
         else:
             return None

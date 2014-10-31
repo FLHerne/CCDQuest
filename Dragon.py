@@ -5,7 +5,7 @@ import MGO
 
 class Dragon(MGO.GEMGO):
     '''Harmless flying thing that follows the player'''
-    PER_TILE = 1/10000
+    PER_TILE = 1/float(6000)
     detectionrange = 18
     speed = 0.8
 
@@ -78,8 +78,9 @@ class Dragon(MGO.GEMGO):
                     #and not (self.cellmap[self.player.position]['hasroof'] and (cell['hasroof'] or not cell['transparent'])):
                     isvisible = True
         if isvisible:
+            offset = [-images.TILESIZE if axis == 1 else 0 for axis in self.direction]
             return (images.DragonRed[self.direction],
-                    self._pixelpos(-images.TILESIZE if axis == 1 else 0 for axis in self.direction),
+                    self._pixelpos(offset),
                     20)
         else:
             return None

@@ -16,6 +16,8 @@ window = pygame.display.set_mode(WINDOWSIZE, pygame.RESIZABLE)
 from HUD import HUD
 from MessageBox import MessageBox
 from Map import Map
+from Bear import Bear
+from Dragon import Dragon
 from Player import Player
 from World import World
 from WorldView import WorldView
@@ -49,6 +51,17 @@ if mainconfig.has_section("settings"):
             Player.XRAYVISION = mainconfig.getboolean("settings", "xrayvision")
         except ValueError:
             print "Invalid value for 'xrayvision'"
+if mainconfig.has_section("fauna"):
+    if mainconfig.has_option("fauna", "tiles_per_bear"):
+        try:
+            Bear.PER_TILE = 1/mainconfig.getfloat("fauna", "tiles_per_bear")
+        except ValueError:
+            print "Invalid value for 'tiles_per_bear'"
+    if mainconfig.has_option("fauna", "tiles_per_dragon"):
+        try:
+            Dragon.PER_TILE = 1/mainconfig.getfloat("fauna", "tiles_per_dragon")
+        except ValueError:
+            print "Invalid value for 'tiles_per_dragon'"
 for im in mainconfig.items("maps"):
     descfilename = os.path.join('map', im[1], 'mapdesc.json')
     try:
