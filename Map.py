@@ -2,6 +2,7 @@ import pygame
 import random
 import CellFiller
 from colors import *
+from directions import *
 import collectables
 import images
 import numpy
@@ -118,7 +119,10 @@ class Map():
         if cell['damaged']:
             addsprite(pickrandomsprite(images.Damaged), -3)
         if coord in self.fusetiles:
-            addsprite(images.Sign, -2)
+            for direction in [UP, DOWN, LEFT, RIGHT]:
+                nbrcoord = ((coord[0]+direction[0])%self.size[0], (coord[1]+direction[1])%self.size[1])
+                if nbrcoord in self.fusetiles or self[nbrcoord]['collectableitem'] == collectables.DYNAMITE:
+                    addsprite(images.Fuse[direction], -2)
         if cell['collectableitem'] != 0:
             addsprite(images.Collectables[cell['collectableitem']], -1)
         if cell['burning']:
@@ -140,7 +144,8 @@ class Map():
         openlist.add(coord)
         while len(openlist) > 0:
             curpos = openlist.pop()
-            self.fusetiles.remove(curpos)
+            if curpos in self.fusetiles:
+                self.fusetiles.remove(curpos)
             for nbrpos in [(curpos[0]-1, curpos[1]), (curpos[0], curpos[1]-1), (curpos[0]+1, curpos[1]), (curpos[0], curpos[1]+1)]:
                 if self[nbrpos]['collectableitem'] == collectables.DYNAMITE:
                     self.detonate(nbrpos)
