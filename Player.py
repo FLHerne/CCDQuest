@@ -42,7 +42,6 @@ class Player(MGO.GEMGO):
                 self.layingfuse = True
                 self.score[collectables.DYNAMITE] -= 1
                 self.cellmap[self.position]['collectableitem'] = collectables.DYNAMITE
-                self.cellmap.placefuse(self.position)
         elif arg == 'ignitefuse':
             self.layingfuse = False
             self.cellmap.ignitefuse(self.position)

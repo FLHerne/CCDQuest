@@ -134,14 +134,16 @@ class Map():
         coord = (coord[0]%self.size[0], coord[1]%self.size[1])
         if not coord in self.fusetiles:
             return False
+        if self[coord]['collectableitem'] == collectables.DYNAMITE:
+            self.detonate(coord)
         openlist = set()
         openlist.add(coord)
         while len(openlist) > 0:
             curpos = openlist.pop()
             self.fusetiles.remove(curpos)
-            if self[curpos]['collectableitem'] == collectables.DYNAMITE:
-                self.detonate(curpos)
             for nbrpos in [(curpos[0]-1, curpos[1]), (curpos[0], curpos[1]-1), (curpos[0]+1, curpos[1]), (curpos[0], curpos[1]+1)]:
+                if self[nbrpos]['collectableitem'] == collectables.DYNAMITE:
+                    self.detonate(nbrpos)
                 nbrpos = (nbrpos[0]%self.size[0], nbrpos[1]%self.size[1])
                 if nbrpos in self.fusetiles:
                     openlist.add(nbrpos)
