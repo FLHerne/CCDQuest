@@ -19,4 +19,5 @@ else:
         pygame.K_d: RIGHT
     }
 
-BLAST = pygame.K_SPACE
+FOLLOWPATH = pygame.K_f
+FUSEREEL   = pygame.K_SPACE

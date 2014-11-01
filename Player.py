@@ -17,6 +17,7 @@ class Player(MGO.GEMGO):
         self.color = MAGENTA
         self.visibility = 15
         self.direction = RIGHT
+        self.layingfuse = False
         self.score = {
             collectables.COIN: 0,
             collectables.CHOCOLATE: 10000,
@@ -32,6 +33,20 @@ class Player(MGO.GEMGO):
 
     def sprite(self):
         return images.Player[self.direction], self._pixelpos(), 0
+
+    def action(self, arg):
+        if arg == 'followpath':
+            self.followpath()
+        elif arg == 'startfuse':
+            if not self.layingfuse:
+                self.layingfuse = True
+                self.score[collectables.DYNAMITE] -= 1
+                self.cellmap[self.position]['collectableitem'] = collectables.DYNAMITE
+        elif arg == 'ignitefuse':
+            self.layingfuse = False
+            self.cellmap.ignitefuse(self.position)
+        else:
+            self.move(*arg)
 
     def move(self, x, y):
         '''Move if possible, update collectable levels accordingly'''
@@ -50,6 +65,24 @@ class Player(MGO.GEMGO):
         self.cellmap[self.position]['collectableitem'] = 0
         if not Player.FREEPLAYER:
             self.score[collectables.CHOCOLATE] -= self.cellmap[self.position]['difficulty']
+        if self.layingfuse and self.cellmap[self.position]['name'] not in ['water', 'deep water']:
+            self.cellmap.placefuse(self.position)
+        return True
+
+    def followpath(self):
+        def subtuple(a, b):
+            return (a[0]-b[0], a[1]-b[1])
+        oldpos = subtuple(self.position, self.direction)
+        if self.cellmap[oldpos]['name'] not in ['wooden planking', 'paving']:
+            return False
+        pathnbrs = []
+        for nbrpos in [(self.position[0]-1, self.position[1]), (self.position[0], self.position[1]-1), (self.position[0]+1, self.position[1]), (self.position[0], self.position[1]+1)]:
+            if (nbrpos == oldpos) or (self.cellmap[nbrpos]['name'] not in ['wooden planking', 'paving']):
+                continue
+            pathnbrs.append(nbrpos)
+        if len(pathnbrs) != 1:
+            return False
+        self.move(*subtuple(pathnbrs[0], self.position))
         return True
 
     def detonate(self):

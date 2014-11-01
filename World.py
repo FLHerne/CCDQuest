@@ -43,10 +43,10 @@ class World:
                 for ty in [sprite[1][1]-self.surface.get_height(), sprite[1][1], sprite[1][1]+self.surface.get_height()]:
                     self.surface.blit(sprite[0], (tx, ty))
 
-    def moveplayer(self, x, y):
+    def moveplayer(self, arg):
         '''Move the player by (x, y), move other fauna, update world surface around player'''
         self.cellmap.update()
-        self.player.move(x, y)
+        self.player.action(arg)
 
         gemgosprites = []
         for gemgo in self.gemgos:

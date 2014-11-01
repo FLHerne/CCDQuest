@@ -100,7 +100,7 @@ def loadmap(newmap):
     messagebox.mgolist = world.gemgos
 
     messagebox.string = None
-    world.moveplayer(0, 0)
+    world.moveplayer((0, 0))
     window.fill(BLACK)
     hud = HUD(world, window)
     worldview = WorldView(world, window)
@@ -120,13 +120,18 @@ def handleevents():
             size = event.dict['size']
             if size[0] >= 320 and size[1] >= 240:
                 window = pygame.display.set_mode(size, pygame.RESIZABLE)
+        if event.type == pygame.KEYUP:
+            if event.key == FUSEREEL:
+                world.moveplayer('ignitefuse')
         if event.type == pygame.KEYDOWN:
-            if event.key == BLAST:
-                world.player.detonate()
             if event.key in MOVEDIRS:
-                world.moveplayer(*MOVEDIRS[event.key])
+                world.moveplayer(MOVEDIRS[event.key])
+            elif event.key == FOLLOWPATH:
+                world.moveplayer('followpath')
+            elif event.key == FUSEREEL:
+                world.moveplayer('startfuse')
             else:
-                world.moveplayer(0, 0)
+                world.moveplayer((0, 0))
             if event.key == pygame.K_1:
                 loadmap(currentmap - 1)
             if event.key == pygame.K_2:
@@ -140,7 +145,7 @@ def handleevents():
     return gameended
 
 world = World(maps[currentmap])
-world.moveplayer(0, 0)
+world.moveplayer((0, 0))
 HUDWIDTH = 92
 worldviewrect = pygame.Rect(0, 0, WINDOWSIZE[0]-HUDWIDTH, WINDOWSIZE[1])
 worldview = WorldView(world, window)

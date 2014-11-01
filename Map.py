@@ -2,6 +2,7 @@ import pygame
 import random
 import CellFiller
 from colors import *
+from directions import *
 import collectables
 import images
 import numpy
@@ -25,6 +26,7 @@ class Map():
             self.pixiedefs = mapdict['pixies']
         self.origcoins = 0
         self.burningtiles = set()
+        self.fusetiles = set()
         self.crcount = 0
 
         celldtype = numpy.dtype([
@@ -115,7 +117,12 @@ class Map():
             offsetspritelist = images.TerrainSprites[imagelayer[0]]
             addsprite(pickrandomsprite(offsetspritelist[1]), imagelayer[1]+offsetspritelist[0])
         if cell['damaged']:
-            addsprite(pickrandomsprite(images.Damaged), -2)
+            addsprite(pickrandomsprite(images.Damaged), -3)
+        if coord in self.fusetiles:
+            for direction in [UP, DOWN, LEFT, RIGHT]:
+                nbrcoord = ((coord[0]+direction[0])%self.size[0], (coord[1]+direction[1])%self.size[1])
+                if nbrcoord in self.fusetiles or self[nbrcoord]['collectableitem'] == collectables.DYNAMITE:
+                    addsprite(images.Fuse[direction], -2)
         if cell['collectableitem'] != 0:
             addsprite(images.Collectables[cell['collectableitem']], -1)
         if cell['burning']:
@@ -123,6 +130,28 @@ class Map():
         if not cell['visible']:
             addsprite(images.NonVisible, 50)
         return sprites
+
+    def placefuse(self, coord):
+        self.fusetiles.add((coord[0]%self.size[0], coord[1]%self.size[1]))
+
+    def ignitefuse(self, coord):
+        coord = (coord[0]%self.size[0], coord[1]%self.size[1])
+        if self[coord]['collectableitem'] == collectables.DYNAMITE:
+            self.detonate(coord)
+        if not coord in self.fusetiles:
+            return False
+        openlist = set()
+        openlist.add(coord)
+        while len(openlist) > 0:
+            curpos = openlist.pop()
+            if curpos in self.fusetiles:
+                self.fusetiles.remove(curpos)
+            for nbrpos in [(curpos[0]-1, curpos[1]), (curpos[0], curpos[1]-1), (curpos[0]+1, curpos[1]), (curpos[0], curpos[1]+1)]:
+                if self[nbrpos]['collectableitem'] == collectables.DYNAMITE:
+                    self.detonate(nbrpos)
+                nbrpos = (nbrpos[0]%self.size[0], nbrpos[1]%self.size[1])
+                if nbrpos in self.fusetiles:
+                    openlist.add(nbrpos)
 
     def destroy(self, coord):
         '''Change cell attributes to reflect destruction'''
@@ -144,14 +173,17 @@ class Map():
 
     def ignite(self, coord, multiplier=1, forceignite=False):
         '''Start a fire at coord, with chance cell.firestartchance * multiplier'''
+        coord = (coord[0]%self.size[0], coord[1]%self.size[1])
         cell = self[coord]
+        if coord in self.fusetiles:
+            self.ignitefuse(coord)
         if cell['collectableitem'] == collectables.DYNAMITE:
             self.detonate(coord)
         if forceignite or random.random() < cell['fireignitechance'] * multiplier:
             cell['burning'] = True
             if cell['fireignitechance'] > 0:
                 self.destroy(coord)
-            self.burningtiles.add((coord[0]%self.size[0], coord[1]%self.size[1]))
+            self.burningtiles.add(coord)
             return True
         return False
 

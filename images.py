@@ -119,6 +119,20 @@ Burning = [
     pygame.image.load("tiles/Fire4.png").convert_alpha()
 ]
 
+# Overlays for fuses.
+FuseLeft = pygame.image.load("tiles/Fuse.png").convert_alpha()
+FuseRight = pygame.transform.rotate(FuseLeft, 180)
+FuseUp = pygame.transform.rotate(FuseLeft, -90)
+FuseDown = pygame.transform.rotate(FuseLeft, 90)
+
+Fuse = {
+    UP: FuseUp,
+    DOWN: FuseDown,
+    LEFT: FuseLeft,
+    RIGHT: FuseRight
+}
+
+
 # Overlays for tiles with collectables.
 Coin = pygame.image.load("tiles/Coin.png").convert_alpha()
 Choc = pygame.image.load("tiles/Chocolate.png").convert_alpha()
