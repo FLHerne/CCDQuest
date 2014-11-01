@@ -25,6 +25,7 @@ class Map():
             self.pixiedefs = mapdict['pixies']
         self.origcoins = 0
         self.burningtiles = set()
+        self.fusetiles = set()
         self.crcount = 0
 
         celldtype = numpy.dtype([
@@ -115,7 +116,9 @@ class Map():
             offsetspritelist = images.TerrainSprites[imagelayer[0]]
             addsprite(pickrandomsprite(offsetspritelist[1]), imagelayer[1]+offsetspritelist[0])
         if cell['damaged']:
-            addsprite(pickrandomsprite(images.Damaged), -2)
+            addsprite(pickrandomsprite(images.Damaged), -3)
+        if coord in self.fusetiles:
+            addsprite(images.Sign, -2)
         if cell['collectableitem'] != 0:
             addsprite(images.Collectables[cell['collectableitem']], -1)
         if cell['burning']:
@@ -123,6 +126,25 @@ class Map():
         if not cell['visible']:
             addsprite(images.NonVisible, 50)
         return sprites
+
+    def placefuse(self, coord):
+        self.fusetiles.add((coord[0]%self.size[0], coord[1]%self.size[1]))
+
+    def ignitefuse(self, coord):
+        coord = (coord[0]%self.size[0], coord[1]%self.size[1])
+        if not coord in self.fusetiles:
+            return False
+        openlist = set()
+        openlist.add(coord)
+        while len(openlist) > 0:
+            curpos = openlist.pop()
+            self.fusetiles.remove(curpos)
+            if self[curpos]['collectableitem'] == collectables.DYNAMITE:
+                self.detonate(curpos)
+            for nbrpos in [(curpos[0]-1, curpos[1]), (curpos[0], curpos[1]-1), (curpos[0]+1, curpos[1]), (curpos[0], curpos[1]+1)]:
+                nbrpos = (nbrpos[0]%self.size[0], nbrpos[1]%self.size[1])
+                if nbrpos in self.fusetiles:
+                    openlist.add(nbrpos)
 
     def destroy(self, coord):
         '''Change cell attributes to reflect destruction'''

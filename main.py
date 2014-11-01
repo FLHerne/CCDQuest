@@ -120,11 +120,16 @@ def handleevents():
             size = event.dict['size']
             if size[0] >= 320 and size[1] >= 240:
                 window = pygame.display.set_mode(size, pygame.RESIZABLE)
+        if event.type == pygame.KEYUP:
+            if event.key == FUSEREEL:
+                world.moveplayer('ignitefuse')
         if event.type == pygame.KEYDOWN:
-            if event.key == BLAST:
-                world.player.detonate()
             if event.key in MOVEDIRS:
                 world.moveplayer(MOVEDIRS[event.key])
+            elif event.key == FOLLOWPATH:
+                world.moveplayer('followpath')
+            elif event.key == FUSEREEL:
+                world.moveplayer('startfuse')
             else:
                 world.moveplayer((0, 0))
             if event.key == pygame.K_1:

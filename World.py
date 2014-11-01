@@ -46,10 +46,7 @@ class World:
     def moveplayer(self, arg):
         '''Move the player by (x, y), move other fauna, update world surface around player'''
         self.cellmap.update()
-        if arg == 'autofollow':
-            self.player.autofollow()
-        else:
-            self.player.move(*arg)
+        self.player.action(arg)
 
         gemgosprites = []
         for gemgo in self.gemgos:
