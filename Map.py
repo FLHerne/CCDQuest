@@ -132,10 +132,10 @@ class Map():
 
     def ignitefuse(self, coord):
         coord = (coord[0]%self.size[0], coord[1]%self.size[1])
-        if not coord in self.fusetiles:
-            return False
         if self[coord]['collectableitem'] == collectables.DYNAMITE:
             self.detonate(coord)
+        if not coord in self.fusetiles:
+            return False
         openlist = set()
         openlist.add(coord)
         while len(openlist) > 0:
@@ -168,14 +168,17 @@ class Map():
 
     def ignite(self, coord, multiplier=1, forceignite=False):
         '''Start a fire at coord, with chance cell.firestartchance * multiplier'''
+        coord = (coord[0]%self.size[0], coord[1]%self.size[1])
         cell = self[coord]
+        if coord in self.fusetiles:
+            self.ignitefuse(coord)
         if cell['collectableitem'] == collectables.DYNAMITE:
             self.detonate(coord)
         if forceignite or random.random() < cell['fireignitechance'] * multiplier:
             cell['burning'] = True
             if cell['fireignitechance'] > 0:
                 self.destroy(coord)
-            self.burningtiles.add((coord[0]%self.size[0], coord[1]%self.size[1]))
+            self.burningtiles.add(coord)
             return True
         return False
 
