@@ -65,7 +65,7 @@ class Player(MGO.GEMGO):
         self.cellmap[self.position]['collectableitem'] = 0
         if not Player.FREEPLAYER:
             self.score[collectables.CHOCOLATE] -= self.cellmap[self.position]['difficulty']
-        if self.layingfuse:
+        if self.layingfuse and self.cellmap[self.position]['name'] not in ['water', 'deep water']:
             self.cellmap.placefuse(self.position)
         return True
 
