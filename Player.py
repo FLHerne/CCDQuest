@@ -73,8 +73,6 @@ class Player(MGO.GEMGO):
         def subtuple(a, b):
             return (a[0]-b[0], a[1]-b[1])
         oldpos = subtuple(self.position, self.direction)
-        if self.cellmap[oldpos]['name'] not in ['wooden planking', 'paving']:
-            return False
         pathnbrs = []
         for nbrpos in [(self.position[0]-1, self.position[1]), (self.position[0], self.position[1]-1), (self.position[0]+1, self.position[1]), (self.position[0], self.position[1]+1)]:
             if (nbrpos == oldpos) or (self.cellmap[nbrpos]['name'] not in ['wooden planking', 'paving']):
