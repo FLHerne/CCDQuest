@@ -1,4 +1,5 @@
 import pygame
+import random
 import images
 from images import TILESIZE
 import MGO
@@ -45,6 +46,8 @@ class Player(MGO.GEMGO):
         elif arg == 'ignitefuse':
             self.layingfuse = False
             self.cellmap.ignitefuse(self.position)
+        elif arg == 'scattercoins':
+            self.scattercoins(3, 10)
         else:
             self.move(*arg)
 
@@ -92,6 +95,22 @@ class Player(MGO.GEMGO):
         self._suggestmessage("You detonate some dynamite", 4)
         self.cellmap.detonate(self.position)
         self.score[collectables.DYNAMITE] -= 1
+
+    def scattercoins(self, radius, number):
+        sqradius = radius**2
+        scattered = 0
+        attempts = 0
+        while scattered < number and attempts < 6*number and self.score[collectables.COIN] > 0:
+            attempts += 1
+            tryoffset = random.randint(-radius, radius), random.randint(-radius, radius)
+            if tryoffset[0]**2 + tryoffset[1]**2 > sqradius:
+                continue
+            trypos = (self.position[0]+tryoffset[0], self.position[1]+tryoffset[1])
+            if self.cellmap[trypos]['collectableitem'] or self.cellmap[trypos]['solid']:
+                continue
+            self.cellmap[trypos]['collectableitem'] = collectables.COIN
+            self.score[collectables.COIN] -= 1
+            scattered += 1
 
     def visible_tiles(self):
         '''Calculate and return the set of tiles visible to player'''

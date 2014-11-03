@@ -130,6 +130,8 @@ def handleevents():
                 world.moveplayer('followpath')
             elif event.key == FUSEREEL:
                 world.moveplayer('startfuse')
+            elif event.key == pygame.K_3:
+                world.moveplayer('scattercoins')
             else:
                 world.moveplayer((0, 0))
             if event.key == pygame.K_1:
