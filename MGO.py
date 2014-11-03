@@ -29,7 +29,7 @@ class GEMGO(MGO):
             created.append(cls(attempt, cellmap))
         return created
 
-    def update(self, playerpos, cellmap):
+    def update(self, player):
         pass
 
     def sprite(self):

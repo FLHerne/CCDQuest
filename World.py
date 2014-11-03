@@ -50,7 +50,7 @@ class World:
 
         gemgosprites = []
         for gemgo in self.gemgos:
-            gemgo.update(self.player.position)
+            gemgo.update(self.player)
             sprite = gemgo.sprite()
             if sprite is not None:
                 gemgosprites.append(sprite)

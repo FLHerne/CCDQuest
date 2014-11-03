@@ -15,8 +15,9 @@ class Dragon(MGO.GEMGO):
         self.direction = UPLEFT
         self.hunting = False
 
-    def update(self, playerpos):
+    def update(self, player):
         '''Fly toward the player if nearby, or continue in same direction'''
+        playerpos = player.position
         def tileoffset(a, b, size):
             offset = [0, 0]
             for axis in [0, 1]:

@@ -10,7 +10,7 @@ class Pixie(MGO.GEMGO):
         self.direction = -1 # Left
         self.phrasebook = phrasebook
         self.visible = False
-        
+
     @classmethod
     def place(cls, cellmap):
         created = []
@@ -18,11 +18,10 @@ class Pixie(MGO.GEMGO):
             created.append(cls(pixiedef[1], pixiedef[0], cellmap))
         return created
 
-    def update(self, playerpos):
+    def update(self, player):
         '''DOCSTRING NEEDED HERE'''
-        self.move(playerpos, self.cellmap)
-        ppx = playerpos[0]
-        ppy = playerpos[1]
+        self.move()
+        ppx, ppy = player.position
         for testx in (ppx-1, ppx, ppx+1):
             for testy in (ppy-1, ppy, ppy+1):
                 if self.position == (testx, testy):
@@ -36,7 +35,7 @@ class Pixie(MGO.GEMGO):
         else:
             self.visible = True
 
-    def move(self, playerpos, cellmap):
+    def move(self):
 
         def randommove():
             '''Move in random direction'''
@@ -47,10 +46,10 @@ class Pixie(MGO.GEMGO):
         poschange = randommove()
 
         self.direction = poschange[0] if abs(poschange[0]) else self.direction
-        newpos = ((self.position[0]+poschange[0]) % cellmap.size[0],
-                  (self.position[1]+poschange[1]) % cellmap.size[1])
+        newpos = ((self.position[0]+poschange[0]) % self.cellmap.size[0],
+                  (self.position[1]+poschange[1]) % self.cellmap.size[1])
 
-        if cellmap[newpos]['solid']:
+        if self.cellmap[newpos]['solid']:
             return False
         self.position = newpos
         return True

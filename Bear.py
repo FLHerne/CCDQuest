@@ -66,7 +66,8 @@ class Bear(MGO.GEMGO):
         return [curpos[0]-self.pfmapsize,
                 curpos[1]-self.pfmapsize]
 
-    def update(self, playerpos):
+    def update(self, player):
+        playerpos = player.position
         def chaseplayer():
             '''Decide whether to chase the player'''
             if (mindist(playerpos[0], self.position[0], self.cellmap.size[0])**2 +

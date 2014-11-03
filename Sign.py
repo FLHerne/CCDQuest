@@ -16,9 +16,9 @@ class Sign(MGO.GEMGO):
             created.append(cls(signdef[1], signdef[0], cellmap))
         return created
 
-    def update(self, playerpos):
+    def update(self, player):
         '''Display message if becoming visible or trodden on'''
-        if self.position == playerpos:
+        if self.position == player.position:
             self._suggestmessage("The sign reads: " + self.string, 50)
 
         if self.cellmap[self.position]['visible']:
