@@ -32,8 +32,12 @@ class World:
                 cell['visible'] = True
         sprites = extrasprites
         drawntiles = set()
-        for x in range(self.player.position[0]-self.player.visibility-5, self.player.position[0]+self.player.visibility+6):
-            for y in range(self.player.position[1]-self.player.visibility-5, self.player.position[1]+self.player.visibility+6):
+        self.surface.set_clip((self.player.position[0]-self.player.visibility-2)*TILESIZE,
+                              (self.player.position[1]-self.player.visibility-2)*TILESIZE,
+                              (2*self.player.visibility+10)*TILESIZE,
+                              (2*self.player.visibility+10)*TILESIZE)
+        for x in range(self.player.position[0]-self.player.visibility-2, self.player.position[0]+self.player.visibility+3):
+            for y in range(self.player.position[1]-self.player.visibility-2, self.player.position[1]+self.player.visibility+3):
                 if (x%self.cellmap.size[0],y%self.cellmap.size[1]) not in drawntiles:
                     drawntiles.add((x%self.cellmap.size[0],y%self.cellmap.size[1]))
                     sprites += self.cellmap.sprites((x, y))
