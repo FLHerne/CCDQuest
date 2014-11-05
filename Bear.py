@@ -68,7 +68,6 @@ class Bear(MGO.GEMGO):
 
     def update(self, player):
         playerpos = player.position
-        print self.position, playerpos
         if self.position == playerpos:
             player.scattercoins(4, random.randint(6,12))
         def chaseplayer():
