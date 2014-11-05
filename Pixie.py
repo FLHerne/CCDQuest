@@ -28,7 +28,7 @@ class Pixie(MGO.GEMGO):
                     phrase = self.phrasebook[random.randint(0, len(self.phrasebook)-1)]
                     self._suggestmessage("Pixie: " + phrase, 50)
 
-        if self.cellmap[self.position]['visible']:
+        if tuple(self.position) in player.visibletiles:
             if not self.visible:
                 self._suggestmessage("You see a pixie in the distance", 1)
             self.visible = True
@@ -54,8 +54,8 @@ class Pixie(MGO.GEMGO):
         self.position = newpos
         return True
 
-    def sprite(self):
-        if self.cellmap[self.position]['visible']:
+    def sprite(self, player):
+        if tuple(self.position) in player.visibletiles:
             if random.getrandbits(1):
                 return images.PixieLeft, self._pixelpos(), -1
             else:

@@ -110,8 +110,8 @@ class Bear(MGO.GEMGO):
             player.scattercoins(4, random.randint(4,8))
             self._suggestmessage("The bear rips a hole in your bag!", 6)
 
-    def sprite(self):
-        if self.cellmap[self.position]['visible']:
+    def sprite(self, player):
+        if tuple(self.position) in player.visibletiles:
             return (images.BearRight if self.direction > 0 else images.BearLeft), self._pixelpos((2,2)), 1
         else:
             return None

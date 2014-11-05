@@ -32,7 +32,7 @@ class GEMGO(MGO):
     def update(self, player):
         pass
 
-    def sprite(self):
+    def sprite(self, player):
         return None
 
     def _pixelpos(self, offset=(0,0)):

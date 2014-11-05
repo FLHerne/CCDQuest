@@ -33,7 +33,6 @@ class Map():
             ('damaged',         numpy.bool_),
             ('burning',         numpy.bool_),
             ('explored',        numpy.bool_),
-            ('visible',         numpy.bool_),
             ('collectableitem', numpy.int8),
             ('name',           (numpy.str_, 19)),
             ('top',             numpy.bool_),
@@ -75,7 +74,7 @@ class Map():
             collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
             self.size = list(groundimage.get_rect().size)
             def createcell(ground, collectable):
-                return list((0,0,0,0) + CellFiller.collectablet[collectable] + CellFiller.terraint[ground] + (random.randint(0, 255),))
+                return list((0,0,0) + CellFiller.collectablet[collectable] + CellFiller.terraint[ground] + (random.randint(0, 255),))
             procfunc = numpy.frompyfunc(createcell, 2, 1)
             temparr = procfunc(groundarray, collectablesarray)
             self.cellarray = numpy.ndarray(self.size, dtype=celldtype)
@@ -127,8 +126,6 @@ class Map():
             addsprite(images.Collectables[cell['collectableitem']], -1)
         if cell['burning']:
             addsprite(pickrandomsprite(images.Burning), -1)
-        if not cell['visible']:
-            addsprite(images.NonVisible, 50)
         return sprites
 
     def placefuse(self, coord):

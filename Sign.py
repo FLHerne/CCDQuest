@@ -21,14 +21,14 @@ class Sign(MGO.GEMGO):
         if self.position == player.position:
             self._suggestmessage("The sign reads: " + self.string, 50)
 
-        if self.cellmap[self.position]['visible']:
+        if tuple(self.position) in player.visibletiles:
             if not self.visible:
                 self._suggestmessage("You see a sign in the distance", 1)
             self.visible = True
         else:
             self.visible = False
 
-    def sprite(self):
+    def sprite(self, player):
         if self.cellmap[self.position]['explored']:
             return images.Sign, self._pixelpos(), -1
         else:
