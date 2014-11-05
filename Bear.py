@@ -68,9 +68,6 @@ class Bear(MGO.GEMGO):
 
     def update(self, player):
         playerpos = player.position
-        if self.position == playerpos:
-            player.scattercoins(4, random.randint(6,12))
-            self._suggestmessage("The bear rips a hole in your bag!", 6)
         def chaseplayer():
             '''Decide whether to chase the player'''
             if (mindist(playerpos[0], self.position[0], self.cellmap.size[0])**2 +
@@ -107,10 +104,11 @@ class Bear(MGO.GEMGO):
         newpos = [(self.position[0]+poschange[0]) % self.cellmap.size[0],
                   (self.position[1]+poschange[1]) % self.cellmap.size[1]]
 
-        if self.cellmap[newpos]['solid']:
-            return False
-        self.position = newpos
-        return True
+        if not self.cellmap[newpos]['solid']:
+            self.position = newpos
+        if self.position == playerpos:
+            player.scattercoins(4, random.randint(4,8))
+            self._suggestmessage("The bear rips a hole in your bag!", 6)
 
     def sprite(self):
         if self.cellmap[self.position]['visible']:
