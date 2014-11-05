@@ -68,6 +68,9 @@ class Bear(MGO.GEMGO):
 
     def update(self, player):
         playerpos = player.position
+        print self.position, playerpos
+        if self.position == playerpos:
+            player.scattercoins(4, random.randint(6,12))
         def chaseplayer():
             '''Decide whether to chase the player'''
             if (mindist(playerpos[0], self.position[0], self.cellmap.size[0])**2 +
@@ -101,8 +104,8 @@ class Bear(MGO.GEMGO):
                 self._suggestmessage("The bear has lost interest in you", 1)
 
         self.direction = poschange[0] if abs(poschange[0]) else self.direction
-        newpos = ((self.position[0]+poschange[0]) % self.cellmap.size[0],
-                  (self.position[1]+poschange[1]) % self.cellmap.size[1])
+        newpos = [(self.position[0]+poschange[0]) % self.cellmap.size[0],
+                  (self.position[1]+poschange[1]) % self.cellmap.size[1]]
 
         if self.cellmap[newpos]['solid']:
             return False
