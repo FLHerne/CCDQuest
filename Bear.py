@@ -70,6 +70,7 @@ class Bear(MGO.GEMGO):
         playerpos = player.position
         if self.position == playerpos:
             player.scattercoins(4, random.randint(6,12))
+            self._suggestmessage("The bear rips a hole in your bag!", 6)
         def chaseplayer():
             '''Decide whether to chase the player'''
             if (mindist(playerpos[0], self.position[0], self.cellmap.size[0])**2 +
