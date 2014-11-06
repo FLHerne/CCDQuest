@@ -9,7 +9,6 @@ from Sign import Sign
 from Map import Map
 from Player import Player
 from colors import *
-import time
 
 TILESIZE = images.TILESIZE
 
@@ -25,7 +24,6 @@ class World:
         self.player = filter(lambda x: isinstance(x, Player), self.gemgos)[0]
 
     def rendervisibletiles(self, extrasprites=[]):
-        a = time.clock()
         self.player.updatevisible()
         for tile in self.player.visibletiles:
             cell = self.cellmap[tile]
@@ -36,11 +34,11 @@ class World:
 
         visibleranges = ([],[])
         for axis in [0, 1]:
-            if 2*self.player.visibility + 1 >= self.cellmap.size[axis]:
+            if 2*self.player.visibility + 5 >= self.cellmap.size[axis]:
                 visibleranges[axis].append((0, self.cellmap.size[axis]))
             else:
-                rmin = (self.player.position[axis] - self.player.visibility) % self.cellmap.size[axis]
-                rmax = (self.player.position[axis] + self.player.visibility) % self.cellmap.size[axis]
+                rmin = (self.player.position[axis] - self.player.visibility - 2) % self.cellmap.size[axis]
+                rmax = (self.player.position[axis] + self.player.visibility + 2) % self.cellmap.size[axis]
                 if rmin < rmax:
                     visibleranges[axis].append((rmin, rmax))
                 else:
@@ -50,18 +48,17 @@ class World:
         for rx in visibleranges[0]:
             for ry in visibleranges[1]:
                 self.surface.set_clip(
-                    (rx[0]-1)*TILESIZE, (ry[0]-1)*TILESIZE,
-                    (rx[1]-rx[0]+3)*TILESIZE, (ry[1]-ry[0]+3)*TILESIZE)
+                    rx[0]*TILESIZE, ry[0]*TILESIZE,
+                    (rx[1]-rx[0])*TILESIZE, (ry[1]-ry[0])*TILESIZE)
                 regionsprites = sprites
-                for ix in range(rx[0]-2, rx[1]+3):
-                    for iy in range(ry[0]-2, ry[1]+3):
+                for ix in range(rx[0]-1, rx[1]+1):
+                    for iy in range(ry[0]-1, ry[1]+1):
                         regionsprites += self.cellmap.sprites((ix, iy))
                         if (ix%self.cellmap.size[0], iy%self.cellmap.size[1]) not in self.player.visibletiles:
                             sprites.append((images.NonVisible, (ix*TILESIZE, iy*TILESIZE), 100))
                 regionsprites.sort(key=lambda x: x[2])
                 for sprite in regionsprites:
                     self.surface.blit(sprite[0], sprite[1])
-        print time.clock() - a
 
     def moveplayer(self, arg):
         '''Move the player by (x, y), move other fauna, update world surface around player'''
