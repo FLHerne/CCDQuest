@@ -50,11 +50,11 @@ class World:
         for rx in visibleranges[0]:
             for ry in visibleranges[1]:
                 self.surface.set_clip(
-                    rx[0]*TILESIZE, ry[0]*TILESIZE,
-                    (rx[1]-rx[0])*TILESIZE, (ry[1]-ry[0])*TILESIZE)
+                    (rx[0]-1)*TILESIZE, (ry[0]-1)*TILESIZE,
+                    (rx[1]-rx[0]+3)*TILESIZE, (ry[1]-ry[0]+3)*TILESIZE)
                 regionsprites = sprites
-                for ix in range(rx[0]-1, rx[1]+1):
-                    for iy in range(ry[0]-1, ry[1]+1):
+                for ix in range(rx[0]-2, rx[1]+3):
+                    for iy in range(ry[0]-2, ry[1]+3):
                         regionsprites += self.cellmap.sprites((ix, iy))
                         if (ix%self.cellmap.size[0], iy%self.cellmap.size[1]) not in self.player.visibletiles:
                             sprites.append((images.NonVisible, (ix*TILESIZE, iy*TILESIZE), 100))
