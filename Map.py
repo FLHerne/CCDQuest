@@ -97,14 +97,13 @@ class Map():
         self.cellarray[coord[0]%self.size[0]][coord[1]%self.size[1]] = value
 
     def sprites(self, coord):
-        coord = (coord[0]%self.size[0], coord[1]%self.size[1])
         sprites = []
         def addsprite(image, layer):
             sprites.append((image,
                             (coord[0]*images.TILESIZE + (images.TILESIZE-image.get_width())/2,
                              coord[1]*images.TILESIZE + (images.TILESIZE-image.get_height())/2),
                             layer))
-        cell = self.cellarray[coord[0]][coord[1]]
+        cell = self[coord]
         if not cell['explored']:
             addsprite(images.Unknown, -20)
             return sprites

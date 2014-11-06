@@ -9,6 +9,7 @@ from Sign import Sign
 from Map import Map
 from Player import Player
 from colors import *
+import time
 
 TILESIZE = images.TILESIZE
 
@@ -24,6 +25,7 @@ class World:
         self.player = filter(lambda x: isinstance(x, Player), self.gemgos)[0]
 
     def rendervisibletiles(self, extrasprites=[]):
+        a = time.clock()
         self.player.updatevisible()
         for tile in self.player.visibletiles:
             cell = self.cellmap[tile]
@@ -31,24 +33,35 @@ class World:
         if not self.cellmap[self.player.position]['transparent']:
             self.player.visibletiles.remove(tuple(self.player.position))
         sprites = extrasprites
-        drawntiles = set()
-        self.surface.set_clip((self.player.position[0]-self.player.visibility-2)*TILESIZE,
-                              (self.player.position[1]-self.player.visibility-2)*TILESIZE,
-                              (2*self.player.visibility+4)*TILESIZE,
-                              (2*self.player.visibility+4)*TILESIZE)
-        for x in range(self.player.position[0]-self.player.visibility-3, self.player.position[0]+self.player.visibility+4):
-            for y in range(self.player.position[1]-self.player.visibility-3, self.player.position[1]+self.player.visibility+4):
-                modcoord = (x%self.cellmap.size[0],y%self.cellmap.size[1])
-                if modcoord not in drawntiles:
-                    drawntiles.add(modcoord)
-                    sprites += self.cellmap.sprites((x, y))
-                    if modcoord not in self.player.visibletiles:
-                        sprites.append((images.NonVisible, (x*TILESIZE, y*TILESIZE), 100))
-        sprites.sort(key=lambda x: x[2])
-        for sprite in sprites:
-            for tx in [sprite[1][0]-self.surface.get_width(), sprite[1][0], sprite[1][0]+self.surface.get_width()]:
-                for ty in [sprite[1][1]-self.surface.get_height(), sprite[1][1], sprite[1][1]+self.surface.get_height()]:
-                    self.surface.blit(sprite[0], (tx, ty))
+
+        visibleranges = ([],[])
+        for axis in [0, 1]:
+            if 2*self.player.visibility + 1 >= self.cellmap.size[axis]:
+                visibleranges[axis].append((0, self.cellmap.size[axis]))
+            else:
+                rmin = (self.player.position[axis] - self.player.visibility) % self.cellmap.size[axis]
+                rmax = (self.player.position[axis] + self.player.visibility) % self.cellmap.size[axis]
+                if rmin < rmax:
+                    visibleranges[axis].append((rmin, rmax))
+                else:
+                    visibleranges[axis].append((rmin, self.cellmap.size[axis]))
+                    visibleranges[axis].append((0, rmax))
+
+        for rx in visibleranges[0]:
+            for ry in visibleranges[1]:
+                self.surface.set_clip(
+                    rx[0]*TILESIZE, ry[0]*TILESIZE,
+                    (rx[1]-rx[0])*TILESIZE, (ry[1]-ry[0])*TILESIZE)
+                regionsprites = sprites
+                for ix in range(rx[0]-1, rx[1]+1):
+                    for iy in range(ry[0]-1, ry[1]+1):
+                        regionsprites += self.cellmap.sprites((ix, iy))
+                        if (ix%self.cellmap.size[0], iy%self.cellmap.size[1]) not in self.player.visibletiles:
+                            sprites.append((images.NonVisible, (ix*TILESIZE, iy*TILESIZE), 100))
+                regionsprites.sort(key=lambda x: x[2])
+                for sprite in regionsprites:
+                    self.surface.blit(sprite[0], sprite[1])
+        print time.clock() - a
 
     def moveplayer(self, arg):
         '''Move the player by (x, y), move other fauna, update world surface around player'''
