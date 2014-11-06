@@ -127,7 +127,7 @@ class Player(MGO.GEMGO):
             '''Test visibility along (offset) diagonals away from player'''
             x = self.position[0]
             y = self.position[1]
-            self.visibletiles.add((x, y))                             # make the currently occupied cell self.visibletiles
+            self.visibletiles.add((x%self.cellmap.size[0], y%self.cellmap.size[1]))                             # make the currently occupied cell self.visibletiles
             for horizontal in (True, False):                # horizontal and vertical
                 for Dir1 in (-1, 1):                        # left/right or up/down
                     for Dir2 in (-1, 1):                    # final division into octants
@@ -142,7 +142,7 @@ class Player(MGO.GEMGO):
                             else:
                                 x = self.position[0]
                                 y = self.position[1] + Base
-                            self.visibletiles.add((x, y))
+                            self.visibletiles.add((x%self.cellmap.size[0], y%self.cellmap.size[1]))
                             while self.cellmap[x, y]['transparent'] and ((self.position[1]-y)**2) + ((self.position[0]-x)**2) <= self.visibility**2:  # test in bounding circle
                                 if horizontal:                                                                      # move diagonally
                                     x += Dir1
@@ -150,25 +150,25 @@ class Player(MGO.GEMGO):
                                 else:
                                     x += Dir2
                                     y += Dir1
-                                self.visibletiles.add((x, y))                                                           # make self.visibletiles
-                            self.visibletiles.add((x, y))                                                               # make the first opaque cell self.visibletiles too
+                                self.visibletiles.add((x%self.cellmap.size[0], y%self.cellmap.size[1]))                                                           # make self.visibletiles
+                            self.visibletiles.add((x%self.cellmap.size[0], y%self.cellmap.size[1]))                                                               # make the first opaque cell self.visibletiles too
                             Base += Dir1       # FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
-                        self.visibletiles.add((x, y))
+                        self.visibletiles.add((x%self.cellmap.size[0], y%self.cellmap.size[1]))
 
         def crosscheck():
             '''Check visibility straight up, down, left and right'''
             for i in (-1, 1):                                                           # Horizontally left and right
                 X = 0                                                                   # start at the player
                 while self.cellmap[(X*i)+self.position[0], self.position[1]]['transparent'] and X < self.visibility:     # if transparent and within bounding range
-                    self.visibletiles.add(((X*i)+self.position[0], self.position[1]))
+                    self.visibletiles.add((((X*i)+self.position[0])%self.cellmap.size[0], self.position[1]%self.cellmap.size[1]))
                     X += 1                                                              # move away from player
-                self.visibletiles.add(((X*i)+self.position[0], self.position[1]))                 # make final cell self.visibletiles
+                self.visibletiles.add((((X*i)+self.position[0])%self.cellmap.size[0], self.position[1]%self.cellmap.size[1]))                 # make final cell self.visibletiles
             for i in (-1, 1):                                                           # Repeat as above, but vertically
                 Y = 0
                 while self.cellmap[self.position[0], (Y*i)+self.position[1]]['transparent'] and Y < self.visibility:
-                    self.visibletiles.add((self.position[0], (Y*i)+self.position[1]))
+                    self.visibletiles.add((self.position[0]%self.cellmap.size[1], ((Y*i)+self.position[1])%self.cellmap.size[1]))
                     Y += 1
-                self.visibletiles.add((self.position[0], (Y*i)+self.position[1]))
+                self.visibletiles.add((self.position[0]%self.cellmap.size[1], ((Y*i)+self.position[1])%self.cellmap.size[1]))
 
         if Player.XRAYVISION:
             square()
