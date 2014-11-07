@@ -109,7 +109,7 @@ class Bear(MGO.GEMGO):
             self._suggestmessage("The bear rips a hole in your bag!", 6)
 
     def sprite(self, player):
-        if tuple(self.position) in player.visibletiles:
+        if self.position in player.visibletiles:
             return (images.BearRight if self.direction > 0 else images.BearLeft), self._pixelpos((2,2)), 1
         else:
             return None

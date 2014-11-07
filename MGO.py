@@ -16,7 +16,7 @@ class GEMGO(MGO):
     PER_TILE = 1/float(1000)
     def __init__(self, position, cellmap):
         super(GEMGO, self).__init__()
-        self.position = list(position)
+        self.position = tuple(position)
         self.cellmap = cellmap
 
     @classmethod

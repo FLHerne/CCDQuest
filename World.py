@@ -29,7 +29,7 @@ class World:
             cell = self.cellmap[tile]
             cell['explored'] = True
         if not self.cellmap[self.player.position]['transparent']:
-            self.player.visibletiles.remove(tuple(self.player.position))
+            self.player.visibletiles.remove(self.player.position)
         sprites = extrasprites
 
         visibleranges = ([],[])
@@ -74,5 +74,5 @@ class World:
 
         self.rendervisibletiles(gemgosprites)
 
-        if tuple(self.player.position) in self.cellmap.burningtiles:
+        if self.player.position in self.cellmap.burningtiles:
             self.player.score[collectables.CHOCOLATE] -= Map.CELLBURNINGCOST

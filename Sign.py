@@ -21,7 +21,7 @@ class Sign(MGO.GEMGO):
         if self.position == player.position:
             self._suggestmessage("The sign reads: " + self.string, 50)
 
-        if tuple(self.position) in player.visibletiles:
+        if self.position in player.visibletiles:
             if not self.visible:
                 self._suggestmessage("You see a sign in the distance", 1)
             self.visible = True

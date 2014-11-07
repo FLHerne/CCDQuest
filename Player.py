@@ -35,7 +35,7 @@ class Player(MGO.GEMGO):
         pass
 
     def sprite(self, player):
-        if tuple(self.position) in player.visibletiles:
+        if self.position in player.visibletiles:
             return images.Player[self.direction], self._pixelpos(), 0
 
     def action(self, arg):
@@ -117,7 +117,7 @@ class Player(MGO.GEMGO):
     def updatevisible(self):
         '''Calculate and return the set of tiles visible to player'''
         self.visibletiles = set()
-        self.visibletiles.add(tuple(self.position))
+        self.visibletiles.add(self.position)
 
         def inrange(a):
             return ((a[0]-self.position[0])**2 + (a[1]-self.position[1])**2 < self.visibility**2)
