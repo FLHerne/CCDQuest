@@ -162,6 +162,7 @@ messageboxregion = pygame.Rect(messageboxpadding, WINDOWSIZE[1]-messageboxheight
 gameended = False
 
 while not gameended:
+    loopstarttime = time.clock()
     gameended = handleevents()
     worldviewrect.width = window.get_width()-HUDWIDTH
     worldviewrect.height = window.get_height()
@@ -175,7 +176,7 @@ while not gameended:
     if gameended:
         hud.endsplash(gameended)
     pygame.display.update()
-    time.sleep(0.05)
+    time.sleep(max(0.05 + loopstarttime - time.clock(), 0))
 
 time.sleep(2)
 pygame.quit()
