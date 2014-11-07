@@ -18,4 +18,4 @@ PRINCIPALS = CARDINALS + ORDINALS
 
 def perpendiculars(direction):
     swapaxes = direction[::-1]
-    return tuple([swapaxes, coords.multuple(swapaxes, -1)])
+    return tuple([swapaxes, coords.mul(swapaxes, -1)])

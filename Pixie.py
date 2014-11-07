@@ -1,4 +1,5 @@
 import images
+import coords
 import random
 import MGO
 
@@ -46,8 +47,7 @@ class Pixie(MGO.GEMGO):
         poschange = randommove()
 
         self.direction = poschange[0] if abs(poschange[0]) else self.direction
-        newpos = ((self.position[0]+poschange[0]) % self.cellmap.size[0],
-                  (self.position[1]+poschange[1]) % self.cellmap.size[1])
+        newpos = coords.mod(coords.sum(self.position, poschange), self.cellmap.size)
 
         if self.cellmap[newpos]['solid']:
             return False

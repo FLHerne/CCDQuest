@@ -62,8 +62,7 @@ class Player(MGO.GEMGO):
         if self.cellmap[self.position[0]+x, self.position[1]+y]['solid'] and not Player.FREEPLAYER:
             self.score[collectables.CHOCOLATE] -= 50
             return False
-        self.position = [(self.position[0]+x)%self.cellmap.size[0],
-                         (self.position[1]+y)%self.cellmap.size[1]]
+        self.position = coords.mod(coords.sum(self.position, self.direction), self.cellmap.size)
         collectable = self.cellmap[self.position]['collectableitem']
         if collectable != 0:
             self.score[collectable] += collectables.value[collectable]
@@ -77,10 +76,10 @@ class Player(MGO.GEMGO):
 
     def followpath(self):
         def subtuple(a, b):
-            return (a[0]-b[0], a[1]-b[1])
+            return coords.sum(a, coords.mul(b, -1))
         oldpos = subtuple(self.position, self.direction)
         pathnbrs = []
-        for nbrpos in [(self.position[0]-1, self.position[1]), (self.position[0], self.position[1]-1), (self.position[0]+1, self.position[1]), (self.position[0], self.position[1]+1)]:
+        for nbrpos in coords.neighbours(self.position):
             if (nbrpos == oldpos) or (self.cellmap[nbrpos]['name'] not in ['wooden planking', 'paving']):
                 continue
             pathnbrs.append(nbrpos)
@@ -108,7 +107,7 @@ class Player(MGO.GEMGO):
             tryoffset = random.randint(-radius, radius), random.randint(-radius, radius)
             if tryoffset[0]**2 + tryoffset[1]**2 > sqradius:
                 continue
-            trypos = (self.position[0]+tryoffset[0], self.position[1]+tryoffset[1])
+            trypos = coords.sum(self.position, tryoffset)
             if self.cellmap[trypos]['collectableitem'] or self.cellmap[trypos]['solid']:
                 continue
             self.cellmap[trypos]['collectableitem'] = collectables.COIN
@@ -126,7 +125,7 @@ class Player(MGO.GEMGO):
             trunkpos = self.position
             while inrange(trunkpos):
                 self.visibletiles.add(coords.mod(trunkpos, self.cellmap.size))
-                for perpdir in directions.perpendiculars(outdir):
+                for perpdir in perpendiculars(outdir):
                     diagdir = coords.sum(outdir, perpdir)
                     branchpos = trunkpos
                     while inrange(branchpos):

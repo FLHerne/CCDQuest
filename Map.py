@@ -3,6 +3,7 @@ import random
 import CellFiller
 from colors import *
 import directions
+import coords
 import collectables
 import images
 import numpy
@@ -118,7 +119,7 @@ class Map():
             addsprite(pickrandomsprite(images.Damaged), -3)
         if coord in self.fusetiles:
             for direction in directions.CARDINALS:
-                nbrcoord = ((coord[0]+direction[0])%self.size[0], (coord[1]+direction[1])%self.size[1])
+                nbrcoord = coords.mod(coords.sum(coord, direction), self.size)
                 if nbrcoord in self.fusetiles or self[nbrcoord]['collectableitem'] == collectables.DYNAMITE:
                     addsprite(images.Fuse[direction], -2)
         if cell['collectableitem'] != 0:
@@ -128,10 +129,10 @@ class Map():
         return sprites
 
     def placefuse(self, coord):
-        self.fusetiles.add((coord[0]%self.size[0], coord[1]%self.size[1]))
+        self.fusetiles.add(coords.mod(coord, self.size))
 
     def ignitefuse(self, coord):
-        coord = (coord[0]%self.size[0], coord[1]%self.size[1])
+        coord = coords.mod(coord, self.size)
         if self[coord]['collectableitem'] == collectables.DYNAMITE:
             self.detonate(coord)
         if not coord in self.fusetiles:
@@ -142,10 +143,10 @@ class Map():
             curpos = openlist.pop()
             if curpos in self.fusetiles:
                 self.fusetiles.remove(curpos)
-            for nbrpos in [(curpos[0]-1, curpos[1]), (curpos[0], curpos[1]-1), (curpos[0]+1, curpos[1]), (curpos[0], curpos[1]+1)]:
+            for nbrpos in coords.neighbours(curpos):
                 if self[nbrpos]['collectableitem'] == collectables.DYNAMITE:
                     self.detonate(nbrpos)
-                nbrpos = (nbrpos[0]%self.size[0], nbrpos[1]%self.size[1])
+                nbrpos = coords.mod(nbrpos, self.size)
                 if nbrpos in self.fusetiles:
                     openlist.add(nbrpos)
 
@@ -169,7 +170,7 @@ class Map():
 
     def ignite(self, coord, multiplier=1, forceignite=False):
         '''Start a fire at coord, with chance cell.firestartchance * multiplier'''
-        coord = (coord[0]%self.size[0], coord[1]%self.size[1])
+        coord = coords.mod(coord, self.size)
         cell = self[coord]
         if coord in self.fusetiles:
             self.ignitefuse(coord)
@@ -201,7 +202,7 @@ class Map():
         '''Spread fire, potentially other continuous map processes'''
         for tile in self.burningtiles.copy():
             cell = self[tile]
-            for nbrpos in [(tile[0]-1, tile[1]), (tile[0], tile[1]-1), (tile[0]+1, tile[1]), (tile[0], tile[1]+1)]:
+            for nbrpos in coords.neighbours(tile):
                 self.ignite(nbrpos)
             if random.random() < cell['fireoutchance']:
                 cell['burning'] = False

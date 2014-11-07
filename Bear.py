@@ -1,5 +1,6 @@
 import random
 import images
+import coords
 import MGO
 
 def mindist(a, b, size):
@@ -28,14 +29,13 @@ class Bear(MGO.GEMGO):
 
         def mapcoord(pfcoord):
             '''Get map coordinate from pathfinder one'''
-            return ((self.position[0] + pfcoord[0] - self.pfmapsize) % self.cellmap.size[0],
-                    (self.position[1] + pfcoord[1] - self.pfmapsize) % self.cellmap.size[1])
+            return coords.mod(coords.sum(self.position, pfcoord, (-self.pfmapsize,)*2), self.cellmap.size)
 
         foundtarget = False
-        dijkstramap = [[[0, (self.pfmapsize, self.pfmapsize), False] for x in xrange(2*self.pfmapsize)] for x in xrange(2*self.pfmapsize)]
+        dijkstramap = [[[0, (self.pfmapsize,)*2, False] for x in xrange(2*self.pfmapsize)] for x in xrange(2*self.pfmapsize)]
         import heapq
         openlist = []
-        heapq.heappush(openlist, (0, (self.pfmapsize, self.pfmapsize)))
+        heapq.heappush(openlist, (0, (self.pfmapsize,)*2))
         curpos = None
         while openlist:
             curnode = heapq.heappop(openlist)
@@ -48,7 +48,7 @@ class Bear(MGO.GEMGO):
                 continue
             else:
                 dijkstramap[curpos[0]][curpos[1]][2] = True
-            for nbrpos in [(curpos[0]-1, curpos[1]), (curpos[0], curpos[1]-1), (curpos[0]+1, curpos[1]), (curpos[0], curpos[1]+1)]:
+            for nbrpos in coords.neighbours(curpos):
                 if (nbrpos[0] < 0 or nbrpos[1] < 0 or
                     nbrpos[0] >= 2*self.pfmapsize or nbrpos[1] >= 2*self.pfmapsize or
                     nbrpos == (self.pfmapsize, self.pfmapsize)):
@@ -63,8 +63,7 @@ class Bear(MGO.GEMGO):
             return False
         while dijkstramap[curpos[0]][curpos[1]][1] != (self.pfmapsize, self.pfmapsize):
             curpos = dijkstramap[curpos[0]][curpos[1]][1]
-        return [curpos[0]-self.pfmapsize,
-                curpos[1]-self.pfmapsize]
+        return coords.sum(curpos, (-self.pfmapsize,)*2)
 
     def update(self, player):
         playerpos = player.position
@@ -101,8 +100,7 @@ class Bear(MGO.GEMGO):
                 self._suggestmessage("The bear has lost interest in you", 1)
 
         self.direction = poschange[0] if abs(poschange[0]) else self.direction
-        newpos = [(self.position[0]+poschange[0]) % self.cellmap.size[0],
-                  (self.position[1]+poschange[1]) % self.cellmap.size[1]]
+        newpos = coords.mod(coords.sum(self.position, poschange), self.cellmap.size)
 
         if not self.cellmap[newpos]['solid']:
             self.position = newpos

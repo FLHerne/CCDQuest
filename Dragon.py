@@ -1,6 +1,7 @@
 import random
 from directions import *
 import images
+import coords
 import MGO
 
 class Dragon(MGO.GEMGO):
@@ -30,9 +31,7 @@ class Dragon(MGO.GEMGO):
             return offset
 
         def flameplayer():
-            def addtuple(a, b, c=1):
-                return (a[0]+b[0]*c, a[1]+b[1]*c)
-            fronttiles = [addtuple(self.position, self.direction, i) for i in range(1,4)]
+            fronttiles = [coords.sum(self.position, coords.mul(self.direction, i)) for i in range(1,4)]
             for tile in fronttiles:
                 if tile == tuple(playerpos):
                     self._suggestmessage("The dragon breaths a jet of fire towards you", 5)
@@ -66,8 +65,7 @@ class Dragon(MGO.GEMGO):
             if washunting:
                 self._suggestmessage("The dragon starts to fly away", 1)
 
-        self.position = ((self.position[0]+self.direction[0]) % self.cellmap.size[0],
-                         (self.position[1]+self.direction[1]) % self.cellmap.size[1])
+        self.position = coords.mod(coords.sum(self.position, self.direction), self.cellmap.size)
         flameplayer()
 
     def sprite(self, player):
