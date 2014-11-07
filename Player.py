@@ -119,41 +119,30 @@ class Player(MGO.GEMGO):
         self.visibletiles = set()
         self.visibletiles.add(tuple(self.position))
 
-        def square():
-            for ix in range(self.position[0]-self.visibility, self.position[0]+self.visibility+1):
-                for iy in range(self.position[1]-self.visibility, self.position[1]+self.visibility+1):
-                    self.visibletiles.add((ix, iy))
+        def addtuple(a, b):
+            return (a[0]+b[0], a[1]+b[1])
+        def modtuple(a, b):
+            return (a[0]%b[0], a[1]%b[1])
+        def multuple(a, b):
+            return tuple([b*m for m in a])
+        def perpdirs(direction):
+            swapaxes = direction[::-1]
+            return [swapaxes, multuple(swapaxes, -1)]
 
-        def diagonalcheck():
-            def addtuple(a, b):
-                return (a[0]+b[0], a[1]+b[1])
-            def modtuple(a, b):
-                return (a[0]%b[0], a[1]%b[1])
-            def multuple(a, b):
-                return tuple([b*m for m in a])
-            def perpdirs(direction):
-                swapaxes = direction[::-1]
-                return [swapaxes, multuple(swapaxes, -1)]
-
-            def inrange(a):
-                return ((a[0]-self.position[0])**2 + (a[1]-self.position[1])**2 < self.visibility**2)
-            for outdir in [LEFT, RIGHT, UP, DOWN]:
-                trunkpos = self.position
-                while inrange(trunkpos):
-                    self.visibletiles.add(modtuple(trunkpos, self.cellmap.size))
-                    for perpdir in perpdirs(outdir):
-                        diagdir = addtuple(outdir, perpdir)
-                        branchpos = trunkpos
-                        while inrange(branchpos):
-                            self.visibletiles.add(modtuple(branchpos, self.cellmap.size))
-                            if not self.cellmap[branchpos]['transparent']:
-                                break
-                            branchpos = addtuple(branchpos, diagdir)
-                    if not self.cellmap[trunkpos]['transparent']:
-                        break
-                    trunkpos = addtuple(trunkpos, outdir)
-
-        if Player.XRAYVISION:
-            square()
-        else:
-            diagonalcheck()
+        def inrange(a):
+            return ((a[0]-self.position[0])**2 + (a[1]-self.position[1])**2 < self.visibility**2)
+        for outdir in [LEFT, RIGHT, UP, DOWN]:
+            trunkpos = self.position
+            while inrange(trunkpos):
+                self.visibletiles.add(modtuple(trunkpos, self.cellmap.size))
+                for perpdir in perpdirs(outdir):
+                    diagdir = addtuple(outdir, perpdir)
+                    branchpos = trunkpos
+                    while inrange(branchpos):
+                        self.visibletiles.add(modtuple(branchpos, self.cellmap.size))
+                        if not Player.XRAYVISION and not self.cellmap[branchpos]['transparent']:
+                            break
+                        branchpos = addtuple(branchpos, diagdir)
+                if not not Player.XRAYVISION and self.cellmap[trunkpos]['transparent']:
+                    break
+                trunkpos = addtuple(trunkpos, outdir)
