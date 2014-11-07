@@ -17,7 +17,11 @@ class World:
     def __init__(self, mapdict):
         self.cellmap = Map(mapdict)
         self.surface = pygame.Surface(coords.mul(self.cellmap.size, TILESIZE))
-        self.surface.fill(BLACK)
+        bgtile = images.Unknown.copy()
+        bgtile.blit(images.NonVisible, (0, 0))
+        for ix in xrange(0, self.cellmap.size[0]*TILESIZE, TILESIZE):
+            for iy in xrange(0, self.cellmap.size[1]*TILESIZE, TILESIZE):
+                self.surface.blit(bgtile, (ix, iy))
 
         self.gemgos = []
         for gemgo in Player, Bear, Dragon, Sign, Pixie:
