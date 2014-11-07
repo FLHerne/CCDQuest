@@ -21,7 +21,7 @@ class GEMGO(MGO):
 
     @classmethod
     def place(cls, cellmap):
-        '''Create set of objects with random positions'''
+        """Create set of objects with random positions"""
         created = []
         for i in xrange(int(cellmap.size[0]*cellmap.size[1]*cls.PER_TILE)):
             attempt = (random.randint(0, cellmap.size[0]-1),

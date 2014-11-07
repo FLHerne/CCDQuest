@@ -2,21 +2,21 @@ import __builtin__
 import directions
 
 def sum(*args):
-    '''Element-wise sum of (equal-size) tuples'''
+    """Element-wise sum of (equal-size) tuples"""
     return tuple(map(__builtin__.sum, zip(*args)))
 
 def mod(a, b):
-    '''Element-wise modulo of a with b'''
+    """Element-wise modulo of a with b"""
     return tuple([ea%eb for ea, eb in zip(a, b)])
 
 def modsum(*args):
-    '''Sum all but the last argument, modulo by that'''
+    """Sum all but the last argument, modulo by that"""
     modval = args[-1]
     args = args[:-1]
     return mod(sum(*args), modval)
 
 def mul(a, b):
-    '''Element-wise multiple of a by b (tuple or int)'''
+    """Element-wise multiple of a by b (tuple or int)"""
     try:
         return tuple([ea*b for ea in a])
     except TypeError:

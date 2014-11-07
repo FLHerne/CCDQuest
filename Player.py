@@ -9,12 +9,12 @@ import coords
 from directions import *
 
 class Player(MGO.GEMGO):
-    '''The player, exploring the grid-based world'''
+    """The player, exploring the grid-based world"""
     FREEPLAYER = False
     XRAYVISION = False
 
     def __init__(self, position, cellmap):
-        '''Initialise instance variables'''
+        """Initialise instance variables"""
         super(Player, self).__init__(position, cellmap)
         self.color = MAGENTA
         self.visibility = 15
@@ -55,7 +55,7 @@ class Player(MGO.GEMGO):
             self.move(*arg)
 
     def move(self, x, y):
-        '''Move if possible, update collectable levels accordingly'''
+        """Move if possible, update collectable levels accordingly"""
         if abs(x) + abs(y) != 1:
             return False
         self.direction = (x, y)
@@ -89,7 +89,7 @@ class Player(MGO.GEMGO):
         return True
 
     def detonate(self):
-        '''Detonate carried explosives at player's location'''
+        """Detonate carried explosives at player's location"""
         if self.score[collectables.DYNAMITE] <= 0:
             return
         if not self.cellmap[self.position]['destructable']:
@@ -115,7 +115,7 @@ class Player(MGO.GEMGO):
             scattered += 1
 
     def updatevisible(self):
-        '''Calculate and return the set of tiles visible to player'''
+        """Calculate and return the set of tiles visible to player"""
         self.visibletiles = set()
         self.visibletiles.add(self.position)
 

@@ -4,15 +4,15 @@ import coords
 import MGO
 
 def mindist(a, b, size):
-    '''Distance between two values accounting for world wrapping'''
+    """Distance between two values accounting for world wrapping"""
     return min((b-a)%size,(a-b)%size)
 
 class Bear(MGO.GEMGO):
-    '''Harmless animal that follows the player'''
+    """Harmless animal that follows the player"""
     PER_TILE = 1/float(2000)
 
     def __init__(self, position, cellmap):
-        '''Create bear at position'''
+        """Create bear at position"""
         super(Bear, self).__init__(position, cellmap)
         self.direction = -1 # Left
         self.speed = 0.7    # Chance of moving per turn, max 1, min 0
@@ -21,14 +21,14 @@ class Bear(MGO.GEMGO):
         self.hunting = False
 
     def directiontoplayer(self, playerpos):
-        '''Find the best direction to move towards the player'''
+        """Find the best direction to move towards the player"""
         if (mindist(playerpos[0], self.position[0], self.cellmap.size[0]) > self.pfmapsize or
             mindist(playerpos[1], self.position[1], self.cellmap.size[1]) > self.pfmapsize):
             # Player is outside pathfinder area
             return False
 
         def mapcoord(pfcoord):
-            '''Get map coordinate from pathfinder one'''
+            """Get map coordinate from pathfinder one"""
             return coords.modsum(self.position, pfcoord, (-self.pfmapsize,)*2, self.cellmap.size)
 
         foundtarget = False
@@ -68,7 +68,7 @@ class Bear(MGO.GEMGO):
     def update(self, player):
         playerpos = player.position
         def chaseplayer():
-            '''Decide whether to chase the player'''
+            """Decide whether to chase the player"""
             if (mindist(playerpos[0], self.position[0], self.cellmap.size[0])**2 +
                 mindist(playerpos[1], self.position[1], self.cellmap.size[1])**2) > self.detectionrange**2:
                 # Can't see/smell/hear (?) player
@@ -79,7 +79,7 @@ class Bear(MGO.GEMGO):
             return True
 
         def randommove():
-            '''Move in random direction'''
+            """Move in random direction"""
             move = [0, random.randint(-1,1)]
             random.shuffle(move)
             return move

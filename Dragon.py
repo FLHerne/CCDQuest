@@ -5,19 +5,19 @@ import coords
 import MGO
 
 class Dragon(MGO.GEMGO):
-    '''Harmless flying thing that follows the player'''
+    """Harmless flying thing that follows the player"""
     PER_TILE = 1/float(6000)
     detectionrange = 18
     speed = 0.8
 
     def __init__(self, position, cellmap):
-        '''Create new dragon in position'''
+        """Create new dragon in position"""
         super(Dragon, self).__init__(position, cellmap)
         self.direction = UPLEFT
         self.hunting = False
 
     def update(self, player):
-        '''Fly toward the player if nearby, or continue in same direction'''
+        """Fly toward the player if nearby, or continue in same direction"""
         playerpos = player.position
         def tileoffset(a, b, size):
             offset = [0, 0]

@@ -2,9 +2,9 @@ import images
 import MGO
 
 class Sign(MGO.GEMGO):
-    '''Sign that displays message when walked over'''
+    """Sign that displays message when walked over"""
     def __init__(self, string, position, cellmap):
-        '''Create new sign in position'''
+        """Create new sign in position"""
         super(Sign, self).__init__(position, cellmap)
         self.string = string
         self.visible = False
@@ -17,7 +17,7 @@ class Sign(MGO.GEMGO):
         return created
 
     def update(self, player):
-        '''Display message if becoming visible or trodden on'''
+        """Display message if becoming visible or trodden on"""
         if self.position == player.position:
             self._suggestmessage("The sign reads: " + self.string, 50)
 

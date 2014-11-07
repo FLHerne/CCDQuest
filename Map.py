@@ -11,13 +11,13 @@ import os.path
 import sys
 
 class Map():
-    '''Contains array of Cells and properties representing the map as a whole'''
+    """Contains array of Cells and properties representing the map as a whole"""
     CELLDAMAGEDCOST = 5
     CELLBURNINGCOST = 200
     DIRTYCACHE = False
 
     def __init__(self, mapdict):
-        '''Load the map from image files'''
+        """Load the map from image files"""
         self.startpos = tuple(mapdict['startpos'])
         self.signdefs = []
         if 'signs' in mapdict:
@@ -90,11 +90,11 @@ class Map():
         self.origcoins = (self.cellarray['collectableitem'] == collectables.COIN).sum()
 
     def __getitem__(self, coord):
-        '''Get map item with [], wrapping'''
+        """Get map item with [], wrapping"""
         return self.cellarray[coord[0]%self.size[0]][coord[1]%self.size[1]]
 
     def __setitem__(self, coord, value):
-        '''Set map item with [], wrapping'''
+        """Set map item with [], wrapping"""
         self.cellarray[coord[0]%self.size[0]][coord[1]%self.size[1]] = value
 
     def sprites(self, coord):
@@ -151,7 +151,7 @@ class Map():
                     openlist.add(nbrpos)
 
     def destroy(self, coord):
-        '''Change cell attributes to reflect destruction'''
+        """Change cell attributes to reflect destruction"""
         cell = self[coord]
         if not cell['destructable']:
             return False
@@ -169,7 +169,7 @@ class Map():
         return True
 
     def ignite(self, coord, multiplier=1, forceignite=False):
-        '''Start a fire at coord, with chance cell.firestartchance * multiplier'''
+        """Start a fire at coord, with chance cell.firestartchance * multiplier"""
         coord = coords.mod(coord, self.size)
         cell = self[coord]
         if coord in self.fusetiles:
@@ -185,7 +185,7 @@ class Map():
         return False
 
     def detonate(self, coord):
-        '''Set off an explosion at coord'''
+        """Set off an explosion at coord"""
         def blam(epicentre):
             self[epicentre]['collectableitem'] = 0
             for dx in (-1, 0, 1):
@@ -199,7 +199,7 @@ class Map():
         return True
 
     def update(self):
-        '''Spread fire, potentially other continuous map processes'''
+        """Spread fire, potentially other continuous map processes"""
         for tile in self.burningtiles.copy():
             cell = self[tile]
             for nbrpos in coords.neighbours(tile):

@@ -4,9 +4,9 @@ import random
 import MGO
 
 class Pixie(MGO.GEMGO):
-    '''Pixie that says things when walked to'''
+    """Pixie that says things when walked to"""
     def __init__(self, phrasebook, position, cellmap):
-        '''Create new pixie in position'''
+        """Create new pixie in position"""
         super(Pixie, self).__init__(position, cellmap)
         self.direction = -1 # Left
         self.phrasebook = phrasebook
@@ -20,7 +20,7 @@ class Pixie(MGO.GEMGO):
         return created
 
     def update(self, player):
-        '''DOCSTRING NEEDED HERE'''
+        """DOCSTRING NEEDED HERE"""
         self.move()
         ppx, ppy = player.position
         for testx in (ppx-1, ppx, ppx+1):
@@ -39,7 +39,7 @@ class Pixie(MGO.GEMGO):
     def move(self):
 
         def randommove():
-            '''Move in random direction'''
+            """Move in random direction"""
             move = [0, random.randint(-1,1)]
             random.shuffle(move)
             return move

@@ -1,6 +1,6 @@
 #!/usr/bin/env python2.6
 
-'''Game of exploration in a grid-based world'''
+"""Game of exploration in a grid-based world"""
 
 import pygame
 import sys
@@ -107,7 +107,7 @@ def loadmap(newmap):
     return True
 
 def handleevents():
-    '''respond to user input'''
+    """respond to user input"""
     global world
     global currentmap
     global window

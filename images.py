@@ -3,7 +3,7 @@ import collectables
 from colors import MAGENTA
 from directions import *
 
-'''Load and convert all in-game images'''
+"""Load and convert all in-game images"""
 
 # Size of terrain sprites.
 TILESIZE = 12

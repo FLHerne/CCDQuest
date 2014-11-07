@@ -62,7 +62,7 @@ class World:
                     self.surface.blit(*sprite[:2])
 
     def moveplayer(self, arg):
-        '''Move the player by (x, y), move other fauna, update world surface around player'''
+        """Move the player by (x, y), move other fauna, update world surface around player"""
         self.cellmap.update()
         self.player.action(arg)
 

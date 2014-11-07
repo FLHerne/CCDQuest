@@ -5,7 +5,7 @@ import collectables
 from colors import *
 
 class ScoreWidget:
-    '''Widget to show a score and associated image'''
+    """Widget to show a score and associated image"""
     def __init__(self, image, window, total=None, stringfunc=None, bgtileimage=None):
         self.image = image
         self.bgtileimage = bgtileimage
@@ -16,7 +16,7 @@ class ScoreWidget:
         self.textbox = TextBox(22, (205, 205, 75), True)
 
     def draw(self, region, quantity):
-        '''Draw the score widget'''
+        """Draw the score widget"""
         region = pygame.Rect(region)
         old_clip = self.window.get_clip()
         self.window.set_clip(region)
@@ -36,13 +36,13 @@ class ScoreWidget:
         self.window.set_clip(old_clip)
 
 class MinimapWidget:
-    '''Widget to display a small map of the world'''
+    """Widget to display a small map of the world"""
     def __init__(self, world, window):
         self.world = world
         self.window = window
 
     def draw(self, region, scrollpos):
-        '''Draw the minimap'''
+        """Draw the minimap"""
         region = pygame.Rect(region)
         old_clip = self.window.get_clip()
         self.window.set_clip(region)
@@ -65,7 +65,7 @@ class MinimapWidget:
         self.window.set_clip(old_clip)
 
 class Frame:
-    '''Thingy to draw around widgets'''
+    """Thingy to draw around widgets"""
     HORIZONTAL = 0
     VERTICAL = 1
     def __init__(self, images, window):
@@ -75,7 +75,7 @@ class Frame:
         self.window = window
 
     def draw(self, region, orientation):
-        '''Draw frame along top or left of region'''
+        """Draw frame along top or left of region"""
         region = pygame.Rect(region)
         old_clip = self.window.get_clip()
         self.window.set_clip(region)
@@ -86,7 +86,7 @@ class Frame:
         self.window.set_clip(old_clip)
 
 class HUD:
-    '''Vertical bar with player scores and minimap'''
+    """Vertical bar with player scores and minimap"""
     def __init__(self, world, window):
         self.window = window
         self.world = world
@@ -99,7 +99,7 @@ class HUD:
         self.minimapwidget = MinimapWidget(world, window)
 
     def draw(self, region, scrollpos):
-        '''Draw the heads-up display'''
+        """Draw the heads-up display"""
         region = pygame.Rect(region)
         pygame.draw.rect(self.window, BLACK, region)
         framewidth = self.frame.thickness[Frame.VERTICAL]
@@ -122,7 +122,7 @@ class HUD:
         self.coinwidget.draw(widgetareas[2], self.world.player.score[collectables.COIN])
 
     def splash(self, message, fontsize=40, icon=None):
-        '''Display a splash message across the entire window'''
+        """Display a splash message across the entire window"""
         windowrect = self.window.get_rect()
         pygame.draw.rect(self.window, BLACK, windowrect)
         textbox = TextBox(fontsize, WHITE, False)
@@ -132,7 +132,7 @@ class HUD:
         textbox.draw(message, windowrect, surface=self.window)
 
     def endsplash(self, reason):
-        '''Display an explanation for the game ending'''
+        """Display an explanation for the game ending"""
         if reason == collectables.CHOCOLATE:
             self.splash("You ran out of chocolate!")
         elif reason == collectables.COIN:
@@ -141,5 +141,5 @@ class HUD:
             self.splash("What happened here?")
 
     def loadingsplash(self, description):
-        '''Display a splash screen while a new world loads'''
+        """Display a splash screen while a new world loads"""
         self.splash(description, 25, hudimages.HourGlass)
