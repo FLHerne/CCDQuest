@@ -126,15 +126,15 @@ class Player(MGO.GEMGO):
         for outdir in directions.cardinals:
             trunkpos = self.position
             while inrange(trunkpos):
-                self.visibletiles.add(coords.modtuple(trunkpos, self.cellmap.size))
+                self.visibletiles.add(coords.mod(trunkpos, self.cellmap.size))
                 for perpdir in directions.perpendiculars(outdir):
-                    diagdir = coords.addtuple(outdir, perpdir)
+                    diagdir = coords.sum(outdir, perpdir)
                     branchpos = trunkpos
                     while inrange(branchpos):
-                        self.visibletiles.add(coords.modtuple(branchpos, self.cellmap.size))
+                        self.visibletiles.add(coords.mod(branchpos, self.cellmap.size))
                         if not Player.XRAYVISION and not self.cellmap[branchpos]['transparent']:
                             break
-                        branchpos = coords.addtuple(branchpos, diagdir)
+                        branchpos = coords.sum(branchpos, diagdir)
                 if not Player.XRAYVISION and not self.cellmap[trunkpos]['transparent']:
                     break
-                trunkpos = coords.addtuple(trunkpos, outdir)
+                trunkpos = coords.sum(trunkpos, outdir)
