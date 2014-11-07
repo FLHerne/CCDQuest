@@ -70,14 +70,15 @@ class Dragon(MGO.GEMGO):
 
     def sprite(self, player):
         isvisible = False
-        for ix, iy in [(0,0), (0,1), (1,0), (1,1)]:
-            if coords.sum(self.position (ix, iy)) in player.visibletiles:
+        tileoffset = [-1 if axis == 1 else 0 for axis in self.direction]
+        for tile in [(0,0), (0,1), (1,0), (1,1)]:
+            tile = coords.modsum(tile, tileoffset, self.cellmap.size)
+            if coords.sum(self.position, tile) in player.visibletiles:
                 isvisible = True
                 break
         if isvisible:
-            offset = [-images.TILESIZE if axis == 1 else 0 for axis in self.direction]
             return (images.DragonRed[self.direction],
-                    self._pixelpos(offset),
+                    self._pixelpos(coords.mul(tileoffset, images.TILESIZE)),
                     20)
         else:
             return None
