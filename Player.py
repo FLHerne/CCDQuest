@@ -117,6 +117,7 @@ class Player(MGO.GEMGO):
     def updatevisible(self):
         '''Calculate and return the set of tiles visible to player'''
         self.visibletiles = set()
+        self.visibletiles.add(tuple(self.position))
 
         def square():
             for ix in range(self.position[0]-self.visibility, self.position[0]+self.visibility+1):
@@ -124,54 +125,35 @@ class Player(MGO.GEMGO):
                     self.visibletiles.add((ix, iy))
 
         def diagonalcheck():
-            '''Test visibility along (offset) diagonals away from player'''
-            x = self.position[0]
-            y = self.position[1]
-            self.visibletiles.add((x%self.cellmap.size[0], y%self.cellmap.size[1]))                             # make the currently occupied cell self.visibletiles
-            for horizontal in (True, False):                # horizontal and vertical
-                for Dir1 in (-1, 1):                        # left/right or up/down
-                    for Dir2 in (-1, 1):                    # final division into octants
-                        Base = 0                            # how far horizontally or vertically the test ray is from the player
-                        while (abs(Base) < self.visibility and
-                            self.cellmap[self.position[0]+(Base if horizontal else 0),
-                                self.position[1]+(0 if horizontal else Base)]['transparent']):   # repeatedly test if a cell is transparent and within a bounding square
-                            #Base += Dir1       # FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
-                            if horizontal:
-                                x = self.position[0] + Base
-                                y = self.position[1]
-                            else:
-                                x = self.position[0]
-                                y = self.position[1] + Base
-                            self.visibletiles.add((x%self.cellmap.size[0], y%self.cellmap.size[1]))
-                            while self.cellmap[x, y]['transparent'] and ((self.position[1]-y)**2) + ((self.position[0]-x)**2) <= self.visibility**2:  # test in bounding circle
-                                if horizontal:                                                                      # move diagonally
-                                    x += Dir1
-                                    y += Dir2
-                                else:
-                                    x += Dir2
-                                    y += Dir1
-                                self.visibletiles.add((x%self.cellmap.size[0], y%self.cellmap.size[1]))                                                           # make self.visibletiles
-                            self.visibletiles.add((x%self.cellmap.size[0], y%self.cellmap.size[1]))                                                               # make the first opaque cell self.visibletiles too
-                            Base += Dir1       # FIXME - either the main diagonals aren't shown, or the ends of the cross aren't
-                        self.visibletiles.add((x%self.cellmap.size[0], y%self.cellmap.size[1]))
+            def addtuple(a, b):
+                return (a[0]+b[0], a[1]+b[1])
+            def modtuple(a, b):
+                return (a[0]%b[0], a[1]%b[1])
+            def multuple(a, b):
+                return tuple([b*m for m in a])
+            def perpdirs(direction):
+                swapaxes = direction[::-1]
+                return [swapaxes, multuple(swapaxes, -1)]
 
-        def crosscheck():
-            '''Check visibility straight up, down, left and right'''
-            for i in (-1, 1):                                                           # Horizontally left and right
-                X = 0                                                                   # start at the player
-                while self.cellmap[(X*i)+self.position[0], self.position[1]]['transparent'] and X < self.visibility:     # if transparent and within bounding range
-                    self.visibletiles.add((((X*i)+self.position[0])%self.cellmap.size[0], self.position[1]%self.cellmap.size[1]))
-                    X += 1                                                              # move away from player
-                self.visibletiles.add((((X*i)+self.position[0])%self.cellmap.size[0], self.position[1]%self.cellmap.size[1]))                 # make final cell self.visibletiles
-            for i in (-1, 1):                                                           # Repeat as above, but vertically
-                Y = 0
-                while self.cellmap[self.position[0], (Y*i)+self.position[1]]['transparent'] and Y < self.visibility:
-                    self.visibletiles.add((self.position[0]%self.cellmap.size[1], ((Y*i)+self.position[1])%self.cellmap.size[1]))
-                    Y += 1
-                self.visibletiles.add((self.position[0]%self.cellmap.size[1], ((Y*i)+self.position[1])%self.cellmap.size[1]))
+            def inrange(a):
+                return ((a[0]-self.position[0])**2 + (a[1]-self.position[1])**2 < self.visibility**2)
+            for outdir in [LEFT, RIGHT, UP, DOWN]:
+                trunkpos = self.position
+                while inrange(trunkpos):
+                    self.visibletiles.add(modtuple(trunkpos, self.cellmap.size))
+                    for perpdir in perpdirs(outdir):
+                        diagdir = addtuple(outdir, perpdir)
+                        branchpos = trunkpos
+                        while inrange(branchpos):
+                            self.visibletiles.add(modtuple(branchpos, self.cellmap.size))
+                            if not self.cellmap[branchpos]['transparent']:
+                                break
+                            branchpos = addtuple(branchpos, diagdir)
+                    if not self.cellmap[trunkpos]['transparent']:
+                        break
+                    trunkpos = addtuple(trunkpos, outdir)
 
         if Player.XRAYVISION:
             square()
         else:
             diagonalcheck()
-            crosscheck()
