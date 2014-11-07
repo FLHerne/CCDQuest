@@ -1,5 +1,5 @@
 import random
-from directions import *
+from directions.ordinals import *
 import images
 import MGO
 

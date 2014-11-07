@@ -2,7 +2,7 @@ import pygame
 import random
 import CellFiller
 from colors import *
-from directions import *
+import directions
 import collectables
 import images
 import numpy
@@ -117,7 +117,7 @@ class Map():
         if cell['damaged']:
             addsprite(pickrandomsprite(images.Damaged), -3)
         if coord in self.fusetiles:
-            for direction in [UP, DOWN, LEFT, RIGHT]:
+            for direction in directions.cardinals:
                 nbrcoord = ((coord[0]+direction[0])%self.size[0], (coord[1]+direction[1])%self.size[1])
                 if nbrcoord in self.fusetiles or self[nbrcoord]['collectableitem'] == collectables.DYNAMITE:
                     addsprite(images.Fuse[direction], -2)

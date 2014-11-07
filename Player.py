@@ -7,7 +7,7 @@ import collectables
 from colors import *
 import coords
 import directions
-from directions.principles import *
+from directions.cardinals import *
 
 class Player(MGO.GEMGO):
     '''The player, exploring the grid-based world'''

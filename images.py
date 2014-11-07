@@ -1,7 +1,7 @@
 import pygame
 import collectables
 from colors import MAGENTA
-from directions import *
+from directions.principles import *
 
 '''Load and convert all in-game images'''
 
