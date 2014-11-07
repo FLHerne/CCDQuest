@@ -143,6 +143,6 @@ class Player(MGO.GEMGO):
                         if not Player.XRAYVISION and not self.cellmap[branchpos]['transparent']:
                             break
                         branchpos = addtuple(branchpos, diagdir)
-                if not Player.XRAYVISION and self.cellmap[trunkpos]['transparent']:
+                if not Player.XRAYVISION and not self.cellmap[trunkpos]['transparent']:
                     break
                 trunkpos = addtuple(trunkpos, outdir)
