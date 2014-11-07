@@ -29,7 +29,7 @@ class Bear(MGO.GEMGO):
 
         def mapcoord(pfcoord):
             '''Get map coordinate from pathfinder one'''
-            return coords.mod(coords.sum(self.position, pfcoord, (-self.pfmapsize,)*2), self.cellmap.size)
+            return coords.modsum(self.position, pfcoord, (-self.pfmapsize,)*2, self.cellmap.size)
 
         foundtarget = False
         dijkstramap = [[[0, (self.pfmapsize,)*2, False] for x in xrange(2*self.pfmapsize)] for x in xrange(2*self.pfmapsize)]
@@ -100,7 +100,7 @@ class Bear(MGO.GEMGO):
                 self._suggestmessage("The bear has lost interest in you", 1)
 
         self.direction = poschange[0] if abs(poschange[0]) else self.direction
-        newpos = coords.mod(coords.sum(self.position, poschange), self.cellmap.size)
+        newpos = coords.modsum(self.position, poschange, self.cellmap.size)
 
         if not self.cellmap[newpos]['solid']:
             self.position = newpos

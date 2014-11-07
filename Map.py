@@ -119,7 +119,7 @@ class Map():
             addsprite(pickrandomsprite(images.Damaged), -3)
         if coord in self.fusetiles:
             for direction in directions.CARDINALS:
-                nbrcoord = coords.mod(coords.sum(coord, direction), self.size)
+                nbrcoord = coords.modsum(coord, direction, self.size)
                 if nbrcoord in self.fusetiles or self[nbrcoord]['collectableitem'] == collectables.DYNAMITE:
                     addsprite(images.Fuse[direction], -2)
         if cell['collectableitem'] != 0:

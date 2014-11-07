@@ -65,7 +65,7 @@ class Dragon(MGO.GEMGO):
             if washunting:
                 self._suggestmessage("The dragon starts to fly away", 1)
 
-        self.position = coords.mod(coords.sum(self.position, self.direction), self.cellmap.size)
+        self.position = coords.modsum(self.position, self.direction, self.cellmap.size)
         flameplayer()
 
     def sprite(self, player):

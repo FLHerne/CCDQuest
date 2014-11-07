@@ -62,7 +62,7 @@ class Player(MGO.GEMGO):
         if self.cellmap[self.position[0]+x, self.position[1]+y]['solid'] and not Player.FREEPLAYER:
             self.score[collectables.CHOCOLATE] -= 50
             return False
-        self.position = coords.mod(coords.sum(self.position, self.direction), self.cellmap.size)
+        self.position = coords.modsum(self.position, self.direction, self.cellmap.size)
         collectable = self.cellmap[self.position]['collectableitem']
         if collectable != 0:
             self.score[collectable] += collectables.value[collectable]
