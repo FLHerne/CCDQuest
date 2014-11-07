@@ -1,22 +1,24 @@
 import random
 from directions import *
 import images
+import coords
 import MGO
 
 class Dragon(MGO.GEMGO):
-    '''Harmless flying thing that follows the player'''
+    """Harmless flying thing that follows the player"""
     PER_TILE = 1/float(6000)
     detectionrange = 18
     speed = 0.8
 
     def __init__(self, position, cellmap):
-        '''Create new dragon in position'''
+        """Create new dragon in position"""
         super(Dragon, self).__init__(position, cellmap)
         self.direction = UPLEFT
         self.hunting = False
 
-    def update(self, playerpos):
-        '''Fly toward the player if nearby, or continue in same direction'''
+    def update(self, player):
+        """Fly toward the player if nearby, or continue in same direction"""
+        playerpos = player.position
         def tileoffset(a, b, size):
             offset = [0, 0]
             for axis in [0, 1]:
@@ -29,9 +31,7 @@ class Dragon(MGO.GEMGO):
             return offset
 
         def flameplayer():
-            def addtuple(a, b, c=1):
-                return (a[0]+b[0]*c, a[1]+b[1]*c)
-            fronttiles = [addtuple(self.position, self.direction, i) for i in range(1,4)]
+            fronttiles = [coords.sum(self.position, coords.mul(self.direction, i)) for i in range(1,4)]
             for tile in fronttiles:
                 if tile == tuple(playerpos):
                     self._suggestmessage("The dragon breaths a jet of fire towards you", 5)
@@ -42,7 +42,7 @@ class Dragon(MGO.GEMGO):
         washunting = self.hunting
         if not self.cellmap[playerpos]['top'] and not self.cellmap[playerpos]['hasroof'] and random.random() < Dragon.speed:
             offset = tileoffset(self.position, playerpos, self.cellmap.size)
-            if offset[0]**2 + offset[1]**1 <= Dragon.detectionrange**2:
+            if offset[0]**2 + offset[1]**2 <= Dragon.detectionrange**2:
                 self.hunting = True
                 newdirection = list(self.direction)
                 if abs(offset[0]) > abs(offset[1]):
@@ -65,22 +65,20 @@ class Dragon(MGO.GEMGO):
             if washunting:
                 self._suggestmessage("The dragon starts to fly away", 1)
 
-        self.position = ((self.position[0]+self.direction[0]) % self.cellmap.size[0],
-                         (self.position[1]+self.direction[1]) % self.cellmap.size[1])
+        self.position = coords.modsum(self.position, self.direction, self.cellmap.size)
         flameplayer()
 
-    def sprite(self):
+    def sprite(self, player):
         isvisible = False
-        for ix in [0, 1]:
-            for iy in [0, 1]:
-                cell = self.cellmap[self.position[0]+ix, self.position[1]+iy]
-                if cell['visible']:
-                    #and not (self.cellmap[self.player.position]['hasroof'] and (cell['hasroof'] or not cell['transparent'])):
-                    isvisible = True
+        tileoffset = [-1 if axis == 1 else 0 for axis in self.direction]
+        for tile in [(0,0), (0,1), (1,0), (1,1)]:
+            tile = coords.modsum(tile, tileoffset, self.cellmap.size)
+            if coords.sum(self.position, tile) in player.visibletiles:
+                isvisible = True
+                break
         if isvisible:
-            offset = [-images.TILESIZE if axis == 1 else 0 for axis in self.direction]
             return (images.DragonRed[self.direction],
-                    self._pixelpos(offset),
+                    self._pixelpos(coords.mul(tileoffset, images.TILESIZE)),
                     20)
         else:
             return None

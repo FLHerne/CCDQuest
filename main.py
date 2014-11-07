@@ -1,6 +1,6 @@
 #!/usr/bin/env python2.6
 
-'''Game of exploration in a grid-based world'''
+"""Game of exploration in a grid-based world"""
 
 import pygame
 import sys
@@ -107,7 +107,7 @@ def loadmap(newmap):
     return True
 
 def handleevents():
-    '''respond to user input'''
+    """respond to user input"""
     global world
     global currentmap
     global window
@@ -130,6 +130,8 @@ def handleevents():
                 world.moveplayer('followpath')
             elif event.key == FUSEREEL:
                 world.moveplayer('startfuse')
+            elif event.key == pygame.K_3:
+                world.moveplayer('scattercoins')
             else:
                 world.moveplayer((0, 0))
             if event.key == pygame.K_1:
@@ -160,6 +162,7 @@ messageboxregion = pygame.Rect(messageboxpadding, WINDOWSIZE[1]-messageboxheight
 gameended = False
 
 while not gameended:
+    loopstarttime = time.clock()
     gameended = handleevents()
     worldviewrect.width = window.get_width()-HUDWIDTH
     worldviewrect.height = window.get_height()
@@ -173,7 +176,7 @@ while not gameended:
     if gameended:
         hud.endsplash(gameended)
     pygame.display.update()
-    time.sleep(0.05)
+    time.sleep(max(0.05 + loopstarttime - time.clock(), 0))
 
 time.sleep(2)
 pygame.quit()

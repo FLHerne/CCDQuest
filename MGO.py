@@ -16,12 +16,12 @@ class GEMGO(MGO):
     PER_TILE = 1/float(1000)
     def __init__(self, position, cellmap):
         super(GEMGO, self).__init__()
-        self.position = list(position)
+        self.position = tuple(position)
         self.cellmap = cellmap
 
     @classmethod
     def place(cls, cellmap):
-        '''Create set of objects with random positions'''
+        """Create set of objects with random positions"""
         created = []
         for i in xrange(int(cellmap.size[0]*cellmap.size[1]*cls.PER_TILE)):
             attempt = (random.randint(0, cellmap.size[0]-1),
@@ -29,10 +29,10 @@ class GEMGO(MGO):
             created.append(cls(attempt, cellmap))
         return created
 
-    def update(self, playerpos, cellmap):
+    def update(self, player):
         pass
 
-    def sprite(self):
+    def sprite(self, player):
         return None
 
     def _pixelpos(self, offset=(0,0)):

@@ -17,7 +17,7 @@ class WorldView:
             drawregion.center = region.center
 
         def updatescrollpos():
-            '''scroll towards the correct position'''
+            """scroll towards the correct position"""
             for axis in [0, 1]:
                 pq = (world.player.position[axis]*TILESIZE+self.scrollpos[axis]) % world.surface.get_size()[axis]
                 if drawregion.size[axis] > 2*world.player.visibility*TILESIZE:

@@ -2,7 +2,8 @@ import pygame
 import random
 import CellFiller
 from colors import *
-from directions import *
+import directions
+import coords
 import collectables
 import images
 import numpy
@@ -10,13 +11,13 @@ import os.path
 import sys
 
 class Map():
-    '''Contains array of Cells and properties representing the map as a whole'''
+    """Contains array of Cells and properties representing the map as a whole"""
     CELLDAMAGEDCOST = 5
     CELLBURNINGCOST = 200
     DIRTYCACHE = False
 
     def __init__(self, mapdict):
-        '''Load the map from image files'''
+        """Load the map from image files"""
         self.startpos = tuple(mapdict['startpos'])
         self.signdefs = []
         if 'signs' in mapdict:
@@ -33,7 +34,6 @@ class Map():
             ('damaged',         numpy.bool_),
             ('burning',         numpy.bool_),
             ('explored',        numpy.bool_),
-            ('visible',         numpy.bool_),
             ('collectableitem', numpy.int8),
             ('name',           (numpy.str_, 19)),
             ('top',             numpy.bool_),
@@ -75,7 +75,7 @@ class Map():
             collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
             self.size = list(groundimage.get_rect().size)
             def createcell(ground, collectable):
-                return list((0,0,0,0) + CellFiller.collectablet[collectable] + CellFiller.terraint[ground] + (random.randint(0, 255),))
+                return list((0,0,0) + CellFiller.collectablet[collectable] + CellFiller.terraint[ground] + (random.randint(0, 255),))
             procfunc = numpy.frompyfunc(createcell, 2, 1)
             temparr = procfunc(groundarray, collectablesarray)
             self.cellarray = numpy.ndarray(self.size, dtype=celldtype)
@@ -90,22 +90,21 @@ class Map():
         self.origcoins = (self.cellarray['collectableitem'] == collectables.COIN).sum()
 
     def __getitem__(self, coord):
-        '''Get map item with [], wrapping'''
+        """Get map item with [], wrapping"""
         return self.cellarray[coord[0]%self.size[0]][coord[1]%self.size[1]]
 
     def __setitem__(self, coord, value):
-        '''Set map item with [], wrapping'''
+        """Set map item with [], wrapping"""
         self.cellarray[coord[0]%self.size[0]][coord[1]%self.size[1]] = value
 
     def sprites(self, coord):
-        coord = (coord[0]%self.size[0], coord[1]%self.size[1])
         sprites = []
         def addsprite(image, layer):
             sprites.append((image,
                             (coord[0]*images.TILESIZE + (images.TILESIZE-image.get_width())/2,
                              coord[1]*images.TILESIZE + (images.TILESIZE-image.get_height())/2),
                             layer))
-        cell = self.cellarray[coord[0]][coord[1]]
+        cell = self[coord]
         if not cell['explored']:
             addsprite(images.Unknown, -20)
             return sprites
@@ -119,23 +118,21 @@ class Map():
         if cell['damaged']:
             addsprite(pickrandomsprite(images.Damaged), -3)
         if coord in self.fusetiles:
-            for direction in [UP, DOWN, LEFT, RIGHT]:
-                nbrcoord = ((coord[0]+direction[0])%self.size[0], (coord[1]+direction[1])%self.size[1])
+            for direction in directions.CARDINALS:
+                nbrcoord = coords.modsum(coord, direction, self.size)
                 if nbrcoord in self.fusetiles or self[nbrcoord]['collectableitem'] == collectables.DYNAMITE:
                     addsprite(images.Fuse[direction], -2)
         if cell['collectableitem'] != 0:
             addsprite(images.Collectables[cell['collectableitem']], -1)
         if cell['burning']:
             addsprite(pickrandomsprite(images.Burning), -1)
-        if not cell['visible']:
-            addsprite(images.NonVisible, 50)
         return sprites
 
     def placefuse(self, coord):
-        self.fusetiles.add((coord[0]%self.size[0], coord[1]%self.size[1]))
+        self.fusetiles.add(coords.mod(coord, self.size))
 
     def ignitefuse(self, coord):
-        coord = (coord[0]%self.size[0], coord[1]%self.size[1])
+        coord = coords.mod(coord, self.size)
         if self[coord]['collectableitem'] == collectables.DYNAMITE:
             self.detonate(coord)
         if not coord in self.fusetiles:
@@ -146,15 +143,15 @@ class Map():
             curpos = openlist.pop()
             if curpos in self.fusetiles:
                 self.fusetiles.remove(curpos)
-            for nbrpos in [(curpos[0]-1, curpos[1]), (curpos[0], curpos[1]-1), (curpos[0]+1, curpos[1]), (curpos[0], curpos[1]+1)]:
+            for nbrpos in coords.neighbours(curpos):
                 if self[nbrpos]['collectableitem'] == collectables.DYNAMITE:
                     self.detonate(nbrpos)
-                nbrpos = (nbrpos[0]%self.size[0], nbrpos[1]%self.size[1])
+                nbrpos = coords.mod(nbrpos, self.size)
                 if nbrpos in self.fusetiles:
                     openlist.add(nbrpos)
 
     def destroy(self, coord):
-        '''Change cell attributes to reflect destruction'''
+        """Change cell attributes to reflect destruction"""
         cell = self[coord]
         if not cell['destructable']:
             return False
@@ -172,8 +169,8 @@ class Map():
         return True
 
     def ignite(self, coord, multiplier=1, forceignite=False):
-        '''Start a fire at coord, with chance cell.firestartchance * multiplier'''
-        coord = (coord[0]%self.size[0], coord[1]%self.size[1])
+        """Start a fire at coord, with chance cell.firestartchance * multiplier"""
+        coord = coords.mod(coord, self.size)
         cell = self[coord]
         if coord in self.fusetiles:
             self.ignitefuse(coord)
@@ -188,12 +185,12 @@ class Map():
         return False
 
     def detonate(self, coord):
-        '''Set off an explosion at coord'''
+        """Set off an explosion at coord"""
         def blam(epicentre):
             self[epicentre]['collectableitem'] = 0
             for dx in (-1, 0, 1):
                 for dy in (-1, 0, 1):
-                    curpos = (epicentre[0]+dx, epicentre[1]+dy)
+                    curpos = coords.sum(epicentre, (dx, dy))
                     if not self.ignite(curpos, multiplier=3):
                         self.destroy(curpos)
         if not self[coord]['destructable']:
@@ -202,10 +199,10 @@ class Map():
         return True
 
     def update(self):
-        '''Spread fire, potentially other continuous map processes'''
+        """Spread fire, potentially other continuous map processes"""
         for tile in self.burningtiles.copy():
             cell = self[tile]
-            for nbrpos in [(tile[0]-1, tile[1]), (tile[0], tile[1]-1), (tile[0]+1, tile[1]), (tile[0], tile[1]+1)]:
+            for nbrpos in coords.neighbours(tile):
                 self.ignite(nbrpos)
             if random.random() < cell['fireoutchance']:
                 cell['burning'] = False
