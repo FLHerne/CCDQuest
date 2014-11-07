@@ -71,7 +71,7 @@ class Dragon(MGO.GEMGO):
     def sprite(self, player):
         isvisible = False
         for ix, iy in [(0,0), (0,1), (1,0), (1,1)]:
-            if (self.position[0]+ix, self.position[1]+iy) in player.visibletiles:
+            if coords.sum(self.position (ix, iy)) in player.visibletiles:
                 isvisible = True
                 break
         if isvisible:

@@ -59,7 +59,7 @@ class Player(MGO.GEMGO):
         if abs(x) + abs(y) != 1:
             return False
         self.direction = (x, y)
-        if self.cellmap[self.position[0]+x, self.position[1]+y]['solid'] and not Player.FREEPLAYER:
+        if self.cellmap[coords.sum(self.position, (x, y))]['solid'] and not Player.FREEPLAYER:
             self.score[collectables.CHOCOLATE] -= 50
             return False
         self.position = coords.modsum(self.position, self.direction, self.cellmap.size)

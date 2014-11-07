@@ -13,7 +13,7 @@ def modsum(*args):
     '''Sum all but the last argument, modulo by that'''
     modval = args[-1]
     args = args[:-1]
-    return mod(sum(args), modval)
+    return mod(sum(*args), modval)
 
 def mul(a, b):
     '''Element-wise multiple of a by b (tuple or int)'''

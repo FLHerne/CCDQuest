@@ -2,6 +2,7 @@ import pygame
 import random
 import collectables
 import images
+import coords
 from Bear import Bear
 from Dragon import Dragon
 from Pixie import Pixie
@@ -15,7 +16,7 @@ TILESIZE = images.TILESIZE
 class World:
     def __init__(self, mapdict):
         self.cellmap = Map(mapdict)
-        self.surface = pygame.Surface((self.cellmap.size[0]*TILESIZE, self.cellmap.size[1]*TILESIZE))
+        self.surface = pygame.Surface(coords.mul(self.cellmap.size, TILESIZE))
         self.surface.fill(BLACK)
 
         self.gemgos = []
@@ -54,11 +55,11 @@ class World:
                 for ix in range(rx[0]-1, rx[1]+1):
                     for iy in range(ry[0]-1, ry[1]+1):
                         regionsprites += self.cellmap.sprites((ix, iy))
-                        if (ix%self.cellmap.size[0], iy%self.cellmap.size[1]) not in self.player.visibletiles:
-                            sprites.append((images.NonVisible, (ix*TILESIZE, iy*TILESIZE), 100))
+                        if coords.mod((ix, iy), self.cellmap.size) not in self.player.visibletiles:
+                            sprites.append((images.NonVisible, coords.mul((ix, iy), TILESIZE), 100))
                 regionsprites.sort(key=lambda x: x[2])
                 for sprite in regionsprites:
-                    self.surface.blit(sprite[0], sprite[1])
+                    self.surface.blit(*sprite[:2])
 
     def moveplayer(self, arg):
         '''Move the player by (x, y), move other fauna, update world surface around player'''
