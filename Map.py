@@ -190,7 +190,7 @@ class Map():
             self[epicentre]['collectableitem'] = 0
             for dx in (-1, 0, 1):
                 for dy in (-1, 0, 1):
-                    curpos = coord.sum(epicentre, (dx, dy))
+                    curpos = coords.sum(epicentre, (dx, dy))
                     if not self.ignite(curpos, multiplier=3):
                         self.destroy(curpos)
         if not self[coord]['destructable']:
