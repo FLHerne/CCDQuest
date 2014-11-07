@@ -5,7 +5,9 @@ from images import TILESIZE
 import MGO
 import collectables
 from colors import *
-from directions import *
+import coords
+import directions
+from directions.principles import *
 
 class Player(MGO.GEMGO):
     '''The player, exploring the grid-based world'''
@@ -119,30 +121,20 @@ class Player(MGO.GEMGO):
         self.visibletiles = set()
         self.visibletiles.add(tuple(self.position))
 
-        def addtuple(a, b):
-            return (a[0]+b[0], a[1]+b[1])
-        def modtuple(a, b):
-            return (a[0]%b[0], a[1]%b[1])
-        def multuple(a, b):
-            return tuple([b*m for m in a])
-        def perpdirs(direction):
-            swapaxes = direction[::-1]
-            return [swapaxes, multuple(swapaxes, -1)]
-
         def inrange(a):
             return ((a[0]-self.position[0])**2 + (a[1]-self.position[1])**2 < self.visibility**2)
-        for outdir in [LEFT, RIGHT, UP, DOWN]:
+        for outdir in directions.cardinals:
             trunkpos = self.position
             while inrange(trunkpos):
-                self.visibletiles.add(modtuple(trunkpos, self.cellmap.size))
-                for perpdir in perpdirs(outdir):
-                    diagdir = addtuple(outdir, perpdir)
+                self.visibletiles.add(coords.modtuple(trunkpos, self.cellmap.size))
+                for perpdir in directions.perpendiculars(outdir):
+                    diagdir = coords.addtuple(outdir, perpdir)
                     branchpos = trunkpos
                     while inrange(branchpos):
-                        self.visibletiles.add(modtuple(branchpos, self.cellmap.size))
+                        self.visibletiles.add(coords.modtuple(branchpos, self.cellmap.size))
                         if not Player.XRAYVISION and not self.cellmap[branchpos]['transparent']:
                             break
-                        branchpos = addtuple(branchpos, diagdir)
+                        branchpos = coords.addtuple(branchpos, diagdir)
                 if not Player.XRAYVISION and not self.cellmap[trunkpos]['transparent']:
                     break
-                trunkpos = addtuple(trunkpos, outdir)
+                trunkpos = coords.addtuple(trunkpos, outdir)
