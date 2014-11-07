@@ -2,9 +2,9 @@ import pygame
 from colors import *
 
 class TextBox:
-    '''Render text with given size/font/colors'''
+    """Render text with given size/font/colors"""
     def __init__(self, size, color, beveled=True, font="./fonts/MorrisRomanBlack.ttf"):
-        '''Set instance variables, calculate beveling colors'''
+        """Set instance variables, calculate beveling colors"""
         self.font = pygame.font.Font(font, size)
         self.beveled = beveled
         self.maincolor = pygame.Color(*color).correct_gamma(1)
@@ -12,7 +12,7 @@ class TextBox:
         self.lightcolor = self.maincolor.correct_gamma(8)
 
     def draw(self, string, region, centered=(True, True), surface=None):
-        '''Draw text to surface, or return text on a new surface'''
+        """Draw text to surface, or return text on a new surface"""
         textsize = self.font.size(string)
         returnsurface = False
         if surface == None:

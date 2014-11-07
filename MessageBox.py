@@ -4,7 +4,7 @@ from TextBox import TextBox
 from colors import *
 
 class MessageBox:
-    '''Horizontal bar with messages'''
+    """Horizontal bar with messages"""
     def __init__(self, window, mgolist):
         self.window = window
         self.textbox = TextBox(20, BLACK, False)
@@ -12,7 +12,7 @@ class MessageBox:
         self.mgolist = mgolist
 
     def draw(self, region):
-        '''Draw the message box'''
+        """Draw the message box"""
         if self.string != None:
             region = pygame.Rect(region)
 
