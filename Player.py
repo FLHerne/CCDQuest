@@ -6,8 +6,7 @@ import MGO
 import collectables
 from colors import *
 import coords
-import directions
-from directions.cardinals import *
+from directions import *
 
 class Player(MGO.GEMGO):
     '''The player, exploring the grid-based world'''
@@ -123,7 +122,7 @@ class Player(MGO.GEMGO):
 
         def inrange(a):
             return ((a[0]-self.position[0])**2 + (a[1]-self.position[1])**2 < self.visibility**2)
-        for outdir in directions.cardinals:
+        for outdir in CARDINALS:
             trunkpos = self.position
             while inrange(trunkpos):
                 self.visibletiles.add(coords.mod(trunkpos, self.cellmap.size))

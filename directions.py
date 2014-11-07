@@ -12,9 +12,9 @@ UPRIGHT   = ( 1,-1)
 DOWNLEFT  = (-1, 1)
 DOWNRIGHT = ( 1, 1)
 
-cardinals = [UP, DOWN, LEFT, RIGHT]
-ordinals = [UPLEFT, UPRIGHT, DOWNLEFT, DOWNRIGHT]
-principles = cardinals + ordinals
+CARDINALS = [UP, DOWN, LEFT, RIGHT]
+ORDINALS  = [UPLEFT, UPRIGHT, DOWNLEFT, DOWNRIGHT]
+PRINCIPALS = CARDINALS + ORDINALS
 
 def perpendiculars(direction):
     swapaxes = direction[::-1]

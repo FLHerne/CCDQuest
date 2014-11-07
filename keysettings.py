@@ -1,5 +1,5 @@
 import pygame
-from directions.cardinals import *
+from directions import *
 
 pygame.key.set_repeat(100, 75)      # press-and hold for faster movement
 USEARROWS = True                    # set the keyboard controls mode

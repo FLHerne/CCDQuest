@@ -16,4 +16,4 @@ def mul(a, b):
         return tuple([ea*eb for ea, eb in zip(a, b)])
 
 def neighbours(a):
-    return [sum(a, dir) for dir in directions.cardinals]
+    return [sum(a, dir) for dir in directions.CARDINALS]
