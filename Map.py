@@ -74,46 +74,31 @@ class Map():
                 print filepath, "is not a file"
                 sys.exit(1)
 
-        binaryfilepath = None
-        if 'binaryfile' in mapdict:
-            binaryfilepath = os.path.join('map', mapdict['dir'], mapdict['binaryfile'])
-        if  (binaryfilepath and os.path.isfile(binaryfilepath) and
-             os.path.getmtime(binaryfilepath) >= os.path.getmtime(terrainfilepath) and
-             os.path.getmtime(binaryfilepath) >= os.path.getmtime(itemfilepath) and
-             not Map.DIRTYCACHE):
-            self.cellarray = numpy.load(binaryfilepath)
-            self.size = self.cellarray.shape
+        groundimage = pygame.image.load(terrainfilepath).convert()
+        groundarray = pygame.surfarray.pixels2d(groundimage)
+        collectablesimage = pygame.image.load(itemfilepath).convert()
+        collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
+        self.size = list(groundimage.get_rect().size)
 
-        else:
-            groundimage = pygame.image.load(terrainfilepath).convert()
-            groundarray = pygame.surfarray.pixels2d(groundimage)
-            collectablesimage = pygame.image.load(itemfilepath).convert()
-            collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
-            self.size = list(groundimage.get_rect().size)
+        def mapcolor(color):
+            return (color[0] << 16) + (color[1] << 8) + color[2]
+        indexarray = numpy.empty(self.size, numpy.int8)
+        colorindex = [
+            BLACK, GREY, BROWN, WHITE, LIGHTBLUE, BLUE, GREEN,
+            BLUEGREY, CYAN, DARKGREEN, DARKYELLOW, LIGHTYELLOW, DARKPINK
+            ]
+        for i in range(0, len(colorindex)):
+            color = mapcolor(colorindex[i])
+            indexarray[groundarray == color] = i
 
-            def mapcolor(color):
-                return (color[0] << 16) + (color[1] << 8) + color[2]
-            indexarray = numpy.empty(self.size, numpy.int8)
-            colorindex = [
-                BLACK, GREY, BROWN, WHITE, LIGHTBLUE, BLUE, GREEN,
-                BLUEGREY, CYAN, DARKGREEN, DARKYELLOW, LIGHTYELLOW, DARKPINK
-                ]
-            for i in range(0, len(colorindex)):
-                color = mapcolor(colorindex[i])
-                indexarray[groundarray == color] = i
+        self.cellarray = numpy.choose(indexarray, terraint)
 
-            self.cellarray = numpy.choose(indexarray, terraint)
-
-            colorindex = [
-                WHITE, YELLOW, BROWN, RED
-                ]
-            for i in range(0, len(colorindex)):
-                color = mapcolor(colorindex[i])
-                self.cellarray['collectableitem'][collectablesarray == color] = i
-
-            if binaryfilepath:
-                print "Creating binary map file:", binaryfilepath
-                numpy.save(binaryfilepath, self.cellarray)
+        colorindex = [
+            WHITE, YELLOW, BROWN, RED
+            ]
+        for i in range(0, len(colorindex)):
+            color = mapcolor(colorindex[i])
+            self.cellarray['collectableitem'][collectablesarray == color] = i
 
         self.origcoins = (self.cellarray['collectableitem'] == collectables.COIN).sum()
 
