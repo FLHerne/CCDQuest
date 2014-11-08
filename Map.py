@@ -1,6 +1,5 @@
 import pygame
 import random
-import CellFiller
 from colors import *
 import directions
 import coords
@@ -9,6 +8,7 @@ import images
 import numpy
 import os.path
 import sys
+from images import TerrainIndex as Index
 
 class Map():
     """Contains array of Cells and properties representing the map as a whole"""
@@ -50,6 +50,22 @@ class Map():
             ('random',          numpy.int8)
             ])
 
+        terraint = numpy.array([
+            (0,0,0,0, 'wall', False, True, 20, 0, 1, False, 3, False, True, Index['wall'], 255, 0),
+            (0,0,0,0, 'rocky ground', False, True, 20, 0, 1, False, 5, True, False, Index['rock'], 255, 0),
+            (0,0,0,0, 'wooden planking', False, True, 20, 0.4, 0.1, False, 2, True, False, Index['planks'], 255, 0),
+            (0,0,0,0, 'snow', False, True, -5, 0, 1, False, 4, True, False, Index['snow'], 255, 0),
+            (0,0,0,0, 'water', False, False, 12, 0, 1, False, 25, True, False, Index['water'], 255, 0),
+            (0,0,0,0, 'deep water', False, False, 8, 0, 1, False, 25, True, True, Index['deepwater'], 255, 0),
+            (0,0,0,0, 'grass', False, True, 20, 0.1, 0.3, False, 2, True, False, Index['grass'], 255, 0),
+            (0,0,0,0, 'marshland', False, True, 20, 0, 1, False, 20, True, False, Index['marsh'], 255, 0),
+            (0,0,0,0, 'window', False, True, 20, 0, 1, False, 3, True, True, Index['glass'], 255, 0),
+            (0,0,0,0, 'forest', True, True, 20, 0.5, 0.1, False, 8, False, False, Index['grass'], Index['tree'], 0),
+            (0,0,0,0, 'sand', False, True, 20, 0, 1, False, 3, True, False, Index['sand'], 255, 0),
+            (0,0,0,0, 'paving', False, True, 20, 0, 1, False, 1, True, False, Index['paving'], 255, 0),
+            (0,0,0,0, 'floor', False, True, 20, 0.5, 0.05, True, 1, True, False, Index['floor'], 255, 0)
+            ], celldtype)
+
         terrainfilepath = os.path.join('map', mapdict['dir'], mapdict['terrainfile'])
         itemfilepath = os.path.join('map', mapdict['dir'], mapdict['itemfile'])
         for filepath in terrainfilepath, itemfilepath:
@@ -74,15 +90,27 @@ class Map():
             collectablesimage = pygame.image.load(itemfilepath).convert()
             collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
             self.size = list(groundimage.get_rect().size)
-            def createcell(ground, collectable):
-                return list((0,0,0) + CellFiller.collectablet[collectable] + CellFiller.terraint[ground] + (random.randint(0, 255),))
-            procfunc = numpy.frompyfunc(createcell, 2, 1)
-            temparr = procfunc(groundarray, collectablesarray)
-            self.cellarray = numpy.ndarray(self.size, dtype=celldtype)
-            for x in xrange(0, self.size[0]):
-                for y in xrange(0, self.size[1]):
-                    tempval = tuple(temparr[x][y])
-                    self.cellarray[x][y] = tempval
+
+            def mapcolor(color):
+                return (color[0] << 16) + (color[1] << 8) + color[2]
+            indexarray = numpy.empty(self.size, numpy.int8)
+            colorindex = [
+                BLACK, GREY, BROWN, WHITE, LIGHTBLUE, BLUE, GREEN,
+                BLUEGREY, CYAN, DARKGREEN, DARKYELLOW, LIGHTYELLOW, DARKPINK
+                ]
+            for i in range(0, len(colorindex)):
+                color = mapcolor(colorindex[i])
+                indexarray[groundarray == color] = i
+
+            self.cellarray = numpy.choose(indexarray, terraint)
+
+            colorindex = [
+                WHITE, YELLOW, BROWN, RED
+                ]
+            for i in range(0, len(colorindex)):
+                color = mapcolor(colorindex[i])
+                self.cellarray['collectableitem'][collectablesarray == color] = i
+
             if binaryfilepath:
                 print "Creating binary map file:", binaryfilepath
                 numpy.save(binaryfilepath, self.cellarray)
