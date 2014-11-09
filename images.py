@@ -37,26 +37,26 @@ for i in enumerate(terrain.types['topimage']):
     indexedterrain.append(offsetgroup)
 
 # Overlays for unknown, non-visible, damaged or burning tiles.
-Unknown = pygame.image.load("tiles/Unknown.png").convert()
-NonVisible = pygame.image.load("tiles/NonVisible.png").convert_alpha()
+Unknown = pygame.image.load("tiles/overlays/Unknown.png").convert()
+NonVisible = pygame.image.load("tiles/overlays/NonVisible.png").convert_alpha()
 
 # These two can be randomly chosen
 Damaged = [
-    pygame.image.load("tiles/Damaged1.png").convert_alpha(),
-    pygame.image.load("tiles/Damaged2.png").convert_alpha(),
-    pygame.image.load("tiles/Damaged3.png").convert_alpha(),
-    pygame.image.load("tiles/Damaged4.png").convert_alpha()
+    pygame.image.load("tiles/overlays/damaged/Damaged1.png").convert_alpha(),
+    pygame.image.load("tiles/overlays/damaged/Damaged2.png").convert_alpha(),
+    pygame.image.load("tiles/overlays/damaged/Damaged3.png").convert_alpha(),
+    pygame.image.load("tiles/overlays/damaged/Damaged4.png").convert_alpha()
 ]
 
 Burning = [
-    pygame.image.load("tiles/Fire1.png").convert_alpha(),
-    pygame.image.load("tiles/Fire2.png").convert_alpha(),
-    pygame.image.load("tiles/Fire3.png").convert_alpha(),
-    pygame.image.load("tiles/Fire4.png").convert_alpha()
+    pygame.image.load("tiles/overlays/fire/Fire1.png").convert_alpha(),
+    pygame.image.load("tiles/overlays/fire/Fire2.png").convert_alpha(),
+    pygame.image.load("tiles/overlays/fire/Fire3.png").convert_alpha(),
+    pygame.image.load("tiles/overlays/fire/Fire4.png").convert_alpha()
 ]
 
 # Overlays for fuses.
-FuseLeft = pygame.image.load("tiles/Fuse.png").convert_alpha()
+FuseLeft = pygame.image.load("tiles/overlays/Fuse.png").convert_alpha()
 FuseRight = pygame.transform.rotate(FuseLeft, 180)
 FuseUp = pygame.transform.rotate(FuseLeft, -90)
 FuseDown = pygame.transform.rotate(FuseLeft, 90)
@@ -70,9 +70,9 @@ Fuse = {
 
 
 # Overlays for tiles with collectables.
-Coin = pygame.image.load("tiles/Coin.png").convert_alpha()
-Choc = pygame.image.load("tiles/Chocolate.png").convert_alpha()
-Dynamite = pygame.image.load("tiles/Dynamite.png").convert_alpha()
+Coin = pygame.image.load("tiles/collectables/Coin.png").convert_alpha()
+Choc = pygame.image.load("tiles/collectables/Chocolate.png").convert_alpha()
+Dynamite = pygame.image.load("tiles/collectables/Dynamite.png").convert_alpha()
 
 Collectables = {
     collectables.COIN: Coin,
@@ -81,7 +81,7 @@ Collectables = {
 }
 
 # Player sprites.
-PlayerUp = pygame.image.load("tiles/Player.png").convert_alpha()
+PlayerUp = pygame.image.load("tiles/gemgos/Player.png").convert_alpha()
 PlayerDown = pygame.transform.flip(PlayerUp, False, True)
 PlayerLeft = pygame.transform.rotate(PlayerUp, 90)
 PlayerRight = pygame.transform.flip(PlayerLeft, True, False)
@@ -94,11 +94,11 @@ Player = {
 }
 
 # Bear sprites.
-BearLeft = pygame.image.load("tiles/Bear.png").convert_alpha()
+BearLeft = pygame.image.load("tiles/gemgos/Bear.png").convert_alpha()
 BearRight = pygame.transform.flip(BearLeft, True, False)
 
 # Dragon sprites.
-DragonRedUpLeft = pygame.image.load("tiles/Dragon-Red.png").convert_alpha()
+DragonRedUpLeft = pygame.image.load("tiles/gemgos/Dragon-Red.png").convert_alpha()
 DragonRedUpRight = pygame.transform.flip(DragonRedUpLeft, True, False)
 DragonRedDownLeft = pygame.transform.flip(DragonRedUpLeft, False, True)
 DragonRedDownRight = pygame.transform.flip(DragonRedUpLeft, True, True)
@@ -110,7 +110,7 @@ DragonRed = {
     DOWNRIGHT: DragonRedDownRight
 }
 
-Sign = pygame.image.load("tiles/Sign.png").convert_alpha()
-PixieLeft = pygame.image.load("tiles/Pixie.png").convert_alpha()
+Sign = pygame.image.load("tiles/gemgos/Sign.png").convert_alpha()
+PixieLeft = pygame.image.load("tiles/gemgos/Pixie.png").convert_alpha()
 PixieRight = pygame.transform.flip(PixieLeft, True, False)
 
