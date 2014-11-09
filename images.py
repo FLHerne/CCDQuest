@@ -15,9 +15,10 @@ TILESIZE = 12
 
 terraingroups = {}
 for name in os.listdir(os.path.join('tiles', 'terrain')):
-    if (not os.path.isdir(os.path.join('tiles', 'terrain', name)) or
-         name not in terrain.types['groundimage'] and name not in terrain.types['topimage']):
+    if not os.path.isdir(os.path.join('tiles', 'terrain', name)):
         continue
+    if not (name in terrain.types['groundimage'] or name in terrain.types['topimage']):
+        print "Warning: terrain sprites", name, "not used"
     terraingroups[name] = []
     for filename in os.listdir(os.path.join('tiles', 'terrain', name)):
         filepath = os.path.join('tiles', 'terrain', name, filename)
@@ -25,6 +26,15 @@ for name in os.listdir(os.path.join('tiles', 'terrain')):
             loadedimage = pygame.image.load(filepath).convert()
             loadedimage.set_colorkey(MAGENTA, pygame.RLEACCEL)
             terraingroups[name].append(loadedimage)
+
+numtypes = len(terrain.types)
+indexedterrain = [(0, None)]
+for i in enumerate(terrain.types['groundimage']):
+    offsetgroup = (numtypes/2 - i[0], terraingroups[i[1]]) if i[1] else (0, None)
+    indexedterrain.append(offsetgroup)
+for i in enumerate(terrain.types['topimage']):
+    offsetgroup = (numtypes/2 - i[0], terraingroups[i[1]]) if i[1] else (0, None)
+    indexedterrain.append(offsetgroup)
 
 # Overlays for unknown, non-visible, damaged or burning tiles.
 Unknown = pygame.image.load("tiles/Unknown.png").convert()
@@ -36,8 +46,8 @@ Damaged = [
     pygame.image.load("tiles/Damaged2.png").convert_alpha(),
     pygame.image.load("tiles/Damaged3.png").convert_alpha(),
     pygame.image.load("tiles/Damaged4.png").convert_alpha()
-
 ]
+
 Burning = [
     pygame.image.load("tiles/Fire1.png").convert_alpha(),
     pygame.image.load("tiles/Fire2.png").convert_alpha(),
