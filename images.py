@@ -1,5 +1,8 @@
+import imghdr
+import os
 import pygame
 import collectables
+import terrain
 from colors import MAGENTA
 from directions import *
 
@@ -10,95 +13,18 @@ TILESIZE = 12
 
 # Images with transparency use convert_alpha().
 
-TerrainSprites = [
-    [
-        'wall',
-        pygame.image.load("tiles/Wall.png").convert()
-    ],
-    [
-        'glass',
-        pygame.image.load("tiles/Glass.png").convert(),
-    ],
-    [
-        'tree',
-        pygame.image.load("tiles/Trees1.png").convert(),
-        pygame.image.load("tiles/Trees2.png").convert(),
-        pygame.image.load("tiles/Trees3.png").convert(),
-        pygame.image.load("tiles/Trees4.png").convert(),
-        pygame.image.load("tiles/Trees5.png").convert(),
-        pygame.image.load("tiles/Trees6.png").convert(),
-        pygame.image.load("tiles/Trees7.png").convert(),
-        pygame.image.load("tiles/Trees8.png").convert(),
-    ],
-    [
-        'snow',
-        pygame.image.load("tiles/Snow1.png").convert(),
-        pygame.image.load("tiles/Snow2.png").convert(),
-        pygame.image.load("tiles/Snow3.png").convert(),
-        pygame.image.load("tiles/Snow4.png").convert(),
-    ],
-    [
-        'rock',
-        pygame.image.load("tiles/Rock1.png").convert(),
-        pygame.image.load("tiles/Rock2.png").convert(),
-        pygame.image.load("tiles/Rock3.png").convert(),
-        pygame.image.load("tiles/Rock4.png").convert(),
-    ],
-    [
-        'floor',
-        pygame.image.load("tiles/Floor1.png").convert(),
-    ],
-    [
-        'grass',
-        pygame.image.load("tiles/Grass1.png").convert(),
-        pygame.image.load("tiles/Grass2.png").convert(),
-        pygame.image.load("tiles/Grass3.png").convert(),
-        pygame.image.load("tiles/Grass4.png").convert(),
-        pygame.image.load("tiles/Grass5.png").convert()
-    ],
-    [
-        'planks',
-        pygame.image.load("tiles/Wood.png").convert(),
-        pygame.image.load("tiles/Wood1.png").convert()
-    ],
-    [
-        'paving',
-        pygame.image.load("tiles/Paving.png").convert(),
-    ],
-    [
-        'sand',
-        pygame.image.load("tiles/Sand1.png").convert(),
-        pygame.image.load("tiles/Sand2.png").convert(),
-        pygame.image.load("tiles/Sand3.png").convert(),
-        pygame.image.load("tiles/Sand4.png").convert(),
-    ],
-    [
-        'marsh',
-        pygame.image.load("tiles/Marsh1.png").convert(),
-        pygame.image.load("tiles/Marsh2.png").convert(),
-        pygame.image.load("tiles/Marsh3.png").convert(),
-        pygame.image.load("tiles/Marsh4.png").convert()
-    ],
-    [
-        'water',
-        pygame.image.load("tiles/Water1.png").convert(),
-        pygame.image.load("tiles/Water2.png").convert(),
-        pygame.image.load("tiles/Water3.png").convert(),
-        pygame.image.load("tiles/Water4.png").convert(),
-    ],
-    [
-        'deepwater',
-        pygame.image.load("tiles/DeepWater.png").convert()
-    ]
-]
-
-TerrainIndex = {}
-for index in range(0, len(TerrainSprites)):
-    entry = TerrainSprites[index]
-    TerrainIndex[entry[0]] = index
-    entry.pop(0)
-    map(lambda x: x.set_colorkey(MAGENTA, pygame.RLEACCEL), entry)
-    TerrainSprites[index] = (len(TerrainSprites)/2-index, entry)
+terraingroups = {}
+for name in os.listdir(os.path.join('tiles', 'terrain')):
+    if (not os.path.isdir(os.path.join('tiles', 'terrain', name)) or
+         name not in terrain.types['groundimage'] and name not in terrain.types['topimage']):
+        continue
+    terraingroups[name] = []
+    for filename in os.listdir(os.path.join('tiles', 'terrain', name)):
+        filepath = os.path.join('tiles', 'terrain', name, filename)
+        if imghdr.what(filepath) == 'png':
+            loadedimage = pygame.image.load(filepath).convert()
+            loadedimage.set_colorkey(MAGENTA, pygame.RLEACCEL)
+            terraingroups[name].append(loadedimage)
 
 # Overlays for unknown, non-visible, damaged or burning tiles.
 Unknown = pygame.image.load("tiles/Unknown.png").convert()

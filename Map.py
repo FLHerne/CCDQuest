@@ -5,10 +5,10 @@ import directions
 import coords
 import collectables
 import images
+import terrain
 import numpy
 import os.path
 import sys
-from images import TerrainIndex as Index
 
 class Map():
     """Contains array of Cells and properties representing the map as a whole"""
@@ -50,21 +50,36 @@ class Map():
             ('random',          numpy.int8)
             ])
 
-        terraint = numpy.array([
-            (0,0,0,0, 'wall', False, True, 20, 0, 1, False, 3, False, True, Index['wall'], 255, 0),
-            (0,0,0,0, 'rocky ground', False, True, 20, 0, 1, False, 5, True, False, Index['rock'], 255, 0),
-            (0,0,0,0, 'wooden planking', False, True, 20, 0.4, 0.1, False, 2, True, False, Index['planks'], 255, 0),
-            (0,0,0,0, 'snow', False, True, -5, 0, 1, False, 4, True, False, Index['snow'], 255, 0),
-            (0,0,0,0, 'water', False, False, 12, 0, 1, False, 25, True, False, Index['water'], 255, 0),
-            (0,0,0,0, 'deep water', False, False, 8, 0, 1, False, 25, True, True, Index['deepwater'], 255, 0),
-            (0,0,0,0, 'grass', False, True, 20, 0.1, 0.3, False, 2, True, False, Index['grass'], 255, 0),
-            (0,0,0,0, 'marshland', False, True, 20, 0, 1, False, 20, True, False, Index['marsh'], 255, 0),
-            (0,0,0,0, 'window', False, True, 20, 0, 1, False, 3, True, True, Index['glass'], 255, 0),
-            (0,0,0,0, 'forest', True, True, 20, 0.5, 0.1, False, 8, False, False, Index['grass'], Index['tree'], 0),
-            (0,0,0,0, 'sand', False, True, 20, 0, 1, False, 3, True, False, Index['sand'], 255, 0),
-            (0,0,0,0, 'paving', False, True, 20, 0, 1, False, 1, True, False, Index['paving'], 255, 0),
-            (0,0,0,0, 'floor', False, True, 20, 0.5, 0.05, True, 1, True, False, Index['floor'], 255, 0)
-            ], celldtype)
+        numtypes = len(terrain.types)
+        self.groundoffsetsprites = []
+        for i in enumerate(terrain.types['groundimage']):
+            if i[1]:
+                self.groundoffsetsprites.append((numtypes/2 - i[0], images.terraingroups[i[1]]))
+            else:
+                self.groundoffsetsprites.append((0, None))
+
+        self.topoffsetsprites = []
+        for i in enumerate(terrain.types['topimage']):
+            if i[1]:
+                self.topoffsetsprites.append((numtypes/2 - i[0], images.terraingroups[i[1]]))
+            else: 
+                self.topoffsetsprites.append((0, None))
+
+        terraint = numpy.empty(numtypes, dtype=celldtype)
+        terraint['damaged'].fill(0)
+        terraint['burning'].fill(0)
+        terraint['explored'].fill(0)
+        copyfields = ['name', 'top', 'destructable', 'temperature',
+                    'fireignitechance', 'fireoutchance', 'hasroof',
+                    'difficulty', 'transparent', 'solid']
+        for field in copyfields:
+            terraint[field] = terrain.types[field]
+        terraint['groundimage'] = numpy.arange(numtypes)
+        terraint['topimage'] = numpy.arange(numtypes)
+
+        colormap = numpy.empty(numtypes, dtype=numpy.dtype([('color', numpy.int_), ('index', numpy.int8)]))
+        colormap['color'] = terrain.types['r']*65536 + terrain.types['g']*256 + terrain.types['b']
+        colormap['index'] = numpy.arange(numtypes)
 
         terrainfilepath = os.path.join('map', mapdict['dir'], mapdict['terrainfile'])
         itemfilepath = os.path.join('map', mapdict['dir'], mapdict['itemfile'])
@@ -83,13 +98,8 @@ class Map():
         def mapcolor(color):
             return (color[0] << 16) + (color[1] << 8) + color[2]
         indexarray = numpy.empty(self.size, numpy.int8)
-        colorindex = [
-            BLACK, GREY, BROWN, WHITE, LIGHTBLUE, BLUE, GREEN,
-            BLUEGREY, CYAN, DARKGREEN, DARKYELLOW, LIGHTYELLOW, DARKPINK
-            ]
-        for i in range(0, len(colorindex)):
-            color = mapcolor(colorindex[i])
-            indexarray[groundarray == color] = i
+        for pair in colormap:
+            indexarray[groundarray == pair['color']] = pair['index']
 
         self.cellarray = numpy.choose(indexarray, terraint)
 
@@ -100,7 +110,7 @@ class Map():
             color = mapcolor(colorindex[i])
             self.cellarray['collectableitem'][collectablesarray == color] = i
 
-        self.cellarray['random'] = numpy.random.randint(0, 256, size=self.size)
+        self.cellarray['random'] = numpy.random.randint(0, 2, size=self.size)
 
         self.origcoins = (self.cellarray['collectableitem'] == collectables.COIN).sum()
 
@@ -125,11 +135,14 @@ class Map():
             return sprites
         def pickrandomsprite(spritelist):
             return spritelist[cell['random']%len(spritelist)]
-        for imagelayer in (cell['groundimage'], -10), (cell['topimage'], 10):
-            if imagelayer[0] == 255:
-                continue
-            offsetspritelist = images.TerrainSprites[imagelayer[0]]
-            addsprite(pickrandomsprite(offsetspritelist[1]), imagelayer[1]+offsetspritelist[0])
+
+        offsetspritelist = self.groundoffsetsprites[cell['groundimage']]
+        if offsetspritelist[1]:
+            addsprite(pickrandomsprite(offsetspritelist[1]), offsetspritelist[0]-10)
+        offsetspritelist = self.topoffsetsprites[cell['topimage']]
+        if offsetspritelist[1]:
+            addsprite(pickrandomsprite(offsetspritelist[1]), offsetspritelist[0]+10)
+
         if cell['damaged']:
             addsprite(pickrandomsprite(images.Damaged), -3)
         if coord in self.fusetiles:
@@ -180,7 +193,7 @@ class Map():
         cell['transparent'] = True
         cell['solid'] = False
         cell['difficulty'] += Map.CELLDAMAGEDCOST
-        cell['topimage'] = 255
+        cell['topimage'] = 0 #FIXME
         return True
 
     def ignite(self, coord, multiplier=1, forceignite=False):
