@@ -77,16 +77,16 @@ class Map():
             istype = groundarray == pair[0]
             self.cellarray[istype] = terraint[pair[1]]
             for level in ['groundimage', 'topimage']:
-                dirsetlist = filter(lambda a: isinstance(a, list), terrain.indexmaps[level][pair[1]])
+                indexmap = terrain.indexmaps[level][pair[1]]
+                dirsetlist = filter(lambda a: isinstance(a, list), indexmap)
                 if dirsetlist:
                     # Non-directional sprites are ignored if one or more directional sets provided.
                     firstindexlist = [m[0] for m in dirsetlist]
-                    randomchoice = numpy.random.randint(len(dirsetlist), size=self.size)
-                    self.cellarray[level][istype] = numpy.choose(randomchoice, firstindexlist)[istype]
-                    self.cellarray[level][istype] += nbrcount[istype]
+                    randomgrid = numpy.random.randint(len(dirsetlist), size=self.size)
+                    self.cellarray[level][istype] = (numpy.choose(randomgrid, firstindexlist) + nbrcount)[istype]
                 else:
-                    randomchoice = numpy.random.choice(terrain.indexmaps[level][pair[1]], self.size)
-                    self.cellarray[level][istype] = randomchoice[istype]
+                    randomgrid = numpy.random.randint(len(indexmap), size=self.size)
+                    self.cellarray[level][istype] = numpy.choose(randomgrid, indexmap)[istype]
 
         def mapcolor(color):
             return (color[0] << 16) + (color[1] << 8) + color[2]
