@@ -18,6 +18,7 @@ class Map():
 
     def __init__(self, mapdict):
         """Load the map from image files"""
+
         self.startpos = tuple(mapdict['startpos'])
         self.signdefs = []
         if 'signs' in mapdict:
@@ -39,8 +40,8 @@ class Map():
             ('top',             numpy.bool_),
             ('destructable',    numpy.bool_),
             ('temperature',     numpy.int8),
-            ('fireignitechance',numpy.float),
-            ('fireoutchance',   numpy.float),
+            ('fireignitechance',numpy.float_),
+            ('fireoutchance',   numpy.float_),
             ('hasroof',         numpy.bool_),
             ('difficulty',      numpy.int8),
             ('transparent',     numpy.bool_),
@@ -50,8 +51,8 @@ class Map():
             ('random',          numpy.int8)
             ])
 
-        numtypes = len(terrain.types)
-        terraint = numpy.array([(0,0,0,0)+i[1][3:13]+(i[0]+1,i[0]+numtypes+1,0) for i in enumerate(terrain.types.tolist())], dtype=celldtype)
+        numtypes = len(terrain.typeslist)
+        terraint = numpy.array([(0,0,0,0)+i[1][3:13]+(i[0],0,0) for i in enumerate(terrain.typeslist)], dtype=celldtype)
 
         terrainfilepath = os.path.join('map', mapdict['dir'], mapdict['terrainfile'])
         itemfilepath = os.path.join('map', mapdict['dir'], mapdict['itemfile'])
@@ -67,11 +68,25 @@ class Map():
         collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
         self.size = list(groundimage.get_rect().size)
 
-        indexarray = numpy.empty(self.size, numpy.int8)
-        for pair in terrain.colormap:
-            indexarray[groundarray == pair[0]] = pair[1]
+        nbrcount = numpy.zeros(self.size, dtype=numpy.uint)
+        for i in [(1,1,1), (1,0,2), (-1,1,4), (-1,0,8)]:
+            nbrcount += (groundarray == numpy.roll(groundarray,  i[0], axis=i[1])) * i[2]
 
-        self.cellarray = numpy.choose(indexarray, terraint)
+        self.cellarray = numpy.empty(self.size, dtype=celldtype)
+        for pair in terrain.colormap:
+            istype = groundarray == pair[0]
+            self.cellarray[istype] = terraint[pair[1]]
+            for level in ['groundimage', 'topimage']:
+                dirsetlist = filter(lambda a: isinstance(a, list), terrain.indexmaps[level][pair[1]])
+                if dirsetlist:
+                    # Non-directional sprites are ignored if one or more directional sets provided.
+                    firstindexlist = [m[0] for m in dirsetlist]
+                    randomchoice = numpy.random.randint(len(dirsetlist), size=self.size)
+                    self.cellarray[level][istype] = numpy.choose(randomchoice, firstindexlist)[istype]
+                    self.cellarray[level][istype] += nbrcount[istype]
+                else:
+                    randomchoice = numpy.random.choice(terrain.indexmaps[level][pair[1]], self.size)
+                    self.cellarray[level][istype] = randomchoice[istype]
 
         def mapcolor(color):
             return (color[0] << 16) + (color[1] << 8) + color[2]
@@ -81,8 +96,6 @@ class Map():
         for i in range(0, len(colorindex)):
             color = mapcolor(colorindex[i])
             self.cellarray['collectableitem'][collectablesarray == color] = i
-
-        self.cellarray['random'] = numpy.random.randint(0, 2, size=self.size)
 
         self.origcoins = (self.cellarray['collectableitem'] == collectables.COIN).sum()
 
@@ -108,12 +121,12 @@ class Map():
         def pickrandomsprite(spritelist):
             return spritelist[cell['random']%len(spritelist)]
 
-        offsetgroup = images.indexedterrain[cell['groundimage']]
-        if offsetgroup[1]:
-            addsprite(pickrandomsprite(offsetgroup[1]), offsetgroup[0]-10)
-        offsetgroup = images.indexedterrain[cell['topimage']]
-        if offsetgroup[1]:
-            addsprite(pickrandomsprite(offsetgroup[1]), offsetgroup[0]+10)
+        offsetsprite = images.indexedterrain[cell['groundimage']]
+        if offsetsprite[1]:
+            addsprite(offsetsprite[1], offsetsprite[0]-10)
+        offsetsprite = images.indexedterrain[cell['topimage']]
+        if offsetsprite[1]:
+            addsprite(offsetsprite[1], offsetsprite[0]+10)
 
         if cell['damaged']:
             addsprite(pickrandomsprite(images.Damaged), -3)
