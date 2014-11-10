@@ -55,8 +55,8 @@ for name in os.listdir(os.path.join('tiles', 'terrain')):
         if numtiles not in [1, 6]:
             print "Warning: sprite", filepath, "has invalid size"
             continue
-        loadedimage.set_colorkey(MAGENTA, pygame.RLEACCEL)
         if numtiles == 1:
+            loadedimage.set_colorkey(MAGENTA, pygame.RLEACCEL)
             terraingroups[name].append(loadedimage)
         else:
             terraingroups[name].append(dirsprites(loadedimage))
