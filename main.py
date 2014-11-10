@@ -15,7 +15,6 @@ window = pygame.display.set_mode(WINDOWSIZE, pygame.RESIZABLE)
 
 from HUD import HUD
 from MessageBox import MessageBox
-from Map import Map
 from Bear import Bear
 from Dragon import Dragon
 from Player import Player
@@ -36,11 +35,6 @@ if not loaded or not mainconfig.has_section("maps"):
     print "Config error!"
     sys.exit(1)
 if mainconfig.has_section("settings"):
-    if mainconfig.has_option("settings", "dirtycache"):
-        try:
-            Map.DIRTYCACHE = mainconfig.getboolean("settings", "dirtycache")
-        except ValueError:
-            print "Invalid value for 'dirtycache'"
     if mainconfig.has_option("settings", "freeplayer"):
         try:
             Player.FREEPLAYER = mainconfig.getboolean("settings", "freeplayer")

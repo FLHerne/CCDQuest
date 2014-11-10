@@ -1,11 +1,11 @@
 import pygame
 import random
-import CellFiller
 from colors import *
 import directions
 import coords
 import collectables
 import images
+import terrain
 import numpy
 import os.path
 import sys
@@ -18,6 +18,7 @@ class Map():
 
     def __init__(self, mapdict):
         """Load the map from image files"""
+
         self.startpos = tuple(mapdict['startpos'])
         self.signdefs = []
         if 'signs' in mapdict:
@@ -39,8 +40,8 @@ class Map():
             ('top',             numpy.bool_),
             ('destructable',    numpy.bool_),
             ('temperature',     numpy.int8),
-            ('fireignitechance',numpy.float),
-            ('fireoutchance',   numpy.float),
+            ('fireignitechance',numpy.float_),
+            ('fireoutchance',   numpy.float_),
             ('hasroof',         numpy.bool_),
             ('difficulty',      numpy.int8),
             ('transparent',     numpy.bool_),
@@ -50,6 +51,9 @@ class Map():
             ('random',          numpy.int8)
             ])
 
+        numtypes = len(terrain.typeslist)
+        terraint = numpy.array([(0,0,0,0)+i[1][3:13]+(i[0],0,0) for i in enumerate(terrain.typeslist)], dtype=celldtype)
+
         terrainfilepath = os.path.join('map', mapdict['dir'], mapdict['terrainfile'])
         itemfilepath = os.path.join('map', mapdict['dir'], mapdict['itemfile'])
         for filepath in terrainfilepath, itemfilepath:
@@ -58,34 +62,40 @@ class Map():
                 print filepath, "is not a file"
                 sys.exit(1)
 
-        binaryfilepath = None
-        if 'binaryfile' in mapdict:
-            binaryfilepath = os.path.join('map', mapdict['dir'], mapdict['binaryfile'])
-        if  (binaryfilepath and os.path.isfile(binaryfilepath) and
-             os.path.getmtime(binaryfilepath) >= os.path.getmtime(terrainfilepath) and
-             os.path.getmtime(binaryfilepath) >= os.path.getmtime(itemfilepath) and
-             not Map.DIRTYCACHE):
-            self.cellarray = numpy.load(binaryfilepath)
-            self.size = self.cellarray.shape
+        groundimage = pygame.image.load(terrainfilepath).convert()
+        groundarray = pygame.surfarray.pixels2d(groundimage)
+        collectablesimage = pygame.image.load(itemfilepath).convert()
+        collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
+        self.size = list(groundimage.get_rect().size)
 
-        else:
-            groundimage = pygame.image.load(terrainfilepath).convert()
-            groundarray = pygame.surfarray.pixels2d(groundimage)
-            collectablesimage = pygame.image.load(itemfilepath).convert()
-            collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
-            self.size = list(groundimage.get_rect().size)
-            def createcell(ground, collectable):
-                return list((0,0,0) + CellFiller.collectablet[collectable] + CellFiller.terraint[ground] + (random.randint(0, 255),))
-            procfunc = numpy.frompyfunc(createcell, 2, 1)
-            temparr = procfunc(groundarray, collectablesarray)
-            self.cellarray = numpy.ndarray(self.size, dtype=celldtype)
-            for x in xrange(0, self.size[0]):
-                for y in xrange(0, self.size[1]):
-                    tempval = tuple(temparr[x][y])
-                    self.cellarray[x][y] = tempval
-            if binaryfilepath:
-                print "Creating binary map file:", binaryfilepath
-                numpy.save(binaryfilepath, self.cellarray)
+        nbrcount = numpy.zeros(self.size, dtype=numpy.uint)
+        for i in [(1,1,1), (1,0,2), (-1,1,4), (-1,0,8)]:
+            nbrcount += (groundarray == numpy.roll(groundarray,  i[0], axis=i[1])) * i[2]
+
+        self.cellarray = numpy.empty(self.size, dtype=celldtype)
+        for pair in terrain.colormap:
+            istype = groundarray == pair[0]
+            self.cellarray[istype] = terraint[pair[1]]
+            for level in ['groundimage', 'topimage']:
+                dirsetlist = filter(lambda a: isinstance(a, list), terrain.indexmaps[level][pair[1]])
+                if dirsetlist:
+                    # Non-directional sprites are ignored if one or more directional sets provided.
+                    firstindexlist = [m[0] for m in dirsetlist]
+                    randomchoice = numpy.random.randint(len(dirsetlist), size=self.size)
+                    self.cellarray[level][istype] = numpy.choose(randomchoice, firstindexlist)[istype]
+                    self.cellarray[level][istype] += nbrcount[istype]
+                else:
+                    randomchoice = numpy.random.choice(terrain.indexmaps[level][pair[1]], self.size)
+                    self.cellarray[level][istype] = randomchoice[istype]
+
+        def mapcolor(color):
+            return (color[0] << 16) + (color[1] << 8) + color[2]
+        colorindex = [
+            WHITE, YELLOW, BROWN, RED
+            ]
+        for i in range(0, len(colorindex)):
+            color = mapcolor(colorindex[i])
+            self.cellarray['collectableitem'][collectablesarray == color] = i
 
         self.origcoins = (self.cellarray['collectableitem'] == collectables.COIN).sum()
 
@@ -110,11 +120,14 @@ class Map():
             return sprites
         def pickrandomsprite(spritelist):
             return spritelist[cell['random']%len(spritelist)]
-        for imagelayer in (cell['groundimage'], -10), (cell['topimage'], 10):
-            if imagelayer[0] == 255:
-                continue
-            offsetspritelist = images.TerrainSprites[imagelayer[0]]
-            addsprite(pickrandomsprite(offsetspritelist[1]), imagelayer[1]+offsetspritelist[0])
+
+        offsetsprite = images.indexedterrain[cell['groundimage']]
+        if offsetsprite[1]:
+            addsprite(offsetsprite[1], offsetsprite[0]-10)
+        offsetsprite = images.indexedterrain[cell['topimage']]
+        if offsetsprite[1]:
+            addsprite(offsetsprite[1], offsetsprite[0]+10)
+
         if cell['damaged']:
             addsprite(pickrandomsprite(images.Damaged), -3)
         if coord in self.fusetiles:
@@ -165,7 +178,7 @@ class Map():
         cell['transparent'] = True
         cell['solid'] = False
         cell['difficulty'] += Map.CELLDAMAGEDCOST
-        cell['topimage'] = 255
+        cell['topimage'] = 0
         return True
 
     def ignite(self, coord, multiplier=1, forceignite=False):
