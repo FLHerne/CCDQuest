@@ -2,6 +2,5 @@
     "name":        "A randomly generated world with roads",
     "terrainfile": "terrain.png",
     "itemfile":    "collectables.png",
-    "binaryfile":  "map.npy",
     "startpos":    [155,175]
 }

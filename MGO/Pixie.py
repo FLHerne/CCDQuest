@@ -15,8 +15,9 @@ class Pixie(BaseMGO.GEMGO):
     @classmethod
     def place(cls, cellmap):
         created = []
-        for pixiedef in cellmap.pixiedefs:
-            created.append(cls(pixiedef[1], pixiedef[0], cellmap))
+        if 'pixies' in cellmap.gemgodefs:
+            for pixiedef in cellmap.gemgodefs['pixies']:
+                created.append(cls(pixiedef[1], pixiedef[0], cellmap))
         return created
 
     def update(self, player):

@@ -10,8 +10,9 @@ class Portal(BaseMGO.GEMGO):
     @classmethod
     def place(cls, cellmap):
         created = []
-        for portaldef in cellmap.portaldefs:
-            created.append(cls(portaldef[0], cellmap))
+        if 'portals' in cellmap.gemgodefs:
+            for portaldef in cellmap.gemgodefs['portals']:
+                created.append(cls(portaldef[0], cellmap))
         return created
 
     def update(self, player):

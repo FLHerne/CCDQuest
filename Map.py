@@ -20,15 +20,10 @@ class Map():
         """Load the map from image files"""
 
         self.startpos = tuple(mapdict['startpos'])
-        self.signdefs = []
-        if 'signs' in mapdict:
-            self.signdefs = mapdict['signs']
-        self.pixiedefs = []
-        if 'pixies' in mapdict:
-            self.pixiedefs = mapdict['pixies']
-        self.portaldefs = []
-        if 'portals' in mapdict:
-            self.portaldefs = mapdict['portals']
+        try:
+            self.gemgodefs = mapdict['gemgos']
+        except KeyError:
+            self.gemgodefs = {}
         self.origcoins = 0
         self.burningtiles = set()
         self.fusetiles = set()

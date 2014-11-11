@@ -12,8 +12,9 @@ class Sign(BaseMGO.GEMGO):
     @classmethod
     def place(cls, cellmap):
         created = []
-        for signdef in cellmap.signdefs:
-            created.append(cls(signdef[1], signdef[0], cellmap))
+        if 'signs' in cellmap.gemgodefs:
+            for signdef in cellmap.gemgodefs['signs']:
+                created.append(cls(signdef[1], signdef[0], cellmap))
         return created
 
     def update(self, player):

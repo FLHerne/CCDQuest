@@ -2,6 +2,5 @@
     "name":        "The Maze",
     "terrainfile": "terrain.png",
     "itemfile":    "collectables.png",
-    "binaryfile":  "map.npy",
     "startpos":    [49,49]
 }
