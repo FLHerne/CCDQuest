@@ -69,7 +69,7 @@ numtypes = len(terrain.types)
 indexedterrain = [(0, None)]
 for level in ['groundimage', 'topimage']:
     for i in enumerate(terrain.types[level]):
-        levelmap = terrain.indexmaps[level]
+        levelmap = terrain.typetoimageindex[level]
         levelmap.append([])
         if not i[1]:
             levelmap[i[0]].append(0)

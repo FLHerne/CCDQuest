@@ -34,29 +34,6 @@ class Map():
         self.fusetiles = set()
         self.crcount = 0
 
-        celldtype = numpy.dtype([
-            ('damaged',         numpy.bool_),
-            ('burning',         numpy.bool_),
-            ('explored',        numpy.bool_),
-            ('collectableitem', numpy.int8),
-            ('name',           (numpy.str_, 19)),
-            ('top',             numpy.bool_),
-            ('destructable',    numpy.bool_),
-            ('temperature',     numpy.int8),
-            ('fireignitechance',numpy.float_),
-            ('fireoutchance',   numpy.float_),
-            ('hasroof',         numpy.bool_),
-            ('difficulty',      numpy.int8),
-            ('transparent',     numpy.bool_),
-            ('solid',           numpy.bool_),
-            ('groundimage',     numpy.uint8),
-            ('topimage',        numpy.uint8),
-            ('random',          numpy.int8)
-            ])
-
-        numtypes = len(terrain.typeslist)
-        terraint = numpy.array([(0,0,0,0)+i[1][3:13]+(i[0],0,0) for i in enumerate(terrain.typeslist)], dtype=celldtype)
-
         terrainfilepath = os.path.join('map', mapdict['dir'], mapdict['terrainfile'])
         itemfilepath = os.path.join('map', mapdict['dir'], mapdict['itemfile'])
         for filepath in terrainfilepath, itemfilepath:
@@ -69,18 +46,18 @@ class Map():
         groundarray = pygame.surfarray.pixels2d(groundimage)
         collectablesimage = pygame.image.load(itemfilepath).convert()
         collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
-        self.size = list(groundimage.get_rect().size)
+        self.size = groundimage.get_rect().size
 
         nbrcount = numpy.zeros(self.size, dtype=numpy.uint)
         for i in [(1,1,1), (1,0,2), (-1,1,4), (-1,0,8)]:
             nbrcount += (groundarray == numpy.roll(groundarray,  i[0], axis=i[1])) * i[2]
 
-        self.cellarray = numpy.empty(self.size, dtype=celldtype)
-        for pair in terrain.colormap:
-            istype = groundarray == pair[0]
-            self.cellarray[istype] = terraint[pair[1]]
+        self.cellarray = numpy.empty(self.size, dtype=terrain.celldtype)
+        for color_type in terrain.color_typeindex:
+            istype = groundarray == color_type[0]
+            self.cellarray[istype] = terrain.typeindextocell[color_type[1]]
             for level in ['groundimage', 'topimage']:
-                indexmap = terrain.indexmaps[level][pair[1]]
+                indexmap = terrain.typetoimageindex[level][color_type[1]]
                 dirsetlist = filter(lambda a: isinstance(a, list), indexmap)
                 if dirsetlist:
                     # Non-directional sprites are ignored if one or more directional sets provided.
