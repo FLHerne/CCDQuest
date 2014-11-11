@@ -166,6 +166,7 @@ DragonRed = {
 }
 
 Sign = pygame.image.load("tiles/gemgos/Sign.png").convert_alpha()
+Portal = pygame.image.load("tiles/gemgos/Portal.png").convert_alpha()
 PixieLeft = pygame.image.load("tiles/gemgos/Pixie.png").convert_alpha()
 PixieRight = pygame.transform.flip(PixieLeft, True, False)
 

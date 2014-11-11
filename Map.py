@@ -26,6 +26,9 @@ class Map():
         self.pixiedefs = []
         if 'pixies' in mapdict:
             self.pixiedefs = mapdict['pixies']
+        self.portaldefs = []
+        if 'portals' in mapdict:
+            self.portaldefs = mapdict['portals']
         self.origcoins = 0
         self.burningtiles = set()
         self.fusetiles = set()

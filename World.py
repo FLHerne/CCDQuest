@@ -7,6 +7,7 @@ from Bear import Bear
 from Dragon import Dragon
 from Pixie import Pixie
 from Sign import Sign
+from Portal import Portal
 from Map import Map
 from Player import Player
 from colors import *
@@ -24,7 +25,7 @@ class World:
                 self.surface.blit(bgtile, (ix, iy))
 
         self.gemgos = []
-        for gemgo in Player, Bear, Dragon, Sign, Pixie:
+        for gemgo in Player, Bear, Dragon, Sign, Pixie, Portal:
             self.gemgos += gemgo.place(self.cellmap)
         self.player = filter(lambda x: isinstance(x, Player), self.gemgos)[0]
 
