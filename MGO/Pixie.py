@@ -1,9 +1,9 @@
 import images
 import coords
 import random
-import MGO
+import BaseMGO
 
-class Pixie(MGO.GEMGO):
+class Pixie(BaseMGO.GEMGO):
     """Pixie that says things when walked to"""
     def __init__(self, phrasebook, position, cellmap):
         """Create new pixie in position"""

@@ -3,13 +3,8 @@ import random
 import collectables
 import images
 import coords
-from Bear import Bear
-from Dragon import Dragon
-from Pixie import Pixie
-from Sign import Sign
-from Portal import Portal
+from MGO import *
 from Map import Map
-from Player import Player
 from colors import *
 
 TILESIZE = images.TILESIZE
@@ -25,9 +20,9 @@ class World:
                 self.surface.blit(bgtile, (ix, iy))
 
         self.gemgos = []
-        for gemgo in Player, Bear, Dragon, Sign, Pixie, Portal:
+        for gemgo in BaseMGO.GEMGO.__subclasses__():
             self.gemgos += gemgo.place(self.cellmap)
-        self.player = filter(lambda x: isinstance(x, Player), self.gemgos)[0]
+        self.player = filter(lambda x: isinstance(x, Player.Player), self.gemgos)[0]
 
     def rendervisibletiles(self, extrasprites=[]):
         self.player.updatevisible()

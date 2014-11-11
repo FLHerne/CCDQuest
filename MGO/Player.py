@@ -2,14 +2,14 @@ import pygame
 import random
 import images
 from images import TILESIZE
-import MGO
+import BaseMGO
 import collectables
 from colors import *
 import coords
 import config
 from directions import *
 
-class Player(MGO.GEMGO):
+class Player(BaseMGO.GEMGO):
     """The player, exploring the grid-based world"""
     FREEPLAYER = config.get('player', 'freeplayer', bool, False)
     XRAYVISION = config.get('player', 'xrayvision', bool, False)

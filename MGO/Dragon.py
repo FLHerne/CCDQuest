@@ -3,9 +3,9 @@ from directions import *
 import images
 import coords
 import config
-import MGO
+import BaseMGO
 
-class Dragon(MGO.GEMGO):
+class Dragon(BaseMGO.GEMGO):
     """Harmless flying thing that follows the player"""
     PER_TILE = 1/config.get('fauna', 'tiles_per_dragon', float, 25000)
     detectionrange = 18

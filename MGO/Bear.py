@@ -2,13 +2,13 @@ import random
 import images
 import coords
 import config
-import MGO
+import BaseMGO
 
 def mindist(a, b, size):
     """Distance between two values accounting for world wrapping"""
     return min((b-a)%size,(a-b)%size)
 
-class Bear(MGO.GEMGO):
+class Bear(BaseMGO.GEMGO):
     """Harmless animal that follows the player"""
     PER_TILE = 1/config.get('fauna', 'tiles_per_bear', float, 2500)
 

@@ -1,7 +1,7 @@
 import images
-import MGO
+import BaseMGO
 
-class Sign(MGO.GEMGO):
+class Sign(BaseMGO.GEMGO):
     """Sign that displays message when walked over"""
     def __init__(self, string, position, cellmap):
         """Create new sign in position"""
