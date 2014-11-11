@@ -5,9 +5,6 @@
 import pygame
 import sys
 import time
-import os
-import json
-import ConfigParser
 
 pygame.init()
 WINDOWSIZE = (800, 480)
@@ -15,9 +12,6 @@ window = pygame.display.set_mode(WINDOWSIZE, pygame.RESIZABLE)
 
 from HUD import HUD
 from MessageBox import MessageBox
-from Bear import Bear
-from Dragon import Dragon
-from Player import Player
 from World import World
 from WorldView import WorldView
 
@@ -25,57 +19,10 @@ from colors import *
 
 from keysettings import *
 import collectables
+import config
 
 currentmap = 0
-maps = []
-
-mainconfig = ConfigParser.RawConfigParser()
-loaded = mainconfig.read("CCDQuest.cfg")
-if not loaded or not mainconfig.has_section("maps"):
-    print "Config error!"
-    sys.exit(1)
-if mainconfig.has_section("settings"):
-    if mainconfig.has_option("settings", "freeplayer"):
-        try:
-            Player.FREEPLAYER = mainconfig.getboolean("settings", "freeplayer")
-        except ValueError:
-            print "Invalid value for 'freeplayer'"
-    if mainconfig.has_option("settings", "xrayvision"):
-        try:
-            Player.XRAYVISION = mainconfig.getboolean("settings", "xrayvision")
-        except ValueError:
-            print "Invalid value for 'xrayvision'"
-if mainconfig.has_section("fauna"):
-    if mainconfig.has_option("fauna", "tiles_per_bear"):
-        try:
-            Bear.PER_TILE = 1/mainconfig.getfloat("fauna", "tiles_per_bear")
-        except ValueError:
-            print "Invalid value for 'tiles_per_bear'"
-    if mainconfig.has_option("fauna", "tiles_per_dragon"):
-        try:
-            Dragon.PER_TILE = 1/mainconfig.getfloat("fauna", "tiles_per_dragon")
-        except ValueError:
-            print "Invalid value for 'tiles_per_dragon'"
-for im in mainconfig.items("maps"):
-    descfilename = os.path.join('map', im[1], 'mapdesc.json')
-    try:
-        imfile = open(descfilename)
-    except:
-        print "Unable to load map", im[0]+":"
-        print "File", descfilename, "unreadable or missing"
-        continue
-    try:
-        newmap = json.load(imfile)
-    except ValueError as err:
-        print "Unable to load map", im[0]+":"
-        print err
-        continue
-    imfile.close()
-    newmap['dir'] = im[1]
-    maps.append(newmap)
-if not len(maps):
-    print "No loadable maps!"
-    sys.exit(1)
+maps = config.maps
 
 def loadmap(newmap):
     global hud

@@ -1,6 +1,7 @@
 import random
 import images
 import coords
+import config
 import MGO
 
 def mindist(a, b, size):
@@ -9,7 +10,7 @@ def mindist(a, b, size):
 
 class Bear(MGO.GEMGO):
     """Harmless animal that follows the player"""
-    PER_TILE = 1/float(2000)
+    PER_TILE = 1/config.get('fauna', 'tiles_per_bear', float, 2500)
 
     def __init__(self, position, cellmap):
         """Create bear at position"""

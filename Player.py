@@ -6,12 +6,13 @@ import MGO
 import collectables
 from colors import *
 import coords
+import config
 from directions import *
 
 class Player(MGO.GEMGO):
     """The player, exploring the grid-based world"""
-    FREEPLAYER = False
-    XRAYVISION = False
+    FREEPLAYER = config.get('player', 'freeplayer', bool, False)
+    XRAYVISION = config.get('player', 'xrayvision', bool, False)
 
     def __init__(self, position, cellmap):
         """Initialise instance variables"""

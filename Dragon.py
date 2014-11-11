@@ -2,11 +2,12 @@ import random
 from directions import *
 import images
 import coords
+import config
 import MGO
 
 class Dragon(MGO.GEMGO):
     """Harmless flying thing that follows the player"""
-    PER_TILE = 1/float(6000)
+    PER_TILE = 1/config.get('fauna', 'tiles_per_dragon', float, 25000)
     detectionrange = 18
     speed = 0.8
 
