@@ -12,7 +12,6 @@ window = pygame.display.set_mode(WINDOWSIZE, pygame.RESIZABLE)
 
 from HUD import HUD
 from MessageBox import MessageBox
-from World import World
 from WorldView import WorldView
 
 from colors import *
@@ -63,6 +62,10 @@ def handleevents():
             if event.key == FUSEREEL:
                 world.moveplayer('ignitefuse')
         if event.type == pygame.KEYDOWN:
+            if gamestate.currentstate in ['lost', 'won']:
+                time.sleep(2)
+                print gamestate.currentstate
+                sys.exit()
             if event.key in MOVEDIRS:
                 world.moveplayer(MOVEDIRS[event.key])
             elif event.key == FOLLOWPATH:
@@ -77,12 +80,6 @@ def handleevents():
                 loadmap(gamestate.stepname(-1))
             if event.key == pygame.K_2:
                 loadmap(gamestate.stepname(1))
-            if world.player.score[collectables.CHOCOLATE] <= 0:
-                gameended = collectables.CHOCOLATE
-            if world.player.score[collectables.COIN] == world.cellmap.origcoins:
-                nextmap = gamestate.stepname(1)
-                if nextmap is None:
-                    gameended = collectables.COIN
             messagebox.update()
     return gameended
 

@@ -28,6 +28,10 @@ if not len(__mapdefs):
 
 __worlds = {}
 
+currentmap = None
+currentworld = None
+currentstate = 'normal'
+
 def loadworld(name):
     global currentmap
     global currentworld
@@ -43,3 +47,6 @@ def stepname(step):
     currentindex = mapdefkeys.index(currentmap)
     nextindex = currentindex + step
     return mapdefkeys[nextindex] if nextindex in range(len(mapdefkeys)) else None
+
+def stepworld(step):
+    loadworld(stepname(step))

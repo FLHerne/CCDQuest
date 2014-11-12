@@ -1,10 +1,10 @@
 import pygame
 import random
 import images
-from images import TILESIZE
 import BaseMGO
 import collectables
 from colors import *
+import gamestate
 import coords
 import config
 from directions import *
@@ -62,6 +62,8 @@ class Player(BaseMGO.GEMGO):
         self.direction = (x, y)
         if self.cellmap[coords.sum(self.position, (x, y))]['solid'] and not Player.FREEPLAYER:
             self.score[collectables.CHOCOLATE] -= 50
+            if self.score[collectables.CHOCOLATE] <= 0:
+                gamestate.currentstate = 'lost'
             return False
         self.position = coords.modsum(self.position, self.direction, self.cellmap.size)
         collectable = self.cellmap[self.position]['collectableitem']
@@ -73,6 +75,16 @@ class Player(BaseMGO.GEMGO):
             self.score[collectables.CHOCOLATE] -= self.cellmap[self.position]['difficulty']
         if self.layingfuse and self.cellmap[self.position]['name'] not in ['water', 'deep water']:
             self.cellmap.placefuse(self.position)
+        if self.score[collectables.COIN] == self.cellmap.origcoins:
+            name = gamestate.stepname(1)
+            if name is None:
+                gamestate.currentstate = 'won'
+                print 'set won'
+            else:
+                print 'load next'
+                gamestate.loadworld(name)
+        if self.score[collectables.CHOCOLATE] <= 0:
+            gamestate.currentstate = 'lost'
         return True
 
     def followpath(self):
