@@ -19,26 +19,24 @@ from colors import *
 
 from keysettings import *
 import collectables
-import config
 
-currentmap = 0
-maps = config.maps
+import gamestate
 
-def loadmap(newmap):
+def loadmap(name):
+    if name is None:
+        return False
     global hud
     global messagebox
     global world
     global worldview
     global currentmap
-    print 'Load world', newmap
-    if newmap not in range(len(maps)):
-        return False
-    currentmap = newmap
-    hud.loadingsplash("Loading next level: " + maps[currentmap]['name'])
-    pygame.display.update()
-    world = World(maps[currentmap])
 
-    messagebox.mgolist = world.gemgos
+    hud.loadingsplash("Loading next level: " + name)
+    pygame.display.update()
+    gamestate.loadworld(name)
+    world = gamestate.currentworld
+
+    messagebox = MessageBox(window, world.gemgos)
 
     messagebox.string = None
     world.moveplayer((0, 0))
@@ -76,18 +74,19 @@ def handleevents():
             else:
                 world.moveplayer((0, 0))
             if event.key == pygame.K_1:
-                loadmap(currentmap - 1)
+                loadmap(gamestate.stepname(-1))
             if event.key == pygame.K_2:
-                loadmap(currentmap + 1)
+                loadmap(gamestate.stepname(1))
             if world.player.score[collectables.CHOCOLATE] <= 0:
                 gameended = collectables.CHOCOLATE
             if world.player.score[collectables.COIN] == world.cellmap.origcoins:
-                if not loadmap(currentmap + 1):
+                nextmap = gamestate.stepname(1)
+                if nextmap is None:
                     gameended = collectables.COIN
             messagebox.update()
     return gameended
 
-world = World(maps[currentmap])
+world = gamestate.currentworld
 world.moveplayer((0, 0))
 HUDWIDTH = 92
 worldviewrect = pygame.Rect(0, 0, WINDOWSIZE[0]-HUDWIDTH, WINDOWSIZE[1])
