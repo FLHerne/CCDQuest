@@ -46,6 +46,7 @@ celldtype = numpy.dtype([
     ('solid',           numpy.bool_),
     ('groundimage',     numpy.uint8),
     ('topimage',        numpy.uint8),
+    ('random',          numpy.uint8),
     ])
 
-typeindextocell = numpy.array([(0,0,0,0)+i[1][3:13]+(i[0],0) for i in enumerate(typeslist)], dtype=celldtype)
+typeindextocell = numpy.array([(0,0,0,0)+i[1][3:13]+(i[0],0,0) for i in enumerate(typeslist)], dtype=celldtype)
