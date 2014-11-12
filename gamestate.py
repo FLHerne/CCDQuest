@@ -26,14 +26,17 @@ for name in os.listdir('map'):
 if not len(__mapdefs):
     raise Exception("No loadable maps!")
 
-currentmap = config.get('map', 'initialmap', str)
-currentworld = World(__mapdefs[currentmap])
+__worlds = {}
 
 def loadworld(name):
     global currentmap
     global currentworld
+    if name not in __worlds:
+        __worlds[name] = World(__mapdefs[name])
     currentmap = name
-    currentworld = World(__mapdefs[currentmap])
+    currentworld = __worlds[name]
+
+loadworld(config.get('map', 'initialmap', str))
 
 def stepname(step):
     mapdefkeys = __mapdefs.keys()
