@@ -8,7 +8,6 @@ import images
 import terrain
 import numpy
 import os.path
-import sys
 
 class Map():
     """Contains array of Cells and properties representing the map as a whole"""
@@ -33,9 +32,7 @@ class Map():
         itemfilepath = os.path.join('map', mapdict['dir'], mapdict['itemfile'])
         for filepath in terrainfilepath, itemfilepath:
             if not os.path.isfile(filepath):
-                print "Failed to load map:"
-                print filepath, "is not a file"
-                sys.exit(1)
+                raise Exception(filepath, "is not a file")
 
         groundimage = pygame.image.load(terrainfilepath).convert()
         groundarray = pygame.surfarray.pixels2d(groundimage)
@@ -63,14 +60,9 @@ class Map():
                     randomgrid = numpy.random.randint(len(indexmap), size=self.size)
                     self.cellarray[level][istype] = numpy.choose(randomgrid, indexmap)[istype]
 
-        def mapcolor(color):
-            return (color[0] << 16) + (color[1] << 8) + color[2]
-        colorindex = [
-            WHITE, YELLOW, BROWN, RED
-            ]
-        for i in range(0, len(colorindex)):
-            color = mapcolor(colorindex[i])
-            self.cellarray['collectableitem'][collectablesarray == color] = i
+        for color_collectable in collectables.mapcolor.iteritems():
+            color = terrain.mapcolor(color_collectable[0])
+            self.cellarray['collectableitem'][collectablesarray == color] = color_collectable[1]
 
         self.origcoins = (self.cellarray['collectableitem'] == collectables.COIN).sum()
 
