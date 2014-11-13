@@ -1,14 +1,15 @@
 from images import TILESIZE
 from colors import *
 import pygame
+import gamestate
 
 class WorldView:
-    def __init__(self, world, window):
-        self.world = world
+    def __init__(self, window):
         self.window = window
         self.scrollpos = None
 
     def draw(self, region):
+        self.world = gamestate.currentworld
         if self.scrollpos == None:
             self.scrollpos = [(-TILESIZE*self.world.player.position[0])+region.width/2,
                               (-TILESIZE*self.world.player.position[1])+region.height/2]

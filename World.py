@@ -23,6 +23,7 @@ class World:
         for gemgo in BaseMGO.GEMGO.__subclasses__():
             self.gemgos += gemgo.place(self.cellmap)
         self.player = filter(lambda x: isinstance(x, Player.Player), self.gemgos)[0]
+        self.moveplayer((0,0))
 
     def rendervisibletiles(self, extrasprites=[]):
         self.player.updatevisible()
