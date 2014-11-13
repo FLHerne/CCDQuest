@@ -1,5 +1,6 @@
 import os
 import json
+import threading
 import config
 from World import World
 
@@ -31,23 +32,38 @@ __worlds = {}
 __states = [{
     'map': None,
     'world': None,
-    'state': 'normal'
+    'state': 'loading'
     }]
 
+statelock = threading.Lock()
+
 def getstate(state, part):
-    return __states[state][part]
+    with statelock:
+        retval = __states[state][part]
+    return retval
 
 def setstate(state, partvalues):
-    for part, value in partvalues.iteritems():
-        __states[state][part] = value
+    with statelock:
+        for part, value in partvalues.iteritems():
+            __states[state][part] = value
 
-def loadworld(name):
+def bglworld(name):
+    setstate(0, {'map': name,'state': 'loading'})
+    __worlds[name] =  World(__mapdefs[name])
+    setstate(0, {'map': name, 'world': __worlds[name], 'state': 'normal'})
+
+def loadworld(name, blocking=False):
     global states
     if name not in __worlds:
-        __worlds[name] = World(__mapdefs[name])
-    setstate(0, {'map': name, 'world': __worlds[name]})
+        if blocking:
+            __worlds[name] =  World(__mapdefs[name])
+        else:
+            t = threading.Thread(target=bglworld, args=[name])
+            t.start()
+            return False
+    setstate(0, {'map': name, 'world': __worlds[name], 'state': 'normal'})
 
-loadworld(config.get('map', 'initialmap', str))
+loadworld(config.get('map', 'initialmap', str), blocking=True)
 
 def stepname(step):
     mapdefkeys = __mapdefs.keys()
@@ -56,4 +72,6 @@ def stepname(step):
     return mapdefkeys[nextindex] if nextindex in range(len(mapdefkeys)) else None
 
 def stepworld(step):
-    loadworld(stepname(step))
+    name = stepname(step)
+    if name is not None:
+        loadworld(name)

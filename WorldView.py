@@ -23,6 +23,8 @@ class WorldView:
                 splash("You lost!")
             elif gamestate.getstate(0, 'state') == 'won':
                 splash("You won!")
+            elif gamestate.getstate(0, 'state') == 'loading':
+                splash("Loading "+gamestate.getstate(0, 'map'))
             return self.scrollpos
         self.world = gamestate.getstate(0, 'world')
         if self.scrollpos == None:
