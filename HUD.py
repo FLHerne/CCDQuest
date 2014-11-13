@@ -121,26 +121,3 @@ class HUD:
         self.dynamitewidget.draw(widgetareas[0], self.world.player.score[collectables.DYNAMITE])
         self.chocwidget.draw(widgetareas[1], self.world.player.score[collectables.CHOCOLATE])
         self.coinwidget.draw(widgetareas[2], self.world.player.score[collectables.COIN], gamestate.currentworld.cellmap.origcoins) #FIXME crazy indirection.
-
-    def splash(self, message, fontsize=40, icon=None):
-        """Display a splash message across the entire window"""
-        windowrect = self.window.get_rect()
-        pygame.draw.rect(self.window, BLACK, windowrect)
-        textbox = TextBox(fontsize, WHITE, False)
-        if icon is not None:
-            self.window.blit(icon, [(windowrect.size[axis]-icon.get_size()[axis])/2 for axis in [0,1]])
-            windowrect.move_ip(0, icon.get_height()/2 + fontsize)
-        textbox.draw(message, windowrect, surface=self.window)
-
-    def endsplash(self, reason):
-        """Display an explanation for the game ending"""
-        if reason == collectables.CHOCOLATE:
-            self.splash("You ran out of chocolate!")
-        elif reason == collectables.COIN:
-            self.splash("You found all the coins!")
-        else:
-            self.splash("What happened here?")
-
-    def loadingsplash(self, description):
-        """Display a splash screen while a new world loads"""
-        self.splash(description, 25, hudimages.HourGlass)

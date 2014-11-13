@@ -1,4 +1,5 @@
 from images import TILESIZE
+from TextBox import TextBox
 from colors import *
 import pygame
 import gamestate
@@ -9,6 +10,20 @@ class WorldView:
         self.scrollpos = None
 
     def draw(self, region):
+        if gamestate.currentstate != 'normal':
+            def splash(message, fontsize=40, icon=None):
+                """Display a splash message across the viewing area"""
+                pygame.draw.rect(self.window, BLACK, region)
+                textbox = TextBox(fontsize, WHITE, False)
+                if icon is not None:
+                    self.window.blit(icon, [(region.size[axis]-icon.get_size()[axis])/2 for axis in [0,1]])
+                    region.move_ip(0, icon.get_height()/2 + fontsize)
+                textbox.draw(message, region, surface=self.window)
+            if gamestate.currentstate == 'lost':
+                splash("You lost!")
+            elif gamestate.currentstate == 'won':
+                splash("You won!")
+            return self.scrollpos
         self.world = gamestate.currentworld
         if self.scrollpos == None:
             self.scrollpos = [(-TILESIZE*self.world.player.position[0])+region.width/2,
