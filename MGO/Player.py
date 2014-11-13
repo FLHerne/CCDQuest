@@ -63,7 +63,7 @@ class Player(BaseMGO.GEMGO):
         if self.cellmap[coords.sum(self.position, (x, y))]['solid'] and not Player.FREEPLAYER:
             self.score[collectables.CHOCOLATE] -= 50
             if self.score[collectables.CHOCOLATE] <= 0:
-                gamestate.currentstate = 'lost'
+                gamestate.setstate(0, {'state': 'lost'})
             return False
         self.position = coords.modsum(self.position, self.direction, self.cellmap.size)
         collectable = self.cellmap[self.position]['collectableitem']
@@ -78,13 +78,11 @@ class Player(BaseMGO.GEMGO):
         if self.score[collectables.COIN] == self.cellmap.origcoins:
             name = gamestate.stepname(1)
             if name is None:
-                gamestate.currentstate = 'won'
-                print 'set won'
+                gamestate.setstate(0, {'state': 'won'})
             else:
-                print 'load next'
                 gamestate.loadworld(name)
         if self.score[collectables.CHOCOLATE] <= 0:
-            gamestate.currentstate = 'lost'
+            gamestate.setstate(0, {'state': 'lost'})
         return True
 
     def followpath(self):

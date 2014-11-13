@@ -42,7 +42,7 @@ class MinimapWidget:
 
     def draw(self, region, scrollpos):
         """Draw the minimap"""
-        self.world = gamestate.currentworld
+        self.world = gamestate.getstate(0, 'world')
         region = pygame.Rect(region)
         old_clip = self.window.get_clip()
         self.window.set_clip(region)
@@ -89,7 +89,7 @@ class HUD:
     """Vertical bar with player scores and minimap"""
     def __init__(self, window):
         self.window = window
-        world = gamestate.currentworld
+        world = gamestate.getstate(0, 'world')
         self.frame = Frame((hudimages.FrameHoriz, hudimages.FrameVert), window)
         self.coinwidget = ScoreWidget(hudimages.Coin, window, bgtileimage=hudimages.HudBackground)
         self.chocwidget = ScoreWidget(hudimages.Choc, window,
@@ -100,7 +100,7 @@ class HUD:
 
     def draw(self, region, scrollpos):
         """Draw the heads-up display"""
-        self.world = gamestate.currentworld
+        self.world = gamestate.getstate(0, 'world')
         region = pygame.Rect(region)
         pygame.draw.rect(self.window, BLACK, region)
         framewidth = self.frame.thickness[Frame.VERTICAL]
@@ -120,4 +120,4 @@ class HUD:
                                 widgetwidth, (region.height/3)-frameheight+1))
         self.dynamitewidget.draw(widgetareas[0], self.world.player.score[collectables.DYNAMITE])
         self.chocwidget.draw(widgetareas[1], self.world.player.score[collectables.CHOCOLATE])
-        self.coinwidget.draw(widgetareas[2], self.world.player.score[collectables.COIN], gamestate.currentworld.cellmap.origcoins) #FIXME crazy indirection.
+        self.coinwidget.draw(widgetareas[2], self.world.player.score[collectables.COIN], self.world.cellmap.origcoins) #FIXME crazy indirection.

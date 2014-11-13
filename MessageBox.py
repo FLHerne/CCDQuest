@@ -34,7 +34,7 @@ class MessageBox:
         highestpriority = 0
         highestprioritymgo = None
         self.string = None
-        mgolist = gamestate.currentworld.gemgos
+        mgolist = gamestate.getstate(0, 'world').gemgos
         if len(mgolist) > 0:
             for mgo in mgolist:
                 if mgo.message[1] > highestpriority:

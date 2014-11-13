@@ -28,23 +28,30 @@ if not len(__mapdefs):
 
 __worlds = {}
 
-currentmap = None
-currentworld = None
-currentstate = 'normal'
+__states = [{
+    'map': None,
+    'world': None,
+    'state': 'normal'
+    }]
+
+def getstate(state, part):
+    return __states[state][part]
+
+def setstate(state, partvalues):
+    for part, value in partvalues.iteritems():
+        __states[state][part] = value
 
 def loadworld(name):
-    global currentmap
-    global currentworld
+    global states
     if name not in __worlds:
         __worlds[name] = World(__mapdefs[name])
-    currentmap = name
-    currentworld = __worlds[name]
+    setstate(0, {'map': name, 'world': __worlds[name]})
 
 loadworld(config.get('map', 'initialmap', str))
 
 def stepname(step):
     mapdefkeys = __mapdefs.keys()
-    currentindex = mapdefkeys.index(currentmap)
+    currentindex = mapdefkeys.index(getstate(0, 'map'))
     nextindex = currentindex + step
     return mapdefkeys[nextindex] if nextindex in range(len(mapdefkeys)) else None
 

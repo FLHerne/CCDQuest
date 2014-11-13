@@ -24,7 +24,7 @@ import gamestate
 
 def handleevents():
     """respond to user input"""
-    world = gamestate.currentworld
+    world = gamestate.getstate(0, 'world')
     global window
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -38,9 +38,8 @@ def handleevents():
             if event.key == FUSEREEL:
                 world.moveplayer('ignitefuse')
         if event.type == pygame.KEYDOWN:
-            if gamestate.currentstate in ['lost', 'won']:
+            if gamestate.getstate(0, 'state') in ['lost', 'won']:
                 time.sleep(2)
-                print gamestate.currentstate
                 sys.exit()
             if event.key in MOVEDIRS:
                 world.moveplayer(MOVEDIRS[event.key])
