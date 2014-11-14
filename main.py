@@ -72,8 +72,8 @@ while True:
     worldviewregion = pygame.Rect(0, 0, hudborderx, window.get_height())
     hudregion = pygame.Rect(hudborderx, 0, HUDWIDTH, window.get_height())
     messageboxregion = pygame.Rect(0, window.get_height()-MBOXHEIGHT-MBOXPADDING,
-                                  hudborderx-(2*MBOXPADDING),
-                                  window.get_height()-MBOXHEIGHT-MBOXPADDING)
+                                  hudborderx - 2*MBOXPADDING,
+                                  MBOXHEIGHT + 2*MBOXPADDING)
     scrollpos = worldview.draw(worldviewregion)
     messagebox.draw(messageboxregion)
     hud.draw(hudregion, scrollpos)

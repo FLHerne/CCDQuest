@@ -1,4 +1,5 @@
 from images import TILESIZE
+from hudimages import HourGlass
 from TextBox import TextBox
 from colors import *
 import pygame
@@ -7,10 +8,12 @@ import gamestate
 class WorldView:
     def __init__(self, window):
         self.window = window
+        self.world = None
         self.scrollpos = None
 
     def draw(self, region):
-        if gamestate.getstate(0, 'state') != 'normal':
+        state = gamestate.getstate(0, 'state')
+        if state != 'normal':
             def splash(message, fontsize=40, icon=None):
                 """Display a splash message across the viewing area"""
                 pygame.draw.rect(self.window, BLACK, region)
@@ -19,14 +22,17 @@ class WorldView:
                     self.window.blit(icon, [(region.size[axis]-icon.get_size()[axis])/2 for axis in [0,1]])
                     region.move_ip(0, icon.get_height()/2 + fontsize)
                 textbox.draw(message, region, surface=self.window)
-            if gamestate.getstate(0, 'state') == 'lost':
+            if state == 'lost':
                 splash("You lost!")
-            elif gamestate.getstate(0, 'state') == 'won':
+            elif state == 'won':
                 splash("You won!")
-            elif gamestate.getstate(0, 'state') == 'loading':
-                splash("Loading "+gamestate.getstate(0, 'map'))
+            elif state == 'loading':
+                splash("Loading "+gamestate.getstate(0, 'map'), 25, HourGlass)
             return self.scrollpos
-        self.world = gamestate.getstate(0, 'world')
+        currentworld = gamestate.getstate(0, 'world')
+        if currentworld != self.world:
+            self.scrollpos = None
+            self.world = currentworld
         if self.scrollpos == None:
             self.scrollpos = [(-TILESIZE*self.world.player.position[0])+region.width/2,
                               (-TILESIZE*self.world.player.position[1])+region.height/2]
