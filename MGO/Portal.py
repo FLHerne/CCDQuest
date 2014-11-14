@@ -1,24 +1,27 @@
 import images
 import BaseMGO
+import gamestate
 
 class Portal(BaseMGO.GEMGO):
     """Sign that displays message when walked over"""
-    def __init__(self, position, cellmap):
+    def __init__(self, position, destination, cellmap):
         """Create new sign in position"""
         super(Portal, self).__init__(position, cellmap)
+        self.destination = destination
 
     @classmethod
     def place(cls, cellmap):
         created = []
         if 'portals' in cellmap.gemgodefs:
             for portaldef in cellmap.gemgodefs['portals']:
-                created.append(cls(portaldef[0], cellmap))
+                created.append(cls(portaldef[0], portaldef[1], cellmap))
         return created
 
     def update(self, player):
         """Display message if becoming visible or trodden on"""
         if self.position == player.position:
             self._suggestmessage("Fizzap!", 50)
+            gamestate.loadworld(self.destination)
 
     def sprite(self, player):
         if self.cellmap[self.position]['explored']:
