@@ -30,7 +30,7 @@ if not len(__mapdefs):
 __worlds = {}
 
 __states = [{
-    'map': None,
+    'mapdef': None,
     'world': None,
     'state': 'loading'
     }]
@@ -48,9 +48,9 @@ def setstate(state, partvalues):
             __states[state][part] = value
 
 def bglworld(name):
-    setstate(0, {'map': name,'state': 'loading'})
+    setstate(0, {'mapdef': __mapdefs[name],'state': 'loading'})
     __worlds[name] =  World(__mapdefs[name])
-    setstate(0, {'map': name, 'world': __worlds[name], 'state': 'normal'})
+    setstate(0, {'mapdef': __mapdefs[name], 'world': __worlds[name], 'state': 'normal'})
 
 def loadworld(name, blocking=False):
     global states
@@ -61,13 +61,13 @@ def loadworld(name, blocking=False):
             t = threading.Thread(target=bglworld, args=[name])
             t.start()
             return False
-    setstate(0, {'map': name, 'world': __worlds[name], 'state': 'normal'})
+    setstate(0, {'mapdef': __mapdefs[name], 'world': __worlds[name], 'state': 'normal'})
 
 loadworld(config.get('map', 'initialmap', str), blocking=True)
 
 def stepname(step):
     mapdefkeys = __mapdefs.keys()
-    currentindex = mapdefkeys.index(getstate(0, 'map'))
+    currentindex = mapdefkeys.index(getstate(0, 'mapdef')['dir'])
     nextindex = currentindex + step
     return mapdefkeys[nextindex] if nextindex in range(len(mapdefkeys)) else None
 
