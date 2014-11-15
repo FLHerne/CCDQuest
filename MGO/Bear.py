@@ -19,7 +19,7 @@ class Bear(BaseMGO.GEMGO):
         self.speed = 0.7    # Chance of moving per turn, max 1, min 0
         self.pfmapsize = 32
         self.detectionrange = 18
-        self.hunting = False
+        self.hunting = None
 
     def directiontoplayer(self, playerpos):
         """Find the best direction to move towards the player"""
@@ -66,9 +66,8 @@ class Bear(BaseMGO.GEMGO):
             curpos = dijkstramap[curpos[0]][curpos[1]][1]
         return coords.sum(curpos, (-self.pfmapsize,)*2)
 
-    def update(self, player):
-        playerpos = player.position
-        def chaseplayer():
+    def update(self, world):
+        def chaseplayer(playerpos):
             """Decide whether to chase the player"""
             if (mindist(playerpos[0], self.position[0], self.cellmap.size[0])**2 +
                 mindist(playerpos[1], self.position[1], self.cellmap.size[1])**2) > self.detectionrange**2:
@@ -86,10 +85,13 @@ class Bear(BaseMGO.GEMGO):
             return move
 
         washunting = self.hunting
-        self.hunting = chaseplayer()
+        self.hunting = None
+        for player in world.players:
+            if chaseplayer(player.position):
+                self.hunting = player
         if self.hunting:
             # Move in direction of player, or randomly if no path found.
-            poschange = self.directiontoplayer(playerpos) or randommove()
+            poschange = self.directiontoplayer(self.hunting.position) or randommove()
             if washunting:
                 self._suggestmessage("You are being chased by a bear", 1)
             else:
@@ -105,9 +107,10 @@ class Bear(BaseMGO.GEMGO):
 
         if not self.cellmap[newpos]['solid']:
             self.position = newpos
-        if self.position == playerpos:
-            player.scattercoins(4, random.randint(4,8))
-            self._suggestmessage("The bear rips a hole in your bag!", 6)
+        for player in world.players:
+            if self.position == player.position:
+                player.scattercoins(4, random.randint(4,8))
+                self._suggestmessage("The bear rips a hole in your bag!", 6)
 
     def sprite(self, player):
         if self.position in player.visibletiles:

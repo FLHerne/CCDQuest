@@ -17,11 +17,12 @@ class Portal(BaseMGO.GEMGO):
                 created.append(cls(portaldef[0], portaldef[1], cellmap))
         return created
 
-    def update(self, player):
+    def update(self, world):
         """Display message if becoming visible or trodden on"""
-        if self.position == player.position:
-            self._suggestmessage("Fizzap!", 50)
-            gamestate.loadworld(self.destination)
+        for player in world.players:
+            if player.position == self.position:
+                self._suggestmessage("Fizzap!", 50)
+                gamestate.loadworld(self.destination)
 
     def sprite(self, player):
         if self.cellmap[self.position]['explored']:

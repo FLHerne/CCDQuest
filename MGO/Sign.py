@@ -17,17 +17,17 @@ class Sign(BaseMGO.GEMGO):
                 created.append(cls(signdef[1], signdef[0], cellmap))
         return created
 
-    def update(self, player):
+    def update(self, world):
         """Display message if becoming visible or trodden on"""
-        if self.position == player.position:
-            self._suggestmessage("The sign reads: " + self.string, 50)
-
-        if self.position in player.visibletiles:
-            if not self.visible:
-                self._suggestmessage("You see a sign in the distance", 1)
-            self.visible = True
-        else:
-            self.visible = False
+        for player in world.players:
+            if player.position == self.position:
+                self._suggestmessage("The sign reads: " + self.string, 50)
+            if self.position in player.visibletiles:
+                if not self.visible:
+                    self._suggestmessage("You see a sign in the distance", 1)
+                self.visible = True
+            else:
+                self.visible = False
 
     def sprite(self, player):
         if self.cellmap[self.position]['explored']:

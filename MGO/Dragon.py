@@ -15,11 +15,10 @@ class Dragon(BaseMGO.GEMGO):
         """Create new dragon in position"""
         super(Dragon, self).__init__(position, cellmap)
         self.direction = UPLEFT
-        self.hunting = False
+        self.hunting = None
 
-    def update(self, player):
+    def update(self, world):
         """Fly toward the player if nearby, or continue in same direction"""
-        playerpos = player.position
         def tileoffset(a, b, size):
             offset = [0, 0]
             for axis in [0, 1]:
@@ -34,30 +33,31 @@ class Dragon(BaseMGO.GEMGO):
         def flameplayer():
             fronttiles = [coords.sum(self.position, coords.mul(self.direction, i)) for i in range(1,4)]
             for tile in fronttiles:
-                if tile == tuple(playerpos):
+                if tile in [player.position for player in world.players]:
                     self._suggestmessage("The dragon breaths a jet of fire towards you", 5)
                     for tile in fronttiles:
                         self.cellmap.ignite(tile, forceignite=True)
                     break
 
         washunting = self.hunting
-        if not self.cellmap[playerpos]['top'] and not self.cellmap[playerpos]['hasroof'] and random.random() < Dragon.speed:
-            offset = tileoffset(self.position, playerpos, self.cellmap.size)
-            if offset[0]**2 + offset[1]**2 <= Dragon.detectionrange**2:
-                self.hunting = True
-                newdirection = list(self.direction)
-                if abs(offset[0]) > abs(offset[1]):
-                    newdirection[0] = cmp(offset[0], 0)
-                elif abs(offset[1]) > abs(offset[0]):
-                    newdirection[1] = cmp(offset[1], 0)
-                elif cmp(offset[0], 0) != cmp(newdirection[0], 0):
-                    newdirection[0] = -self.direction[0]
-                elif cmp(offset[1], 0) != cmp(newdirection[1], 0):
-                    newdirection[1] = -self.direction[1]
-                self.direction = tuple(newdirection)
-        else:
-            self.hunting = False
+        self.hunting = None
+        for player in world.players:
+            playerpos = player.position
+            if not self.cellmap[playerpos]['top'] and not self.cellmap[playerpos]['hasroof'] and random.random() < Dragon.speed:
+                offset = tileoffset(self.position, playerpos, self.cellmap.size)
+                if offset[0]**2 + offset[1]**2 <= Dragon.detectionrange**2:
+                    self.hunting = player
         if self.hunting:
+            newdirection = list(self.direction)
+            if abs(offset[0]) > abs(offset[1]):
+                newdirection[0] = cmp(offset[0], 0)
+            elif abs(offset[1]) > abs(offset[0]):
+                newdirection[1] = cmp(offset[1], 0)
+            elif cmp(offset[0], 0) != cmp(newdirection[0], 0):
+                newdirection[0] = -self.direction[0]
+            elif cmp(offset[1], 0) != cmp(newdirection[1], 0):
+                newdirection[1] = -self.direction[1]
+            self.direction = tuple(newdirection)
             if washunting:
                 self._suggestmessage("You are being hunted down by a dragon", 2)
             else:

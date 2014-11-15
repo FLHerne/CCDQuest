@@ -22,7 +22,8 @@ class World:
         self.gemgos = []
         for gemgo in BaseMGO.GEMGO.__subclasses__():
             self.gemgos += gemgo.place(self.cellmap)
-        self.player = filter(lambda x: isinstance(x, Player.Player), self.gemgos)[0]
+        self.players = filter(lambda x: isinstance(x, Player.Player), self.gemgos)
+        self.player = self.players[0] #FIXME this is very borken
         self.moveplayer((0,0))
 
     def rendervisibletiles(self, extrasprites=[]):
@@ -69,7 +70,7 @@ class World:
 
         gemgosprites = []
         for gemgo in self.gemgos:
-            gemgo.update(self.player)
+            gemgo.update(self)
             sprite = gemgo.sprite(self.player)
             if sprite is not None:
                 gemgosprites.append(sprite)

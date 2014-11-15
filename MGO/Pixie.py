@@ -20,22 +20,20 @@ class Pixie(BaseMGO.GEMGO):
                 created.append(cls(pixiedef[1], pixiedef[0], cellmap))
         return created
 
-    def update(self, player):
+    def update(self, world):
         """DOCSTRING NEEDED HERE"""
         self.move()
-        ppx, ppy = player.position
-        for testx in (ppx-1, ppx, ppx+1):
-            for testy in (ppy-1, ppy, ppy+1):
-                if self.position == (testx, testy):
-                    phrase = self.phrasebook[random.randint(0, len(self.phrasebook)-1)]
-                    self._suggestmessage("Pixie: " + phrase, 50)
-
-        if self.position in player.visibletiles:
-            if not self.visible:
-                self._suggestmessage("You see a pixie in the distance", 1)
-            self.visible = True
-        else:
-            self.visible = True
+        nearbytiles = coords.neighbours(self.position) + [self.position]
+        for player in world.players:
+            if player.position in nearbytiles:
+                phrase = self.phrasebook[random.randint(0, len(self.phrasebook)-1)]
+                self._suggestmessage("Pixie: " + phrase, 50)
+            if self.position in player.visibletiles:
+                if not self.visible:
+                    self._suggestmessage("You see a pixie in the distance", 1)
+                self.visible = True
+            else:
+                self.visible = False
 
     def move(self):
 

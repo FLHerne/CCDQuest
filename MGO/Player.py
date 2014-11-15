@@ -32,7 +32,7 @@ class Player(BaseMGO.GEMGO):
     def place(cls, cellmap):
         return [cls(cellmap.startpos, cellmap)]
 
-    def update(self, playerpos):
+    def update(self, world):
         pass
 
     def sprite(self, player):
