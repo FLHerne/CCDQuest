@@ -29,49 +29,7 @@ if not len(__mapdefs):
 
 __worlds = {}
 
-__states = [{
-    'mapdef': None,
-    'world': None,
-    'state': 'loading'
-    }]
-
-statelock = threading.Lock()
-
-def getstate(state, part):
-    with statelock:
-        retval = __states[state][part]
-    return retval
-
-def setstate(state, partvalues):
-    with statelock:
-        for part, value in partvalues.iteritems():
-            __states[state][part] = value
-
-def bglworld(name):
-    setstate(0, {'mapdef': __mapdefs[name],'state': 'loading'})
-    __worlds[name] =  World(__mapdefs[name])
-    setstate(0, {'mapdef': __mapdefs[name], 'world': __worlds[name], 'state': 'normal'})
-
-def loadworld(name, blocking=False):
-    global states
+def getworld(name):
     if name not in __worlds:
-        if blocking:
-            __worlds[name] =  World(__mapdefs[name])
-        else:
-            t = threading.Thread(target=bglworld, args=[name])
-            t.start()
-            return False
-    setstate(0, {'mapdef': __mapdefs[name], 'world': __worlds[name], 'state': 'normal'})
-
-loadworld(config.get('map', 'initialmap', str), blocking=True)
-
-def stepname(step):
-    mapdefkeys = __mapdefs.keys()
-    currentindex = mapdefkeys.index(getstate(0, 'mapdef')['dir'])
-    nextindex = currentindex + step
-    return mapdefkeys[nextindex] if nextindex in range(len(mapdefkeys)) else None
-
-def stepworld(step):
-    name = stepname(step)
-    if name is not None:
-        loadworld(name)
+        __worlds[name] = World(__mapdefs[name])
+    return __worlds[name]
