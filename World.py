@@ -34,12 +34,6 @@ class World:
         self.surfaces[geplayer] = None
 
     def rendervisibletiles(self, geplayer, extrasprites=[]):
-        geplayer.updatevisible()
-        for tile in geplayer.visibletiles:
-            cell = self.cellmap[tile]
-            cell['explored'] = True
-        if not self.cellmap[geplayer.position]['transparent']:
-            geplayer.visibletiles.remove(geplayer.position)
         sprites = extrasprites
 
         visibleranges = ([],[])
@@ -73,6 +67,12 @@ class World:
 
     def update(self, geplayer):
         """Move the player by (x, y), move other fauna, update world surface around player"""
+        geplayer.updatevisible()
+        for tile in geplayer.visibletiles:
+            cell = self.cellmap[tile]
+            cell['explored'] = True
+        if not self.cellmap[geplayer.position]['transparent']:
+            geplayer.visibletiles.remove(geplayer.position)
         self.cellmap.update()
 
         self.players = filter(lambda x: isinstance(x, GEPlayer.GEPlayer), self.gemgos)
