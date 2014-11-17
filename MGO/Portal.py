@@ -1,5 +1,6 @@
 import images
 import BaseMGO
+import gamestate
 
 class Portal(BaseMGO.GEMGO):
     """Sign that displays message when walked over"""
@@ -21,6 +22,7 @@ class Portal(BaseMGO.GEMGO):
         for player in world.players:
             if player.position == self.position:
                 self._suggestmessage("Fizzap!", 50)
+                gamestate.loadworld(self.destination)
 
     def sprite(self, player):
         if self.cellmap[self.position]['explored']:

@@ -1,6 +1,7 @@
 import pygame
 import random
 import images
+import BaseMGO
 import collectables
 from colors import *
 import gamestate
@@ -8,15 +9,14 @@ import coords
 import config
 from directions import *
 
-class Player(object):
+class Player(BaseMGO.GEMGO):
     """The player, exploring the grid-based world"""
     FREEPLAYER = config.get('player', 'freeplayer', bool, False)
     XRAYVISION = config.get('player', 'xrayvision', bool, False)
 
-    def __init__(self, worldname):
+    def __init__(self, position, cellmap):
         """Initialise instance variables"""
-        self.state = 'normal'
-        self.setworld(worldname)
+        super(Player, self).__init__(position, cellmap)
         self.color = MAGENTA
         self.visibility = 15
         self.direction = RIGHT
@@ -27,13 +27,13 @@ class Player(object):
             collectables.CHOCOLATE: 10000,
             collectables.DYNAMITE: 15
         }
-        self.message = (None, 0)
 
-    def setworld(self, worldname):
-        self.world = gamestate.getworld(worldname)
-        self.world.insertplayer(self)
-        self.cellmap = self.world.cellmap
-        self.position = self.cellmap.startpos
+    @classmethod
+    def place(cls, cellmap):
+        return [cls(cellmap.startpos, cellmap)]
+
+    def update(self, world):
+        pass
 
     def sprite(self, player):
         if self.position in player.visibletiles:
@@ -63,7 +63,7 @@ class Player(object):
         if self.cellmap[coords.sum(self.position, (x, y))]['solid'] and not Player.FREEPLAYER:
             self.score[collectables.CHOCOLATE] -= 50
             if self.score[collectables.CHOCOLATE] <= 0:
-                self.state = 'lost'
+                gamestate.setstate(0, {'state': 'lost'})
             return False
         self.position = coords.modsum(self.position, self.direction, self.cellmap.size)
         collectable = self.cellmap[self.position]['collectableitem']
@@ -75,14 +75,14 @@ class Player(object):
             self.score[collectables.CHOCOLATE] -= self.cellmap[self.position]['difficulty']
         if self.layingfuse and self.cellmap[self.position]['name'] not in ['water', 'deep water']:
             self.cellmap.placefuse(self.position)
-        #if self.score[collectables.COIN] == self.cellmap.origcoins:
-            #name = gamestate.stepname(1)
-            #if name is None:
-                #self.state = 'won'
-            #else:
-                #gamestate.loadworld(name)
+        if self.score[collectables.COIN] == self.cellmap.origcoins:
+            name = gamestate.stepname(1)
+            if name is None:
+                gamestate.setstate(0, {'state': 'won'})
+            else:
+                gamestate.loadworld(name)
         if self.score[collectables.CHOCOLATE] <= 0:
-            self.state = 'lost'
+            gamestate.setstate(0, {'state': 'lost'})
         return True
 
     def followpath(self):
@@ -147,14 +147,3 @@ class Player(object):
                 if not Player.XRAYVISION and not self.cellmap[trunkpos]['transparent']:
                     break
                 trunkpos = coords.sum(trunkpos, outdir)
-
-    def _pixelpos(self, offset=(0,0)):
-        return (self.position[0]*images.TILESIZE + offset[0],
-                self.position[1]*images.TILESIZE + offset[1])
-
-    def _suggestmessage(self, string, priority):
-        if priority > self.message[1]:
-            self.message = [string, priority]
-
-    def mdnotify(self):
-        self.message = [None, 0]

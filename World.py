@@ -4,90 +4,78 @@ import collectables
 import images
 import coords
 from MGO import *
-import Player
 from Map import Map
 from colors import *
 
 TILESIZE = images.TILESIZE
 
 class World:
-    def __init__(self, mapdef):
-        self.cellmap = Map(mapdef)
-        self.surfaces = {}
-        self.mapdef = mapdef
+    def __init__(self, mapdict):
+        self.cellmap = Map(mapdict)
+        self.surface = pygame.Surface(coords.mul(self.cellmap.size, TILESIZE))
+        bgtile = images.Unknown.copy()
+        bgtile.blit(images.NonVisible, (0, 0))
+        for ix in xrange(0, self.cellmap.size[0]*TILESIZE, TILESIZE):
+            for iy in xrange(0, self.cellmap.size[1]*TILESIZE, TILESIZE):
+                self.surface.blit(bgtile, (ix, iy))
 
         self.gemgos = []
         for gemgo in BaseMGO.GEMGO.__subclasses__():
             self.gemgos += gemgo.place(self.cellmap)
-        self.players = []
+        self.players = filter(lambda x: isinstance(x, Player.Player), self.gemgos)
+        self.player = self.players[0] #FIXME this is very borken
+        self.moveplayer((0,0))
 
-    def insertplayer(self, player):
-        self.players.append(player)
-        self.surfaces[player] = pygame.Surface(coords.mul(self.cellmap.size, TILESIZE))
-        bgtile = images.Unknown.copy()
-        bgtile.blit(images.NonVisible, (0, 0))
-        surface = self.surfaces[player]
-        for ix in xrange(0, self.cellmap.size[0]*TILESIZE, TILESIZE):
-            for iy in xrange(0, self.cellmap.size[1]*TILESIZE, TILESIZE):
-                surface.blit(bgtile, (ix, iy))
-
-    def removeplayer(self, player):
-        self.players.remove(player)
-        self.surfaces[player] = None
-
-    def rendervisibletiles(self, player, extrasprites=[]):
-        player.updatevisible()
-        for tile in player.visibletiles:
+    def rendervisibletiles(self, extrasprites=[]):
+        self.player.updatevisible()
+        for tile in self.player.visibletiles:
             cell = self.cellmap[tile]
             cell['explored'] = True
-        if not self.cellmap[player.position]['transparent']:
-            player.visibletiles.remove(player.position)
+        if not self.cellmap[self.player.position]['transparent']:
+            self.player.visibletiles.remove(self.player.position)
         sprites = extrasprites
 
         visibleranges = ([],[])
         for axis in [0, 1]:
-            if 2*player.visibility + 5 >= self.cellmap.size[axis]:
+            if 2*self.player.visibility + 5 >= self.cellmap.size[axis]:
                 visibleranges[axis].append((0, self.cellmap.size[axis]))
             else:
-                rmin = (player.position[axis] - player.visibility - 2) % self.cellmap.size[axis]
-                rmax = (player.position[axis] + player.visibility + 2) % self.cellmap.size[axis]
+                rmin = (self.player.position[axis] - self.player.visibility - 2) % self.cellmap.size[axis]
+                rmax = (self.player.position[axis] + self.player.visibility + 2) % self.cellmap.size[axis]
                 if rmin < rmax:
                     visibleranges[axis].append((rmin, rmax))
                 else:
                     visibleranges[axis].append((rmin, self.cellmap.size[axis]))
                     visibleranges[axis].append((0, rmax))
 
-        surface = self.surfaces[player]
         for rx in visibleranges[0]:
             for ry in visibleranges[1]:
-                surface.set_clip(
+                self.surface.set_clip(
                     rx[0]*TILESIZE, ry[0]*TILESIZE,
                     (rx[1]-rx[0])*TILESIZE, (ry[1]-ry[0])*TILESIZE)
                 regionsprites = sprites
                 for ix in range(rx[0]-1, rx[1]+1):
                     for iy in range(ry[0]-1, ry[1]+1):
                         regionsprites += self.cellmap.sprites((ix, iy))
-                        if coords.mod((ix, iy), self.cellmap.size) not in player.visibletiles:
+                        if coords.mod((ix, iy), self.cellmap.size) not in self.player.visibletiles:
                             sprites.append((images.NonVisible, coords.mul((ix, iy), TILESIZE), 100))
                 regionsprites.sort(key=lambda x: x[2])
                 for sprite in regionsprites:
-                    surface.blit(*sprite[:2])
+                    self.surface.blit(*sprite[:2])
 
-    def moveplayer(self, player, arg):
+    def moveplayer(self, arg):
         """Move the player by (x, y), move other fauna, update world surface around player"""
         self.cellmap.update()
-        player.action(arg)
+        self.player.action(arg)
 
         gemgosprites = []
         for gemgo in self.gemgos:
             gemgo.update(self)
-            sprite = gemgo.sprite(player)
+            sprite = gemgo.sprite(self.player)
             if sprite is not None:
                 gemgosprites.append(sprite)
-        playersprites = [iterplayer.sprite(player) for iterplayer in self.players]
-        playersprites = filter(lambda x: x is not None, playersprites)
 
-        self.rendervisibletiles(player, gemgosprites+playersprites)
+        self.rendervisibletiles(gemgosprites)
 
-        if player.position in self.cellmap.burningtiles:
-            player.score[collectables.CHOCOLATE] -= Map.CELLBURNINGCOST
+        if self.player.position in self.cellmap.burningtiles:
+            self.player.score[collectables.CHOCOLATE] -= Map.CELLBURNINGCOST

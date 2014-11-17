@@ -1,12 +1,12 @@
 import pygame
 import hudimages
+import gamestate
 from TextBox import TextBox
 from colors import *
 
 class MessageBox:
     """Horizontal bar with messages"""
-    def __init__(self, player, window):
-        self.player = player
+    def __init__(self, window):
         self.window = window
         self.textbox = TextBox(20, BLACK, False)
         self.string = None
@@ -34,7 +34,7 @@ class MessageBox:
         highestpriority = 0
         highestprioritymgo = None
         self.string = None
-        mgolist = self.player.world.gemgos
+        mgolist = gamestate.getstate(0, 'world').gemgos
         if len(mgolist) > 0:
             for mgo in mgolist:
                 if mgo.message[1] > highestpriority:

@@ -1,5 +1,6 @@
 import pygame
 import hudimages
+import gamestate
 from TextBox import TextBox
 import collectables
 from colors import *
@@ -36,27 +37,25 @@ class ScoreWidget:
 
 class MinimapWidget:
     """Widget to display a small map of the world"""
-    def __init__(self, player, window):
-        self.player = player
+    def __init__(self, window):
         self.window = window
 
     def draw(self, region, scrollpos):
         """Draw the minimap"""
-        world = self.player.world
-        worldsurface = world.surfaces[self.player]
+        self.world = gamestate.getstate(0, 'world')
         region = pygame.Rect(region)
         old_clip = self.window.get_clip()
         self.window.set_clip(region)
-        miniworldscale = min(float(region.width)/worldsurface.get_width(),
-                             float(region.height)/worldsurface.get_height())
-        miniworld = pygame.transform.scale(self.player.world.surfaces[self.player], #FIXME this is crazy
-                                           (int(worldsurface.get_width()*miniworldscale),
-                                            int(worldsurface.get_height()*miniworldscale)))
+        miniworldscale = min(float(region.width)/self.world.surface.get_width(),
+                             float(region.height)/self.world.surface.get_height())
+        miniworld = pygame.transform.scale(self.world.surface,
+                                           (int(self.world.surface.get_width()*miniworldscale),
+                                            int(self.world.surface.get_height()*miniworldscale)))
         self.window.blit(miniworld, region)
-        for tx in [scrollpos[0]-worldsurface.get_width(), scrollpos[0], scrollpos[0]+worldsurface.get_width()]:
-            for ty in [scrollpos[1]-worldsurface.get_height(), scrollpos[1], scrollpos[1]+worldsurface.get_height()]:
+        for tx in [scrollpos[0]-self.world.surface.get_width(), scrollpos[0], scrollpos[0]+self.world.surface.get_width()]:
+            for ty in [scrollpos[1]-self.world.surface.get_height(), scrollpos[1], scrollpos[1]+self.world.surface.get_height()]:
                 pygame.draw.rect(self.window,
-                    self.player.color,
+                    self.world.player.color,
                     (region.left-(tx*miniworldscale), # Top x corner of minimap, plus scroll offset
                     region.top-(ty*miniworldscale), # Top y ''
                     #FIXME should be viewport size, not window size!
@@ -88,19 +87,20 @@ class Frame:
 
 class HUD:
     """Vertical bar with player scores and minimap"""
-    def __init__(self, player, window):
-        self.player = player
+    def __init__(self, window):
         self.window = window
+        world = gamestate.getstate(0, 'world')
         self.frame = Frame((hudimages.FrameHoriz, hudimages.FrameVert), window)
         self.coinwidget = ScoreWidget(hudimages.Coin, window, bgtileimage=hudimages.HudBackground)
         self.chocwidget = ScoreWidget(hudimages.Choc, window,
                                       stringfunc=lambda a, b: str(round(a/1000.0, 2))+"kg" if a >= 1000 else str(a)+"g",
                                       bgtileimage=hudimages.HudBackground)
         self.dynamitewidget = ScoreWidget(hudimages.Dynamite, window, bgtileimage=hudimages.HudBackground)
-        self.minimapwidget = MinimapWidget(player, window)
+        self.minimapwidget = MinimapWidget(window)
 
     def draw(self, region, scrollpos):
         """Draw the heads-up display"""
+        self.world = gamestate.getstate(0, 'world')
         region = pygame.Rect(region)
         pygame.draw.rect(self.window, BLACK, region)
         framewidth = self.frame.thickness[Frame.VERTICAL]
@@ -118,6 +118,6 @@ class HUD:
             self.frame.draw(region.move(0, offset_y), Frame.HORIZONTAL)
             widgetareas.append((region.left+framewidth, region.top+offset_y+frameheight,
                                 widgetwidth, (region.height/3)-frameheight+1))
-        self.dynamitewidget.draw(widgetareas[0], self.player.score[collectables.DYNAMITE])
-        self.chocwidget.draw(widgetareas[1], self.player.score[collectables.CHOCOLATE])
-        self.coinwidget.draw(widgetareas[2], self.player.score[collectables.COIN], self.player.world.cellmap.origcoins) #FIXME crazy indirection.
+        self.dynamitewidget.draw(widgetareas[0], self.world.player.score[collectables.DYNAMITE])
+        self.chocwidget.draw(widgetareas[1], self.world.player.score[collectables.CHOCOLATE])
+        self.coinwidget.draw(widgetareas[2], self.world.player.score[collectables.COIN], self.world.cellmap.origcoins) #FIXME crazy indirection.
