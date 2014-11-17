@@ -96,7 +96,8 @@ class Map():
         for i in range(0, len(colorindex)):
             color = mapcolor(colorindex[i])
             self.cellarray['collectableitem'][collectablesarray == color] = i
-
+            
+        self.cellarray['random'] = numpy.random.randint(256, size=self.size)
         self.origcoins = (self.cellarray['collectableitem'] == collectables.COIN).sum()
 
     def __getitem__(self, coord):
