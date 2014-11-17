@@ -25,8 +25,13 @@ class World:
     def removegeplayer(self, geplayer):
         self.gemgos.remove(geplayer)
 
-    def rendervisibletiles(self, geplayer, extrasprites=[]):
+    def rendervisible(self, geplayer, extrasprites=[]):
         sprites = extrasprites
+
+        for gemgo in self.gemgos:
+            sprite = gemgo.sprite(geplayer)
+            if sprite is not None:
+                sprites.append(sprite)
 
         visibleranges = ([],[])
         for axis in [0, 1]:
@@ -71,11 +76,8 @@ class World:
         gemgosprites = []
         for gemgo in self.gemgos:
             gemgo.update(self)
-            sprite = gemgo.sprite(geplayer)
-            if sprite is not None:
-                gemgosprites.append(sprite)
 
-        self.rendervisibletiles(geplayer, gemgosprites)
+        self.rendervisible(geplayer, gemgosprites)
 
         if geplayer.position in self.cellmap.burningtiles:
             geplayer.score[collectables.CHOCOLATE] -= Map.CELLBURNINGCOST
