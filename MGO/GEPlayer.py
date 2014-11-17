@@ -26,6 +26,7 @@ class GEPlayer(BaseMGO.GEMGO):
         self.direction = RIGHT
         self.layingfuse = False
         self.visibletiles = set()
+        self.pendingteleports = []
         world.insertgeplayer(self)
 
     @classmethod
@@ -55,6 +56,8 @@ class GEPlayer(BaseMGO.GEMGO):
         elif arg in CARDINALS:
             self.move(*arg)
         self.world.update(self)
+        if self.pendingteleports:
+            self.player.setworld(*random.choice(self.pendingteleports))
 
     def move(self, x, y):
         """Move if possible, update collectable levels accordingly"""
@@ -115,6 +118,9 @@ class GEPlayer(BaseMGO.GEMGO):
             self.cellmap[trypos]['collectableitem'] = collectables.COIN
             self.score[collectables.COIN] -= 1
             scattered += 1
+
+    def delayedteleport(self, worldname, position=None):
+        self.pendingteleports.append((worldname, position))
 
     def updatevisible(self):
         """Calculate and return the set of tiles visible to player"""
