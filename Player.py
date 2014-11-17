@@ -20,6 +20,11 @@ class Player(object):
         world = worlds.getworld(name)
         self.geplayer = GEPlayer(self, world, position)
 
+    def stepworld(self, step):
+        nextname = worlds.stepname(self.geplayer.world.mapdef['dir'], step) #FIXME
+        if nextname:
+            self.setworld(nextname)
+
     def action(self, arg):
         self.geplayer.action(arg)
         self.score = self.geplayer.score

@@ -27,14 +27,13 @@ if not len(__mapdefs):
 
 __worlds = {}
 
-def getworld(name, step=0):
-    name = stepname(step) if step else name
+def getworld(name):
     if name not in __worlds:
         __worlds[name] = World(__mapdefs[name])
     return __worlds[name]
 
-def stepname(step):
+def stepname(curname, step):
     mapdefkeys = __mapdefs.keys()
-    currentindex = mapdefkeys.index(getstate(0, 'mapdef')['dir'])
+    currentindex = mapdefkeys.index(curname)
     nextindex = currentindex + step
     return mapdefkeys[nextindex] if nextindex in range(len(mapdefkeys)) else None

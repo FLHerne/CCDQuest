@@ -11,6 +11,7 @@ TILESIZE = images.TILESIZE
 
 class World:
     def __init__(self, mapdict):
+        self.mapdef = mapdict
         self.cellmap = Map(mapdict)
         self.surfaces = {}
 

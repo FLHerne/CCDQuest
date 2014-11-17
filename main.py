@@ -48,6 +48,10 @@ def handleevents(player):
                 player.action('scattercoins')
             else:
                 player.action((0, 0))
+            if event.key == pygame.K_1:
+                player.stepworld(-1)
+            if event.key == pygame.K_2:
+                player.stepworld(1)
             messagebox.update()
 
 HUDWIDTH = 92
