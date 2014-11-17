@@ -27,7 +27,8 @@ class World:
         self.gemgos.remove(geplayer)
 
     def rendervisible(self, geplayer, extrasprites=[]):
-        sprites = extrasprites
+        sprites = []
+        sprites += extrasprites
 
         for gemgo in self.gemgos:
             sprite = gemgo.sprite(geplayer)
