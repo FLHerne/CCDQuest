@@ -1,7 +1,7 @@
 import random
 import images
 
-class MGO(object):
+class BaseMGO(object):
     def __init__(self):
         self.message = (None, 0)
 
@@ -12,8 +12,7 @@ class MGO(object):
     def mdnotify(self):
         self.message = [None, 0]
 
-class GEMGO(MGO):
-    PER_TILE = 1/float(1000)
+class GEMGO(BaseMGO):
     def __init__(self, position, cellmap):
         super(GEMGO, self).__init__()
         self.position = tuple(position)
@@ -29,7 +28,7 @@ class GEMGO(MGO):
             created.append(cls(attempt, cellmap))
         return created
 
-    def update(self, player):
+    def update(self, world):
         pass
 
     def sprite(self, player):

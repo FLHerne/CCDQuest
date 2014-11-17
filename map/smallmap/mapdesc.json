@@ -2,10 +2,14 @@
     "name":        "Tiny Island",
     "terrainfile": "terrain.png",
     "itemfile":    "collectables.png",
-    "binaryfile":  "map.npy",
     "startpos":    [8,6],
-    "signs":       [
-    [[7,3],"Welcome to Tiny Island!"],
-    [[6,6],"Warning: unstable sign"]
-    ]
+    "gemgos": {
+        "signs":   [
+            [[7,3],"Welcome to Tiny Island!"],
+            [[6,6],"Warning: unstable sign"]
+        ],
+        "portals": [
+            [[7,5], "labyrinth", [52,52]]
+        ]
+    }
 }

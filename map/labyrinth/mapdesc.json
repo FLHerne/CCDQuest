@@ -2,6 +2,10 @@
     "name":        "The Maze",
     "terrainfile": "terrain.png",
     "itemfile":    "collectables.png",
-    "binaryfile":  "map.npy",
-    "startpos":    [49,49]
+    "startpos":    [49,49],
+    "gemgos": {
+        "portals": [
+            [[52,52], "smallmap", [7,5]]
+        ]
+    }
 }

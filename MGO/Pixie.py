@@ -1,9 +1,9 @@
 import images
 import coords
 import random
-import MGO
+import BaseMGO
 
-class Pixie(MGO.GEMGO):
+class Pixie(BaseMGO.GEMGO):
     """Pixie that says things when walked to"""
     def __init__(self, phrasebook, position, cellmap):
         """Create new pixie in position"""
@@ -15,26 +15,25 @@ class Pixie(MGO.GEMGO):
     @classmethod
     def place(cls, cellmap):
         created = []
-        for pixiedef in cellmap.pixiedefs:
-            created.append(cls(pixiedef[1], pixiedef[0], cellmap))
+        if 'pixies' in cellmap.gemgodefs:
+            for pixiedef in cellmap.gemgodefs['pixies']:
+                created.append(cls(pixiedef[1], pixiedef[0], cellmap))
         return created
 
-    def update(self, player):
+    def update(self, world):
         """DOCSTRING NEEDED HERE"""
         self.move()
-        ppx, ppy = player.position
-        for testx in (ppx-1, ppx, ppx+1):
-            for testy in (ppy-1, ppy, ppy+1):
-                if self.position == (testx, testy):
-                    phrase = self.phrasebook[random.randint(0, len(self.phrasebook)-1)]
-                    self._suggestmessage("Pixie: " + phrase, 50)
-
-        if self.position in player.visibletiles:
-            if not self.visible:
-                self._suggestmessage("You see a pixie in the distance", 1)
-            self.visible = True
-        else:
-            self.visible = True
+        nearbytiles = coords.neighbours(self.position) + [self.position]
+        for player in world.players:
+            if player.position in nearbytiles:
+                phrase = self.phrasebook[random.randint(0, len(self.phrasebook)-1)]
+                self._suggestmessage("Pixie: " + phrase, 50)
+            if self.position in player.visibletiles:
+                if not self.visible:
+                    self._suggestmessage("You see a pixie in the distance", 1)
+                self.visible = True
+            else:
+                self.visible = False
 
     def move(self):
 

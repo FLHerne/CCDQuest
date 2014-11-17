@@ -69,7 +69,7 @@ numtypes = len(terrain.types)
 indexedterrain = [(0, None)]
 for level in ['groundimage', 'topimage']:
     for i in enumerate(terrain.types[level]):
-        levelmap = terrain.indexmaps[level]
+        levelmap = terrain.typetoimageindex[level]
         levelmap.append([])
         if not i[1]:
             levelmap[i[0]].append(0)
@@ -166,6 +166,7 @@ DragonRed = {
 }
 
 Sign = pygame.image.load("tiles/gemgos/Sign.png").convert_alpha()
+Portal = pygame.image.load("tiles/gemgos/Portal.png").convert_alpha()
 PixieLeft = pygame.image.load("tiles/gemgos/Pixie.png").convert_alpha()
 PixieRight = pygame.transform.flip(PixieLeft, True, False)
 

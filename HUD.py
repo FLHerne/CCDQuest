@@ -6,16 +6,15 @@ from colors import *
 
 class ScoreWidget:
     """Widget to show a score and associated image"""
-    def __init__(self, image, window, total=None, stringfunc=None, bgtileimage=None):
+    def __init__(self, image, window, stringfunc=None, bgtileimage=None):
         self.image = image
         self.bgtileimage = bgtileimage
         self.window = window
-        self.total = total
         self.stringfunc = (stringfunc if stringfunc != None else
                            lambda a, b: str(a) + ("/"+str(b) if b != None else ""))
         self.textbox = TextBox(22, (205, 205, 75), True)
 
-    def draw(self, region, quantity):
+    def draw(self, region, quantity, total=None):
         """Draw the score widget"""
         region = pygame.Rect(region)
         old_clip = self.window.get_clip()
@@ -31,31 +30,33 @@ class ScoreWidget:
         if imageregion.height > 0 and imageregion.height > 0:
             fittedimage = self.image.get_rect().fit(imageregion)
             self.window.blit(pygame.transform.scale(self.image, fittedimage.size), fittedimage)
-        string = self.stringfunc(quantity, self.total)
+        string = self.stringfunc(quantity, total)
         self.textbox.draw(string, region, (True, False), self.window)
         self.window.set_clip(old_clip)
 
 class MinimapWidget:
     """Widget to display a small map of the world"""
-    def __init__(self, world, window):
-        self.world = world
+    def __init__(self, player, window):
+        self.player = player
         self.window = window
 
     def draw(self, region, scrollpos):
         """Draw the minimap"""
+        geplayer = self.player.geplayer
+        surface = geplayer.surface
         region = pygame.Rect(region)
         old_clip = self.window.get_clip()
         self.window.set_clip(region)
-        miniworldscale = min(float(region.width)/self.world.surface.get_width(),
-                             float(region.height)/self.world.surface.get_height())
-        miniworld = pygame.transform.scale(self.world.surface,
-                                           (int(self.world.surface.get_width()*miniworldscale),
-                                            int(self.world.surface.get_height()*miniworldscale)))
+        miniworldscale = min(float(region.width)/surface.get_width(),
+                             float(region.height)/surface.get_height())
+        miniworld = pygame.transform.scale(surface,
+                                           (int(surface.get_width()*miniworldscale),
+                                            int(surface.get_height()*miniworldscale)))
         self.window.blit(miniworld, region)
-        for tx in [scrollpos[0]-self.world.surface.get_width(), scrollpos[0], scrollpos[0]+self.world.surface.get_width()]:
-            for ty in [scrollpos[1]-self.world.surface.get_height(), scrollpos[1], scrollpos[1]+self.world.surface.get_height()]:
+        for tx in [scrollpos[0]-surface.get_width(), scrollpos[0], scrollpos[0]+surface.get_width()]:
+            for ty in [scrollpos[1]-surface.get_height(), scrollpos[1], scrollpos[1]+surface.get_height()]:
                 pygame.draw.rect(self.window,
-                    self.world.player.color,
+                    geplayer.color,
                     (region.left-(tx*miniworldscale), # Top x corner of minimap, plus scroll offset
                     region.top-(ty*miniworldscale), # Top y ''
                     #FIXME should be viewport size, not window size!
@@ -87,19 +88,20 @@ class Frame:
 
 class HUD:
     """Vertical bar with player scores and minimap"""
-    def __init__(self, world, window):
+    def __init__(self, player, window):
+        self.player = player
         self.window = window
-        self.world = world
         self.frame = Frame((hudimages.FrameHoriz, hudimages.FrameVert), window)
-        self.coinwidget = ScoreWidget(hudimages.Coin, window, world.cellmap.origcoins, bgtileimage=hudimages.HudBackground)
+        self.coinwidget = ScoreWidget(hudimages.Coin, window, bgtileimage=hudimages.HudBackground)
         self.chocwidget = ScoreWidget(hudimages.Choc, window,
                                       stringfunc=lambda a, b: str(round(a/1000.0, 2))+"kg" if a >= 1000 else str(a)+"g",
                                       bgtileimage=hudimages.HudBackground)
         self.dynamitewidget = ScoreWidget(hudimages.Dynamite, window, bgtileimage=hudimages.HudBackground)
-        self.minimapwidget = MinimapWidget(world, window)
+        self.minimapwidget = MinimapWidget(player, window)
 
     def draw(self, region, scrollpos):
         """Draw the heads-up display"""
+        geplayer = self.player.geplayer
         region = pygame.Rect(region)
         pygame.draw.rect(self.window, BLACK, region)
         framewidth = self.frame.thickness[Frame.VERTICAL]
@@ -117,29 +119,6 @@ class HUD:
             self.frame.draw(region.move(0, offset_y), Frame.HORIZONTAL)
             widgetareas.append((region.left+framewidth, region.top+offset_y+frameheight,
                                 widgetwidth, (region.height/3)-frameheight+1))
-        self.dynamitewidget.draw(widgetareas[0], self.world.player.score[collectables.DYNAMITE])
-        self.chocwidget.draw(widgetareas[1], self.world.player.score[collectables.CHOCOLATE])
-        self.coinwidget.draw(widgetareas[2], self.world.player.score[collectables.COIN])
-
-    def splash(self, message, fontsize=40, icon=None):
-        """Display a splash message across the entire window"""
-        windowrect = self.window.get_rect()
-        pygame.draw.rect(self.window, BLACK, windowrect)
-        textbox = TextBox(fontsize, WHITE, False)
-        if icon is not None:
-            self.window.blit(icon, [(windowrect.size[axis]-icon.get_size()[axis])/2 for axis in [0,1]])
-            windowrect.move_ip(0, icon.get_height()/2 + fontsize)
-        textbox.draw(message, windowrect, surface=self.window)
-
-    def endsplash(self, reason):
-        """Display an explanation for the game ending"""
-        if reason == collectables.CHOCOLATE:
-            self.splash("You ran out of chocolate!")
-        elif reason == collectables.COIN:
-            self.splash("You found all the coins!")
-        else:
-            self.splash("What happened here?")
-
-    def loadingsplash(self, description):
-        """Display a splash screen while a new world loads"""
-        self.splash(description, 25, hudimages.HourGlass)
+        self.dynamitewidget.draw(widgetareas[0], geplayer.score[collectables.DYNAMITE])
+        self.chocwidget.draw(widgetareas[1], geplayer.score[collectables.CHOCOLATE])
+        self.coinwidget.draw(widgetareas[2], geplayer.score[collectables.COIN], geplayer.cellmap.origcoins) #FIXME crazy indirection.
