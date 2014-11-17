@@ -41,5 +41,9 @@ class Player(object):
             self.setworld(nextname)
 
     def action(self, arg):
+        if self.state != 'normal':
+            return  False
         self.geplayer.action(arg)
         self.score = self.geplayer.score
+        if self.score[collectables.CHOCOLATE] <= 0:
+            self.state = 'lost'

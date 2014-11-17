@@ -48,8 +48,6 @@ class GEPlayer(BaseMGO.GEMGO):
             return images.Player[self.direction], self._pixelpos(), 0
 
     def action(self, arg):
-        if not self.player.state:
-            return  False
         if arg == 'followpath':
             self.followpath()
         elif arg == 'startfuse':
