@@ -22,7 +22,7 @@ class World:
         self.gemgos = []
         for gemgo in BaseMGO.GEMGO.__subclasses__():
             self.gemgos += gemgo.place(self.cellmap)
-        self.players = filter(lambda x: isinstance(x, Player.Player), self.gemgos)
+        self.players = filter(lambda x: isinstance(x, GEPlayer.GEPlayer), self.gemgos)
         self.player = self.players[0] #FIXME this is very borken
         self.moveplayer((0,0))
 

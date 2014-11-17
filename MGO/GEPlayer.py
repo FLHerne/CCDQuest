@@ -9,14 +9,14 @@ import coords
 import config
 from directions import *
 
-class Player(BaseMGO.GEMGO):
+class GEPlayer(BaseMGO.GEMGO):
     """The player, exploring the grid-based world"""
     FREEPLAYER = config.get('player', 'freeplayer', bool, False)
     XRAYVISION = config.get('player', 'xrayvision', bool, False)
 
     def __init__(self, position, cellmap):
         """Initialise instance variables"""
-        super(Player, self).__init__(position, cellmap)
+        super(GEPlayer, self).__init__(position, cellmap)
         self.color = MAGENTA
         self.visibility = 15
         self.direction = RIGHT
@@ -60,7 +60,7 @@ class Player(BaseMGO.GEMGO):
         if abs(x) + abs(y) != 1:
             return False
         self.direction = (x, y)
-        if self.cellmap[coords.sum(self.position, (x, y))]['solid'] and not Player.FREEPLAYER:
+        if self.cellmap[coords.sum(self.position, (x, y))]['solid'] and not GEPlayer.FREEPLAYER:
             self.score[collectables.CHOCOLATE] -= 50
             if self.score[collectables.CHOCOLATE] <= 0:
                 gamestate.setstate(0, {'state': 'lost'})
@@ -71,7 +71,7 @@ class Player(BaseMGO.GEMGO):
             self.score[collectable] += collectables.value[collectable]
             self._suggestmessage("You pick up " + collectables.name[collectable], 4)
         self.cellmap[self.position]['collectableitem'] = 0
-        if not Player.FREEPLAYER:
+        if not GEPlayer.FREEPLAYER:
             self.score[collectables.CHOCOLATE] -= self.cellmap[self.position]['difficulty']
         if self.layingfuse and self.cellmap[self.position]['name'] not in ['water', 'deep water']:
             self.cellmap.placefuse(self.position)
@@ -141,9 +141,9 @@ class Player(BaseMGO.GEMGO):
                     branchpos = trunkpos
                     while inrange(branchpos):
                         self.visibletiles.add(coords.mod(branchpos, self.cellmap.size))
-                        if not Player.XRAYVISION and not self.cellmap[branchpos]['transparent']:
+                        if not GEPlayer.XRAYVISION and not self.cellmap[branchpos]['transparent']:
                             break
                         branchpos = coords.sum(branchpos, diagdir)
-                if not Player.XRAYVISION and not self.cellmap[trunkpos]['transparent']:
+                if not GEPlayer.XRAYVISION and not self.cellmap[trunkpos]['transparent']:
                     break
                 trunkpos = coords.sum(trunkpos, outdir)
