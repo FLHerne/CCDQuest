@@ -60,10 +60,13 @@ class Map():
                     randomgrid = numpy.random.randint(len(indexmap), size=self.size)
                     self.cellarray[level][istype] = numpy.choose(randomgrid, indexmap)[istype]
 
+
+        self.cellarray['random'] = numpy.random.randint(256, size=self.size)
+
         for color_collectable in collectables.mapcolor.iteritems():
             color = terrain.mapcolor(color_collectable[0])
             self.cellarray['collectableitem'][collectablesarray == color] = color_collectable[1]
-
+            
         self.origcoins = (self.cellarray['collectableitem'] == collectables.COIN).sum()
 
     def __getitem__(self, coord):
