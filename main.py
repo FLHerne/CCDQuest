@@ -20,11 +20,11 @@ from colors import *
 from keysettings import *
 import collectables
 
-import gamestate
+from Player import Player
+player1 = Player()
 
-def handleevents():
+def handleevents(player):
     """respond to user input"""
-    world = gamestate.getstate(0, 'world')
     global window
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -36,38 +36,31 @@ def handleevents():
                 window = pygame.display.set_mode(size, pygame.RESIZABLE)
         if event.type == pygame.KEYUP:
             if event.key == FUSEREEL:
-                world.moveplayer('ignitefuse')
+                player.action('ignitefuse')
         if event.type == pygame.KEYDOWN:
-            if gamestate.getstate(0, 'state') in ['lost', 'won']:
-                time.sleep(2)
-                sys.exit()
             if event.key in MOVEDIRS:
-                world.moveplayer(MOVEDIRS[event.key])
+                player.action(MOVEDIRS[event.key])
             elif event.key == FOLLOWPATH:
-                world.moveplayer('followpath')
+                player.action('followpath')
             elif event.key == FUSEREEL:
-                world.moveplayer('startfuse')
+                player.action('startfuse')
             elif event.key == pygame.K_3:
-                world.moveplayer('scattercoins')
+                player.action('scattercoins')
             else:
-                world.moveplayer((0, 0))
-            if event.key == pygame.K_1:
-                gamestate.stepworld(-1)
-            if event.key == pygame.K_2:
-                gamestate.stepworld(1)
+                player.action((0, 0))
             messagebox.update()
 
 HUDWIDTH = 92
 MBOXHEIGHT = 25
 MBOXPADDING = 15
 
-worldview = WorldView(window)
-messagebox = MessageBox(window)
-hud = HUD(window)
+worldview = WorldView(player1, window)
+messagebox = MessageBox(player1, window)
+hud = HUD(player1, window)
 
 while True:
     loopstarttime = time.clock()
-    gameended = handleevents()
+    gameended = handleevents(player1)
     hudborderx = window.get_width()-HUDWIDTH
     worldviewregion = pygame.Rect(0, 0, hudborderx, window.get_height())
     hudregion = pygame.Rect(hudborderx, 0, HUDWIDTH, window.get_height())

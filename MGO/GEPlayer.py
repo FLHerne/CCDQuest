@@ -4,7 +4,6 @@ import images
 import BaseMGO
 import collectables
 from colors import *
-import gamestate
 import coords
 import config
 from directions import *
@@ -14,23 +13,23 @@ class GEPlayer(BaseMGO.GEMGO):
     FREEPLAYER = config.get('player', 'freeplayer', bool, False)
     XRAYVISION = config.get('player', 'xrayvision', bool, False)
 
-    def __init__(self, position, cellmap):
+    def __init__(self, player, world):
         """Initialise instance variables"""
-        super(GEPlayer, self).__init__(position, cellmap)
+        self.player = player
+        self.score = player.score
+        self.world = world
+        self.cellmap = world.cellmap
+        super(GEPlayer, self).__init__(self.cellmap.startpos, self.cellmap)
         self.color = MAGENTA
         self.visibility = 15
         self.direction = RIGHT
         self.layingfuse = False
         self.visibletiles = set()
-        self.score = {
-            collectables.COIN: 0,
-            collectables.CHOCOLATE: 10000,
-            collectables.DYNAMITE: 15
-        }
+        world.insertgeplayer(self)
 
     @classmethod
     def place(cls, cellmap):
-        return [cls(cellmap.startpos, cellmap)]
+        return []
 
     def update(self, world):
         pass
@@ -52,8 +51,9 @@ class GEPlayer(BaseMGO.GEMGO):
             self.cellmap.ignitefuse(self.position)
         elif arg == 'scattercoins':
             self.scattercoins(3, 10)
-        else:
+        elif arg in CARDINALS:
             self.move(*arg)
+        self.world.update(self)
 
     def move(self, x, y):
         """Move if possible, update collectable levels accordingly"""
@@ -62,8 +62,6 @@ class GEPlayer(BaseMGO.GEMGO):
         self.direction = (x, y)
         if self.cellmap[coords.sum(self.position, (x, y))]['solid'] and not GEPlayer.FREEPLAYER:
             self.score[collectables.CHOCOLATE] -= 50
-            if self.score[collectables.CHOCOLATE] <= 0:
-                gamestate.setstate(0, {'state': 'lost'})
             return False
         self.position = coords.modsum(self.position, self.direction, self.cellmap.size)
         collectable = self.cellmap[self.position]['collectableitem']
@@ -75,14 +73,6 @@ class GEPlayer(BaseMGO.GEMGO):
             self.score[collectables.CHOCOLATE] -= self.cellmap[self.position]['difficulty']
         if self.layingfuse and self.cellmap[self.position]['name'] not in ['water', 'deep water']:
             self.cellmap.placefuse(self.position)
-        if self.score[collectables.COIN] == self.cellmap.origcoins:
-            name = gamestate.stepname(1)
-            if name is None:
-                gamestate.setstate(0, {'state': 'won'})
-            else:
-                gamestate.loadworld(name)
-        if self.score[collectables.CHOCOLATE] <= 0:
-            gamestate.setstate(0, {'state': 'lost'})
         return True
 
     def followpath(self):
