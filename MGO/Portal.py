@@ -13,7 +13,7 @@ class Portal(BaseMGO.GEMGO):
         created = []
         if 'portals' in cellmap.gemgodefs:
             for portaldef in cellmap.gemgodefs['portals']:
-                created.append(cls(portaldef[0], portaldef[1], cellmap))
+                created.append(cls(portaldef[0], portaldef[1:3], cellmap))
         return created
 
     def update(self, world):
@@ -21,7 +21,7 @@ class Portal(BaseMGO.GEMGO):
         for player in world.players:
             if player.position == self.position:
                 self._suggestmessage("Fizzap!", 50)
-                player.delayedteleport(self.destination)
+                player.delayedteleport(*self.destination)
 
     def sprite(self, player):
         if self.cellmap[self.position]['explored']:

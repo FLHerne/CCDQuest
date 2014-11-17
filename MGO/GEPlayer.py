@@ -153,3 +153,9 @@ class GEPlayer(BaseMGO.GEMGO):
                 if not GEPlayer.XRAYVISION and not self.cellmap[trunkpos]['transparent']:
                     break
                 trunkpos = coords.sum(trunkpos, outdir)
+
+        for tile in self.visibletiles:
+            cell = self.cellmap[tile]
+            cell['explored'] = True
+        if not self.cellmap[self.position]['transparent']:
+            self.visibletiles.remove(self.position)

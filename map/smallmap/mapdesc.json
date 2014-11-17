@@ -9,7 +9,7 @@
             [[6,6],"Warning: unstable sign"]
         ],
         "portals": [
-            [[7,5], "labyrinth"]
+            [[7,5], "labyrinth", [52,52]]
         ]
     }
 }
