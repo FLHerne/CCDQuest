@@ -2,7 +2,7 @@ import json
 import os
 from World import World
 
-__mapdefs = {}
+mapdefs = {}
 for name in os.listdir('map'):
     if not os.path.isdir(os.path.join('map', name)):
         continue
@@ -21,19 +21,19 @@ for name in os.listdir('map'):
         continue
     imfile.close()
     newmap['dir'] = name
-    __mapdefs[name] = newmap
-if not len(__mapdefs):
+    mapdefs[name] = newmap
+if not len(mapdefs):
     raise Exception("No loadable maps!")
 
 __worlds = {}
 
 def getworld(name):
     if name not in __worlds:
-        __worlds[name] = World(__mapdefs[name])
+        __worlds[name] = World(mapdefs[name])
     return __worlds[name]
 
 def stepname(curname, step):
-    mapdefkeys = __mapdefs.keys()
+    mapdefkeys = mapdefs.keys()
     currentindex = mapdefkeys.index(curname)
     nextindex = currentindex + step
     return mapdefkeys[nextindex] if nextindex in range(len(mapdefkeys)) else None

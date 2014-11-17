@@ -8,16 +8,34 @@ class WorldView:
     def __init__(self, player, window):
         self.player = player
         self.window = window
-        self.world = None
+        self.geplayer = None
         self.scrollpos = None
 
     def draw(self, region):
-        geplayer = self.player.geplayer
-        currentworld = geplayer.world
-        surface = geplayer.surface
-        if currentworld != self.world:
+        with self.player.statelock:
+            state = self.player.state
+            mapdef = self.player.mapdef
+            geplayer = self.player.geplayer
+        if state != 'normal':
+            def splash(message, fontsize=40, icon=None):
+                """Display a splash message across the viewing area"""
+                pygame.draw.rect(self.window, BLACK, region)
+                textbox = TextBox(fontsize, WHITE, False)
+                if icon is not None:
+                    self.window.blit(icon, [(region.size[axis]-icon.get_size()[axis])/2 for axis in [0,1]])
+                    region.move_ip(0, icon.get_height()/2 + fontsize)
+                textbox.draw(message, region, surface=self.window)
+            if state == 'lost':
+                splash("You lost!")
+            elif state == 'won':
+                splash("You won!")
+            elif state == 'loading':
+                splash("Loading "+mapdef['name'], 25, HourGlass)
+            return self.scrollpos
+        if geplayer is not self.geplayer:
+            self.geplayer = geplayer
             self.scrollpos = None
-            self.world = currentworld
+        surface = geplayer.surface
         if self.scrollpos == None:
             self.scrollpos = [(-TILESIZE*geplayer.position[0])+region.width/2,
                               (-TILESIZE*geplayer.position[1])+region.height/2]
