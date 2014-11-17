@@ -14,7 +14,7 @@ class WorldView:
     def draw(self, region):
         geplayer = self.player.geplayer
         currentworld = geplayer.world
-        surface = currentworld.surfaces[geplayer]
+        surface = geplayer.surface
         if currentworld != self.world:
             self.scrollpos = None
             self.world = currentworld

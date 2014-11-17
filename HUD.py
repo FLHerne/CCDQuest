@@ -43,7 +43,7 @@ class MinimapWidget:
     def draw(self, region, scrollpos):
         """Draw the minimap"""
         geplayer = self.player.geplayer
-        surface = geplayer.world.surfaces[geplayer]
+        surface = geplayer.surface
         region = pygame.Rect(region)
         old_clip = self.window.get_clip()
         self.window.set_clip(region)

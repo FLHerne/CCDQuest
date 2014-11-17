@@ -7,6 +7,7 @@ from colors import *
 import coords
 import config
 from directions import *
+TILESIZE = images.TILESIZE
 
 class GEPlayer(BaseMGO.GEMGO):
     """The player, exploring the grid-based world"""
@@ -27,6 +28,12 @@ class GEPlayer(BaseMGO.GEMGO):
         self.layingfuse = False
         self.visibletiles = set()
         self.pendingteleports = []
+        self.surface = pygame.Surface(coords.mul(world.cellmap.size, TILESIZE))
+        bgtile = images.Unknown.copy()
+        bgtile.blit(images.NonVisible, (0, 0))
+        for ix in xrange(0, world.cellmap.size[0]*TILESIZE, TILESIZE):
+            for iy in xrange(0, world.cellmap.size[1]*TILESIZE, TILESIZE):
+                self.surface.blit(bgtile, (ix, iy))
         world.insertgeplayer(self)
 
     @classmethod

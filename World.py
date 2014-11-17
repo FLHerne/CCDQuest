@@ -13,7 +13,6 @@ class World:
     def __init__(self, mapdict):
         self.mapdef = mapdict
         self.cellmap = Map(mapdict)
-        self.surfaces = {}
 
         self.gemgos = []
         for gemgo in BaseMGO.GEMGO.__subclasses__():
@@ -21,18 +20,10 @@ class World:
 
     def insertgeplayer(self, geplayer):
         self.gemgos.append(geplayer)
-        self.surfaces[geplayer] = pygame.Surface(coords.mul(self.cellmap.size, TILESIZE))
-        surface = self.surfaces[geplayer]
-        bgtile = images.Unknown.copy()
-        bgtile.blit(images.NonVisible, (0, 0))
-        for ix in xrange(0, self.cellmap.size[0]*TILESIZE, TILESIZE):
-            for iy in xrange(0, self.cellmap.size[1]*TILESIZE, TILESIZE):
-                surface.blit(bgtile, (ix, iy))
         self.update(geplayer)
 
     def removegeplayer(self, geplayer):
         self.gemgos.remove(geplayer)
-        self.surfaces[geplayer] = None
 
     def rendervisibletiles(self, geplayer, extrasprites=[]):
         sprites = extrasprites
@@ -50,7 +41,7 @@ class World:
                     visibleranges[axis].append((rmin, self.cellmap.size[axis]))
                     visibleranges[axis].append((0, rmax))
 
-        surface = self.surfaces[geplayer]
+        surface = geplayer.surface
         for rx in visibleranges[0]:
             for ry in visibleranges[1]:
                 surface.set_clip(
