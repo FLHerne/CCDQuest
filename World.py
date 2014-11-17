@@ -66,6 +66,7 @@ class World:
     def update(self, geplayer):
         """Move the player by (x, y), move other fauna, update world surface around player"""
         self.cellmap.update()
+        geplayer.updatevisible()
 
         self.players = filter(lambda x: isinstance(x, GEPlayer.GEPlayer), self.gemgos)
         gemgosprites = []

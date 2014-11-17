@@ -67,7 +67,7 @@ hud = HUD(player1, window)
 
 while True:
     loopstarttime = time.clock()
-    gameended = handleevents(player1)
+    handleevents(player1)
     hudborderx = window.get_width()-HUDWIDTH
     worldviewregion = pygame.Rect(0, 0, hudborderx, window.get_height())
     hudregion = pygame.Rect(hudborderx, 0, HUDWIDTH, window.get_height())
