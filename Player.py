@@ -18,7 +18,7 @@ class Player(object):
             world = self.geplayer.world
             world.removegeplayer(self.geplayer)
         world = worlds.getworld(name)
-        self.geplayer = GEPlayer(self, world)
+        self.geplayer = GEPlayer(self, world, position)
 
     def action(self, arg):
         self.geplayer.action(arg)

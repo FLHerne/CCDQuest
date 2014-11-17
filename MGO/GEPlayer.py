@@ -13,13 +13,14 @@ class GEPlayer(BaseMGO.GEMGO):
     FREEPLAYER = config.get('player', 'freeplayer', bool, False)
     XRAYVISION = config.get('player', 'xrayvision', bool, False)
 
-    def __init__(self, player, world):
+    def __init__(self, player, world, position):
         """Initialise instance variables"""
         self.player = player
         self.score = player.score
         self.world = world
-        self.cellmap = world.cellmap
-        super(GEPlayer, self).__init__(self.cellmap.startpos, self.cellmap)
+        cellmap = world.cellmap
+        position = position if position else cellmap.startpos
+        super(GEPlayer, self).__init__(position, cellmap)
         self.color = MAGENTA
         self.visibility = 15
         self.direction = RIGHT
