@@ -1,4 +1,4 @@
-# r    g    b   name             top    destr tmp  ignite out roof diff trans solid sogginess groundimage  topimage
+# r    g    b   name             top    destr tmp  ignite out roof diff trans solid sogginess, groundimage  topimage
   0,   0,   0,  wall,            False, True,  20, 0,     1, False,  3, False, True,    0,     wall,
   0, 255, 255,  window,          False, True,  20, 0,     1, False,  3, True,  True,    0,     glass,
 127, 127, 127,  rocky ground,    False, True,  20, 0,     1, False,  5, True,  False,   0,     rock,
