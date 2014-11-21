@@ -14,7 +14,7 @@ csvdtype = numpy.dtype([
     ('difficulty',      numpy.int8),
     ('transparent',     numpy.bool_),
     ('solid',           numpy.bool_),
-    ('sogginess',       numpy.bool_),
+    ('sogginess',       numpy.uint8),
     ('groundimage',    (numpy.str_, 20)),
     ('topimage',       (numpy.str_, 20))
     ])
@@ -45,7 +45,7 @@ celldtype = numpy.dtype([
     ('difficulty',      numpy.int8),
     ('transparent',     numpy.bool_),
     ('solid',           numpy.bool_),
-    ('sogginess',       numpy.bool_),
+    ('sogginess',       numpy.uint8),
     ('groundimage',     numpy.uint8),
     ('topimage',        numpy.uint8),
     ('random',          numpy.uint8),
