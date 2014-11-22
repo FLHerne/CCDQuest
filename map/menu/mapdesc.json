@@ -5,8 +5,11 @@
     "startpos":    [52, 47],
     "gemgos": {
         "signs":   [
-            [[55, 50],"Hello, World!"],
-            [[31, 32],"The causeway"]
+            [[56, 48],"To the labyrinth"],
+            [[42, 50],"To the tiny island"],
+            [[65, 36],"To the randomly generated map with roads"],
+            [[68, 50],"To the huge randomly generated map"],
+            [[59, 40],"To world seven"]
         ],
     "portals": [
             [[24, 19], "menu", [52, 47]],
@@ -14,13 +17,13 @@
             [[49, 25], "menu", [52, 47]],
             [[44, 30], "menu", [52, 47]],
             [[39, 34], "menu", [52, 47]],
-            [[67, 37], "menu", [52, 47]],
+            [[67, 37], "roadmap", [52, 47]],
             [[34, 39], "menu", [52, 47]],
-            [[60, 42], "menu", [52, 47]],
+            [[60, 42], "world7", [40, 30]],
             [[69, 43], "menu", [52, 47]],
-            [[60, 47], "menu", [52, 47]],
-            [[70, 49], "menu", [52, 47]],
-            [[43, 51], "menu", [52, 47]],
+            [[60, 47], "labyrinth", [50, 50]],
+            [[70, 49], "giantmap", [52, 47]],
+            [[43, 51], "smallmap", [7, 7]],
             [[34, 55], "menu", [52, 47]],
             [[71, 55], "menu", [52, 47]],
             [[39, 61], "menu", [52, 47]],
