@@ -31,6 +31,8 @@ class WorldView:
                 splash("You won!")
             elif state == 'loading':
                 splash("Loading "+mapdef['name'], 25, HourGlass)
+            elif state == 'crashed':
+                splash("Game crashed!")
             return self.scrollpos
         if geplayer is not self.geplayer:
             self.geplayer = geplayer
