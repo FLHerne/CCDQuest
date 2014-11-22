@@ -1,6 +1,11 @@
 {
-    "name":        "A large randomly generated world",
+    "name":        "a very large randomly generated map",
     "terrainfile": "terrain.png",
     "itemfile":    "collectables.png",
-    "startpos":    [512,512]
+    "startpos":    [512,512],
+    "gemgos": {
+        "portals": [
+            [[190, 583], "menu", [70, 49]]
+        ]
+    }
 }

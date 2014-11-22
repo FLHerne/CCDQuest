@@ -9,6 +9,7 @@
             [[6,6],"Warning: unstable sign"]
         ],
         "portals": [
+            [[7, 7], "menu", [43, 51]],
             [[7,5], "labyrinth", [52,52]]
         ]
     }

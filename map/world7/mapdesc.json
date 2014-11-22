@@ -16,6 +16,9 @@
             [[102,110],"Deep, dark wood - Here Be Dragons!"],
             [[64,106],"An Englishman's home is his castle"]
         ],
+        "portals": [
+            [[40, 30], "menu", [60, 42]]
+        ],
         "pixies":   [
             [[50,50],
                 [

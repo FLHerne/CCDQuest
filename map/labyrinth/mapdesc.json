@@ -5,6 +5,7 @@
     "startpos":    [49,49],
     "gemgos": {
         "portals": [
+            [[50, 50], "menu", [60, 47]],
             [[52,52], "smallmap", [7,5]]
         ]
     }
