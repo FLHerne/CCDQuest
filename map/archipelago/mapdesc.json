@@ -1,0 +1,11 @@
+{
+    "name":        "archipelago",
+    "terrainfile": "terrain.png",
+    "itemfile":    "collectables.png",
+    "startpos":    [300, 281],
+    "gemgos": {
+        "portals": [
+            [[324, 380], "menu", [69, 43]]
+        ]
+    }
+}
