@@ -34,7 +34,10 @@ class MessageBox:
         highestpriority = 0
         highestprioritymgo = None
         self.string = None
-        mgolist = self.player.geplayer.world.gemgos #FIXME
+        with self.player.statelock:
+            if self.player.geplayer is None:
+                return False
+            mgolist = self.player.geplayer.world.gemgos
         if len(mgolist) > 0:
             for mgo in mgolist:
                 if mgo.message[1] > highestpriority:
