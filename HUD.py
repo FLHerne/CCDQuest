@@ -101,7 +101,10 @@ class HUD:
 
     def draw(self, region, scrollpos):
         """Draw the heads-up display"""
-        geplayer = self.player.geplayer
+        with self.player.statelock:
+            geplayer = self.player.geplayer
+        if geplayer is None:
+            return False
         region = pygame.Rect(region)
         pygame.draw.rect(self.window, BLACK, region)
         framewidth = self.frame.thickness[Frame.VERTICAL]
