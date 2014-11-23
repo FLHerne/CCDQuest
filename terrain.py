@@ -24,7 +24,7 @@ types = numpy.genfromtxt('map/terrain.csv', delimiter=',', dtype=csvdtype, autos
 typeslist = types.tolist()
 
 def colorlist(surface):
-    return [pygame.surfarray.map_array(surface, numpy.array([type[0:3]])) for type in typeslist]
+    return pygame.surfarray.map_array(surface, types[['r','g','b']].view(numpy.uint8).reshape(-1, 3))
 def color_typeindex(surface):
     return zip(colorlist(surface), range(len(typeslist)))
 

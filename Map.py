@@ -36,11 +36,16 @@ class Map():
 
         groundimage = pygame.image.load(terrainfilepath).convert()
         groundarray = pygame.surfarray.pixels2d(groundimage)
-        if not all(color in terrain.colorlist(groundimage) for color in numpy.unique(groundarray)):
+        wronggroundcolours = numpy.setdiff1d(groundarray, terrain.colorlist(groundimage))
+        if wronggroundcolours.size:
+            print wronggroundcolours
             raise Exception("Unexpected value in "+terrainfilepath)
         collectablesimage = pygame.image.load(itemfilepath).convert()
         collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
-        if not all(color in collectables.colorlist(collectablesimage) for color in numpy.unique(collectablesarray)):
+        collectablescolorsflat = pygame.surfarray.map_array(collectablesimage, numpy.array(collectables.mapcolor.keys()))
+        wrongcollectablecolors = numpy.setdiff1d(collectablesarray, collectablescolorsflat)
+        if wrongcollectablecolors.size:
+            print wrongcollectablecolors
             raise Exception("Unexpected value in "+itemfilepath)
         self.size = groundimage.get_rect().size
 

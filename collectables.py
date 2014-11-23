@@ -1,5 +1,3 @@
-import numpy
-import pygame.surfarray
 from colors import *
 
 NONE = 0
@@ -13,8 +11,6 @@ mapcolor = {
     BROWN:  CHOCOLATE,
     RED:    DYNAMITE
 }
-def colorlist(surface):
-    return [pygame.surfarray.map_array(surface, numpy.array([color])) for color in mapcolor.keys()]
 
 value = {
     NONE: 0,
