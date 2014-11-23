@@ -32,12 +32,16 @@ class Map():
         itemfilepath = os.path.join('map', mapdict['dir'], mapdict['itemfile'])
         for filepath in terrainfilepath, itemfilepath:
             if not os.path.isfile(filepath):
-                raise Exception(filepath, "is not a file")
+                raise Exception(filepath+" is not a file")
 
         groundimage = pygame.image.load(terrainfilepath).convert()
         groundarray = pygame.surfarray.pixels2d(groundimage)
+        if not all(color in terrain.colorlist for color in numpy.unique(groundarray)):
+            raise Exception("Unexpected value in "+terrainfilepath)
         collectablesimage = pygame.image.load(itemfilepath).convert()
         collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
+        if not all(color in collectables.colorlist for color in numpy.unique(collectablesarray)):
+            raise Exception("Unexpected value in "+itemfilepath)
         self.size = groundimage.get_rect().size
 
         nbrcount = numpy.zeros(self.size, dtype=numpy.uint)
@@ -60,14 +64,12 @@ class Map():
                     randomgrid = numpy.random.randint(len(indexmap), size=self.size)
                     self.cellarray[level][istype] = numpy.choose(randomgrid, indexmap)[istype]
 
-
-        self.cellarray['random'] = numpy.random.randint(256, size=self.size)
-
         for color_collectable in collectables.mapcolor.iteritems():
             color = terrain.mapcolor(color_collectable[0])
             self.cellarray['collectableitem'][collectablesarray == color] = color_collectable[1]
-            
+
         self.origcoins = (self.cellarray['collectableitem'] == collectables.COIN).sum()
+        self.cellarray['random'] = numpy.random.randint(256, size=self.size)
 
     def __getitem__(self, coord):
         """Get map item with [], wrapping"""

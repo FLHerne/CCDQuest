@@ -26,7 +26,12 @@ class Player(object):
         if self.geplayer is not None:
             self.geplayer.world.removegeplayer(self.geplayer)
         def lworld():
-            geplayer = GEPlayer(self, worlds.getworld(name), position)
+            try:
+                geplayer = GEPlayer(self, worlds.getworld(name), position)
+            except Exception, e:
+                with self.statelock:
+                    self.state = 'crashed'
+                raise e; return
             with self.statelock:
                 self.geplayer = geplayer
                 self.state = 'normal'

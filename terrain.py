@@ -21,9 +21,11 @@ csvdtype = numpy.dtype([
 
 types = numpy.genfromtxt('map/terrain.csv', delimiter=',', dtype=csvdtype, autostrip=True)
 typeslist = types.tolist()
+
 def mapcolor(color):
     return (color[0] << 16) + (color[1] << 8) + color[2]
-color_typeindex = [(mapcolor(i[1][0:3]), i[0]) for i in enumerate(typeslist)]
+colorlist = [mapcolor(type[0:3]) for type in typeslist]
+color_typeindex = zip(colorlist, range(len(typeslist)))
 
 typetoimageindex = {
     'groundimage': [],

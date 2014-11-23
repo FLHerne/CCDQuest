@@ -38,7 +38,7 @@ def handleevents(player):
             if event.key == FUSEREEL:
                 player.action('ignitefuse')
         if event.type == pygame.KEYDOWN:
-            if player.state in ['lost', 'won']:
+            if player.state in ['lost', 'won', 'crashed']:
                 time.sleep(2)
                 sys.exit()
             if event.key in MOVEDIRS:
