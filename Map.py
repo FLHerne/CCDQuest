@@ -36,11 +36,11 @@ class Map():
 
         groundimage = pygame.image.load(terrainfilepath).convert()
         groundarray = pygame.surfarray.pixels2d(groundimage)
-        if not all(color in terrain.colorlist for color in numpy.unique(groundarray)):
+        if not all(color in terrain.colorlist(groundimage) for color in numpy.unique(groundarray)):
             raise Exception("Unexpected value in "+terrainfilepath)
         collectablesimage = pygame.image.load(itemfilepath).convert()
         collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
-        if not all(color in collectables.colorlist for color in numpy.unique(collectablesarray)):
+        if not all(color in collectables.colorlist(collectablesimage) for color in numpy.unique(collectablesarray)):
             raise Exception("Unexpected value in "+itemfilepath)
         self.size = groundimage.get_rect().size
 
@@ -49,7 +49,7 @@ class Map():
             nbrcount += (groundarray == numpy.roll(groundarray,  i[0], axis=i[1])) * i[2]
 
         self.cellarray = numpy.empty(self.size, dtype=terrain.celldtype)
-        for color_type in terrain.color_typeindex:
+        for color_type in terrain.color_typeindex(groundimage):
             istype = groundarray == color_type[0]
             self.cellarray[istype] = terrain.typeindextocell[color_type[1]]
             for level in ['groundimage', 'topimage']:
@@ -65,7 +65,7 @@ class Map():
                     self.cellarray[level][istype] = numpy.choose(randomgrid, indexmap)[istype]
 
         for color_collectable in collectables.mapcolor.iteritems():
-            color = terrain.mapcolor(color_collectable[0])
+            color = pygame.surfarray.map_array(collectablesimage, numpy.array([color_collectable[0]]))
             self.cellarray['collectableitem'][collectablesarray == color] = color_collectable[1]
 
         self.origcoins = (self.cellarray['collectableitem'] == collectables.COIN).sum()
