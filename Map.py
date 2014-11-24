@@ -17,7 +17,7 @@ class Map():
 
     def __init__(self, mapdict):
         """Load the map from image files"""
-
+        self.mapdef = mapdict
         self.startpos = tuple(mapdict['startpos'])
         try:
             self.gemgodefs = mapdict['gemgos']

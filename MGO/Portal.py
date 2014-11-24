@@ -13,7 +13,8 @@ class Portal(BaseMGO.GEMGO):
         created = []
         if 'portals' in cellmap.gemgodefs:
             for portaldef in cellmap.gemgodefs['portals']:
-                created.append(cls(portaldef[0], portaldef[1:3], cellmap))
+                destination = portaldef[1:3] if len(portaldef) >= 3 else None
+                created.append(cls(portaldef[0], destination, cellmap))
         return created
 
     def update(self, world):
@@ -25,6 +26,12 @@ class Portal(BaseMGO.GEMGO):
 
     def sprite(self, player):
         if self.cellmap[self.position]['explored']:
-            return images.Portal, self._pixelpos((-6, -6)), -1
+            if self.destination is None:
+                image = images.PortalIn
+            elif self.destination[0] == self.cellmap.mapdef['dir']:
+                image = images.PortalLocal
+            else:
+                image = images.PortalOut
+            return image, self._pixelpos((-6, -6)), -1
         else:
             return None
