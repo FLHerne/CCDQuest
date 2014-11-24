@@ -20,7 +20,7 @@ class Portal(BaseMGO.GEMGO):
     def update(self, world):
         """Display message if becoming visible or trodden on"""
         for player in world.players:
-            if player.position == self.position:
+            if (player.position == self.position) and self.destination:
                 self._suggestmessage("Fizzap!", 50)
                 player.delayedteleport(*self.destination)
 
