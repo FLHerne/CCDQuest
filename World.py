@@ -19,7 +19,8 @@ class World:
             self.gemgos += gemgo.place(self.cellmap)
 
     def insertgeplayer(self, geplayer):
-        self.gemgos.append(geplayer)
+        if geplayer not in self.gemgos:
+            self.gemgos.append(geplayer)
         geplayer.updatevisible()
         self.rendervisible(geplayer)
 
