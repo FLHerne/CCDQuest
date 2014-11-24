@@ -25,6 +25,29 @@ for name in os.listdir('map'):
 if not len(mapdefs):
     raise Exception("No loadable maps!")
 
+def __checkportals():
+    portallocs = set()  # Locations (mapname, coord) of all portals
+    portaldests = set() # Destinations (mapname, coord) of all portals
+    outportals = {}     # Index of portals that have destinations.
+
+    for mapname, portaldefs in [(mapdef['dir'], mapdef['gemgos']['portals']) for mapdef in mapdefs.values()]:
+        for portaldef in portaldefs:
+            portallocs.add((mapname, tuple(portaldef[0])))
+            if len(portaldef) >= 3:
+                portaldests.add((portaldef[1], tuple(portaldef[2])))
+                outportals[(mapname, tuple(portaldef[0]))] = True
+
+    unterminated = portaldests.difference(portallocs)
+    if unterminated:
+        raise Exception("Portals at " + str(list(unterminated)) + " are unterminated.")
+
+    # Check that all portals without incoming connections link somewhere themselves.
+    for nonreceiver in portallocs.difference(portaldests):
+        if nonreceiver not in outportals:
+            raise Exception("Portal at " + str(nonreceiver) + " has no connections!")
+
+__checkportals()
+
 __worlds = {}
 
 def getworld(name):
