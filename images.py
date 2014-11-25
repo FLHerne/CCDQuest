@@ -11,12 +11,20 @@ from directions import *
 # Size of terrain sprites.
 TILESIZE = 12
 
+def chopimage(image, xslices, yslices=1):
+    """Chop an image into a line or grid of smaller images"""
+    outrect = pygame.Rect(0, 0, image.get_width()/xslices, image.get_height()/yslices)
+    chopped = []
+    for ix in range(xslices):
+        chopped.append([])
+        for iy in range(yslices):
+            choprect = outrect.move(ix*outrect.width, iy*outrect.height)
+            chopped[-1].append(image.subsurface(choprect))
+    # Return a 1d array if only chopping in X axis.
+    return [sub[0] for sub in chopped] if yslices == 1 else chopped
+
 def dirsprites(image):
-    sprites = []
-    for i in range(6):
-        sprites.append(pygame.Surface((loadedimage.get_height(),)*2))
-        sprites[-1].blit(loadedimage, (-i*loadedimage.get_height(), 0))
-        sprites[-1].set_colorkey(MAGENTA, pygame.RLEACCEL)
+    sprites = chopimage(image, 6)
     rot = pygame.transform.rotate
     #FIXME Horribly ugly!
     return [
@@ -55,12 +63,11 @@ for name in os.listdir(os.path.join('tiles', 'terrain')):
         if numtiles not in [1, 6]:
             print "Warning: sprite %s has invalid size" %filepath
             continue
+        loadedimage.set_colorkey(MAGENTA, pygame.RLEACCEL)
         if numtiles == 1:
-            loadedimage.set_colorkey(MAGENTA, pygame.RLEACCEL)
             terraingroups[name].append(loadedimage)
         else:
             terraingroups[name].append(dirsprites(loadedimage))
-            continue
 
 # Create list of all sprites used, in format (layeroffset, surface).
 # Create list of sprite indices and/or of 16-index direction lists of indices...
