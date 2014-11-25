@@ -2,10 +2,10 @@
     "name":        "a large randomly generated map with roads",
     "terrainfile": "terrain.png",
     "itemfile":    "collectables.png",
-    "startpos":    [155,175],
+    "startpos":    [121,226],
     "gemgos": {
         "portals": [
-            [[157, 177], "menu", [67, 37]]
+            [[121, 228], "menu", [67, 37]]
         ]
     }
 }
