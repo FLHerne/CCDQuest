@@ -13,6 +13,7 @@ class GEPlayer(BaseMGO.GEMGO):
     """The player, exploring the grid-based world"""
     FREEPLAYER = config.get('player', 'freeplayer', bool, False)
     XRAYVISION = config.get('player', 'xrayvision', bool, False)
+    POSMESSAGE = config.get('player', 'posmessage', bool, False)
 
     def __init__(self, player, world, position):
         """Initialise instance variables"""
@@ -43,7 +44,8 @@ class GEPlayer(BaseMGO.GEMGO):
         return []
 
     def update(self, world):
-        pass
+        if GEPlayer.POSMESSAGE:
+            self._suggestmessage(str(self.position), 1)
 
     def sprite(self, player):
         if self.position in player.visibletiles:

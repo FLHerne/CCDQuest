@@ -46,5 +46,3 @@ class MessageBox:
             if highestprioritymgo != None and highestprioritymgo.message[0] != None:
                 self.string = highestprioritymgo.message[0]
                 highestprioritymgo.mdnotify()
-        else:
-            self.string = None
