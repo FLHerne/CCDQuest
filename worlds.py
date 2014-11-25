@@ -39,7 +39,7 @@ def __checkportals():
 
     unterminated = portaldests.difference(portallocs)
     if unterminated:
-        raise Exception("Portals at " + str(list(unterminated)) + " are unterminated.")
+        raise Exception("Portals to " + str(list(unterminated)) + " are unterminated.")
 
     # Check that all portals without incoming connections link somewhere themselves.
     for nonreceiver in portallocs.difference(portaldests):
