@@ -23,14 +23,17 @@ class MessageBox:
             minwidth = hudimages.MessageBackgroundLeft.get_width() + hudimages.MessageBackgroundRight.get_width()
             boxregion.inflate_ip(max(0, minwidth-boxregion.width), 0)
 
+            oldclip = self.window.get_clip()
+            self.window.set_clip(boxregion)
             imagewidth = hudimages.MessageBackground.get_width()
             horiztileoffset = 0
-            while horiztileoffset+imagewidth < boxregion.width:
+            while horiztileoffset < boxregion.width:
                 self.window.blit(hudimages.MessageBackground, boxregion.move(horiztileoffset, 0))
                 horiztileoffset += imagewidth
             self.window.blit(hudimages.MessageBackgroundLeft, boxregion)
             self.window.blit(hudimages.MessageBackgroundRight, boxregion.move(-hudimages.MessageBackgroundRight.get_width(), 0).topright)
             self.window.blit(textsurface, textsurface.get_rect(center=region.center))
+            self.window.set_clip(oldclip)
 
     def update(self):
         highestpriority = 0
