@@ -25,26 +25,36 @@ for name in os.listdir('map'):
 if not len(mapdefs):
     raise Exception("No loadable maps!")
 
-def __checkportals():
-    portallocs = set()  # Locations (mapname, coord) of all portals
-    portaldests = set() # Destinations (mapname, coord) of all portals
-    outportals = {}     # Index of portals that have destinations.
+class PortalException(Exception):
+    """Exception for invalid portal definitions"""
+    def __init__(self, portalpos, portaldest):
+        posstr = ', '.join(repr(e) for e in portalpos)
+        if portaldest is None:
+            message = "Portal at %s has no connections." %posstr
+        else:
+            deststr = ', '.join(repr(e) for e in portaldest)
+            message = "Portal from %s to %s is unterminated." %(posstr, deststr)
+        Exception.__init__(self, message)
 
+def __checkportals():
+    """Validate portal relationships"""
+    postodest = {}
     for mapname, portaldefs in [(mapdef['dir'], mapdef['gemgos']['portals']) for mapdef in mapdefs.values()]:
         for portaldef in portaldefs:
-            portallocs.add((mapname, tuple(portaldef[0])))
-            if len(portaldef) >= 3:
-                portaldests.add((portaldef[1], tuple(portaldef[2])))
-                outportals[(mapname, tuple(portaldef[0]))] = True
-
-    unterminated = portaldests.difference(portallocs)
-    if unterminated:
-        raise Exception("Portals to " + str(list(unterminated)) + " are unterminated.")
+            pos  = (mapname, tuple(portaldef[0]))
+            dest = (str(portaldef[1]), tuple(portaldef[2])) if len(portaldef) >= 3 else None
+            postodest[pos] = dest
 
     # Check that all portals without incoming connections link somewhere themselves.
-    for nonreceiver in portallocs.difference(portaldests):
-        if nonreceiver not in outportals:
-            raise Exception("Portal at " + str(nonreceiver) + " has no connections!")
+    for nonreceiver in set(postodest.keys()).difference(postodest.values()):
+        if postodest[nonreceiver] is None:
+            raise PortalException(nonreceiver, None)
+
+    # Check that the destination of each portal is another portal.
+    desttopos = dict((b,a) for a, b in postodest.items())
+    for nondest in set(postodest.values()).difference(postodest.keys()):
+        if nondest is not None:
+            raise PortalException(desttopos[nondest], nondest)
 
 __checkportals()
 
