@@ -44,7 +44,7 @@ for name in os.listdir(os.path.join('tiles', 'terrain')):
     if not os.path.isdir(os.path.join('tiles', 'terrain', name)):
         continue
     if not (name in terrain.types['groundimage'] or name in terrain.types['topimage']):
-        print "Warning: terrain sprites", name, "not used"
+        print "Warning: terrain sprites %s not used" %name
     terraingroups[name] = []
     for filename in os.listdir(os.path.join('tiles', 'terrain', name)):
         filepath = os.path.join('tiles', 'terrain', name, filename)
@@ -53,7 +53,7 @@ for name in os.listdir(os.path.join('tiles', 'terrain')):
         loadedimage = pygame.image.load(filepath).convert()
         numtiles = float(loadedimage.get_width())/loadedimage.get_height()
         if numtiles not in [1, 6]:
-            print "Warning: sprite", filepath, "has invalid size"
+            print "Warning: sprite %s has invalid size" %filepath
             continue
         if numtiles == 1:
             loadedimage.set_colorkey(MAGENTA, pygame.RLEACCEL)

@@ -9,16 +9,17 @@ if not loaded:
 
 def get(section, name, valuetype, default=None):
     try:
+        value = mainconfig.get(section, name)
         if valuetype is bool:
             # ConfigParser.getboolean() does useful string parsing.
             return mainconfig.getboolean(section, name)
         else:
-            return valuetype(mainconfig.get(section, name))
+            return valuetype(value)
     except ValueError:
         if default is None:
             raise
         else:
-            print "Warning: invalid value for ["+section+"] '"+name+"'"
+            print "Warning: invalid value '%s' for [%s], %s" %(value, section, name)
     except ConfigParser.Error:
         if default is None:
             raise

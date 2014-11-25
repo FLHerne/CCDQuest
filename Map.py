@@ -32,21 +32,21 @@ class Map():
         itemfilepath = os.path.join('map', mapdict['dir'], mapdict['itemfile'])
         for filepath in terrainfilepath, itemfilepath:
             if not os.path.isfile(filepath):
-                raise Exception(filepath+" is not a file")
+                raise Exception("%s is not a file" %filepath)
 
         groundimage = pygame.image.load(terrainfilepath).convert()
         groundarray = pygame.surfarray.pixels2d(groundimage)
         wronggroundcolours = numpy.setdiff1d(groundarray, terrain.colorlist(groundimage))
         if wronggroundcolours.size:
             print wronggroundcolours
-            raise Exception("Unexpected value in "+terrainfilepath)
+            raise Exception("Unexpected value in %s" %terrainfilepath)
         collectablesimage = pygame.image.load(itemfilepath).convert()
         collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
         collectablescolorsflat = pygame.surfarray.map_array(collectablesimage, numpy.array(collectables.mapcolor.keys()))
         wrongcollectablecolors = numpy.setdiff1d(collectablesarray, collectablescolorsflat)
         if wrongcollectablecolors.size:
             print wrongcollectablecolors
-            raise Exception("Unexpected value in "+itemfilepath)
+            raise Exception("Unexpected value in %s" %itemfilepath)
         self.size = groundimage.get_rect().size
 
         nbrcount = numpy.zeros(self.size, dtype=numpy.uint)

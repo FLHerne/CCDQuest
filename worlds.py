@@ -10,13 +10,13 @@ for name in os.listdir('map'):
     try:
         imfile = open(descfilename)
     except:
-        print "Unable to load map", name+":"
-        print "File", descfilename, "unreadable or missing"
+        print "Unable to load map %s name:" %name
+        print "File %s unreadable or missing" %descfilename
         continue
     try:
         newmap = json.load(imfile)
     except ValueError as err:
-        print "Unable to load map", name+":"
+        print "Unable to load map %s:" %name
         print err
         continue
     imfile.close()
