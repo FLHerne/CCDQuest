@@ -113,19 +113,8 @@ Unknown = pygame.image.load("tiles/overlays/Unknown.png").convert()
 NonVisible = pygame.image.load("tiles/overlays/NonVisible.png").convert_alpha()
 
 # These two can be randomly chosen
-Damaged = [
-    pygame.image.load("tiles/overlays/damaged/Damaged1.png").convert_alpha(),
-    pygame.image.load("tiles/overlays/damaged/Damaged2.png").convert_alpha(),
-    pygame.image.load("tiles/overlays/damaged/Damaged3.png").convert_alpha(),
-    pygame.image.load("tiles/overlays/damaged/Damaged4.png").convert_alpha()
-]
-
-Burning = [
-    pygame.image.load("tiles/overlays/fire/Fire1.png").convert_alpha(),
-    pygame.image.load("tiles/overlays/fire/Fire2.png").convert_alpha(),
-    pygame.image.load("tiles/overlays/fire/Fire3.png").convert_alpha(),
-    pygame.image.load("tiles/overlays/fire/Fire4.png").convert_alpha()
-]
+Damaged = getimages(os.path.join('tiles', 'overlays', 'damaged'), alpha=True)
+Burning = getimages(os.path.join('tiles', 'overlays', 'fire'), alpha=True)
 
 # Overlays for fuses.
 FuseLeft = pygame.image.load("tiles/overlays/Fuse.png").convert_alpha()
