@@ -116,19 +116,18 @@ NonVisible = pygame.image.load("tiles/overlays/NonVisible.png").convert_alpha()
 Damaged = getimages(os.path.join('tiles', 'overlays', 'damaged'), alpha=True)
 Burning = getimages(os.path.join('tiles', 'overlays', 'fire'), alpha=True)
 
+def rotatedquad(image, direction):
+    """Return {direction: sprite} for rotations at right-angles to 'direction'"""
+    rotcoord = lambda coord: (coord[1], -coord[0])
+    rdict = {}
+    for count in range(4):
+        rdict[direction] = pygame.transform.rotate(image, 90*count)
+        direction = rotcoord(direction)
+    return rdict
+
 # Overlays for fuses.
 FuseLeft = pygame.image.load("tiles/overlays/Fuse.png").convert_alpha()
-FuseRight = pygame.transform.rotate(FuseLeft, 180)
-FuseUp = pygame.transform.rotate(FuseLeft, -90)
-FuseDown = pygame.transform.rotate(FuseLeft, 90)
-
-Fuse = {
-    UP: FuseUp,
-    DOWN: FuseDown,
-    LEFT: FuseLeft,
-    RIGHT: FuseRight
-}
-
+Fuse = rotatedquad(FuseLeft, LEFT)
 
 # Overlays for tiles with collectables.
 Coin = pygame.image.load("tiles/collectables/Coin.png").convert_alpha()
@@ -143,16 +142,7 @@ Collectables = {
 
 # Player sprites.
 PlayerUp = pygame.image.load("tiles/gemgos/Player.png").convert_alpha()
-PlayerDown = pygame.transform.flip(PlayerUp, False, True)
-PlayerLeft = pygame.transform.rotate(PlayerUp, 90)
-PlayerRight = pygame.transform.flip(PlayerLeft, True, False)
-
-Player = {
-    UP: PlayerUp,
-    DOWN: PlayerDown,
-    LEFT: PlayerLeft,
-    RIGHT: PlayerRight
-}
+Player = rotatedquad(PlayerUp, UP)
 
 # Bear sprites.
 BearLeft = pygame.image.load("tiles/gemgos/Bear.png").convert_alpha()
@@ -160,21 +150,14 @@ BearRight = pygame.transform.flip(BearLeft, True, False)
 
 # Dragon sprites.
 DragonRedUpLeft = pygame.image.load("tiles/gemgos/Dragon-Red.png").convert_alpha()
-DragonRedUpRight = pygame.transform.flip(DragonRedUpLeft, True, False)
-DragonRedDownLeft = pygame.transform.flip(DragonRedUpLeft, False, True)
-DragonRedDownRight = pygame.transform.flip(DragonRedUpLeft, True, True)
-
-DragonRed = {
-    UPLEFT: DragonRedUpLeft,
-    UPRIGHT: DragonRedUpRight,
-    DOWNLEFT: DragonRedDownLeft,
-    DOWNRIGHT: DragonRedDownRight
-}
+DragonRed = rotatedquad(DragonRedUpLeft, UPLEFT)
 
 Sign = pygame.image.load("tiles/gemgos/Sign.png").convert_alpha()
+
 PortalOut = pygame.image.load("tiles/gemgos/PortalOut.png").convert_alpha()
 PortalLocal = pygame.image.load("tiles/gemgos/PortalLocal.png").convert_alpha()
 PortalIn = pygame.image.load("tiles/gemgos/PortalIn.png").convert_alpha()
+
 PixieLeft = pygame.image.load("tiles/gemgos/Pixie.png").convert_alpha()
 PixieRight = pygame.transform.flip(PixieLeft, True, False)
 
