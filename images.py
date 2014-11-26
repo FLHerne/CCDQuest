@@ -59,15 +59,18 @@ def getimages(dirpath, alpha=False, colorkey=None):
         images.append(image)
     return images
 
+def subdirs(dirpath):
+    """Paths to subdirectories of 'dirpath'"""
+    return filter(os.path.isdir, [os.path.join(dirpath, name) for name in os.listdir(dirpath)])
+
 terraingroups = {}
 # Create list of sprites and/or of 16-sprite direction lists for each subdirectory of tiles/terrain.
-for name in os.listdir(os.path.join('tiles', 'terrain')):
-    if not os.path.isdir(os.path.join('tiles', 'terrain', name)):
-        continue
+for terraindir in subdirs(os.path.join('tiles', 'terrain')):
+    name = os.path.basename(terraindir)
     if not (name in terrain.types['groundimage'] or name in terrain.types['topimage']):
         print "Warning: terrain sprites %s not used" %name
     terraingroups[name] = []
-    images = getimages(os.path.join('tiles', 'terrain', name), colorkey=MAGENTA)
+    images = getimages(terraindir, colorkey=MAGENTA)
     for image in images:
         numtiles = float(image.get_width())/image.get_height()
         if numtiles not in [1, 6]:
