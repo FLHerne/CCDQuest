@@ -27,11 +27,11 @@ class Portal(BaseMGO.GEMGO):
     def sprite(self, player):
         if self.cellmap[self.position]['explored']:
             if self.destination is None:
-                image = images.PortalIn
+                image = images.Portal[0][1]
             elif self.destination[0] == self.cellmap.mapdef['dir']:
-                image = images.PortalLocal
+                image = images.Portal[1][0]
             else:
-                image = images.PortalOut
+                image = images.Portal[2][0]
             return image, self._pixelpos((-6, -6)), -1
         else:
             return None

@@ -154,12 +154,10 @@ DragonRed = rotatedquad(DragonRedUpLeft, UPLEFT)
 
 Sign = pygame.image.load("tiles/gemgos/Sign.png").convert_alpha()
 
-PortalOut = pygame.image.load("tiles/gemgos/PortalOut.png").convert_alpha()
-PortalLocal = pygame.image.load("tiles/gemgos/PortalLocal.png").convert_alpha()
-PortalIn = pygame.image.load("tiles/gemgos/PortalIn.png").convert_alpha()
-
 PixieLeft = pygame.image.load("tiles/gemgos/Pixie.png").convert_alpha()
 PixieRight = pygame.transform.flip(PixieLeft, True, False)
 
 DuckieLeft = pygame.image.load("tiles/gemgos/Duckie.png").convert_alpha()
 DuckieRight = pygame.transform.flip(DuckieLeft, True, False)
+
+Portal = chopimage(pygame.image.load("tiles/gemgos/Portal.png").convert_alpha(), 3, 4)
