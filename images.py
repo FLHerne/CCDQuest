@@ -46,6 +46,19 @@ def dirsprites(image):
             sprites[5]
         ]
 
+def getimages(dirpath, alpha=False, colorkey=None):
+    assert not (alpha and colorkey)
+    images = []
+    convfunc = pygame.Surface.convert_alpha if alpha else pygame.Surface.convert
+    for filename in os.listdir(dirpath):
+        filepath = os.path.join(dirpath, filename)
+        if not imghdr.what(filepath) == 'png':
+            continue
+        image = convfunc(pygame.image.load(filepath))
+        image.set_colorkey(colorkey)
+        images.append(image)
+    return images
+
 terraingroups = {}
 # Create list of sprites and/or of 16-sprite direction lists for each subdirectory of tiles/terrain.
 for name in os.listdir(os.path.join('tiles', 'terrain')):
@@ -54,20 +67,14 @@ for name in os.listdir(os.path.join('tiles', 'terrain')):
     if not (name in terrain.types['groundimage'] or name in terrain.types['topimage']):
         print "Warning: terrain sprites %s not used" %name
     terraingroups[name] = []
-    for filename in os.listdir(os.path.join('tiles', 'terrain', name)):
-        filepath = os.path.join('tiles', 'terrain', name, filename)
-        if not imghdr.what(filepath) == 'png':
-            continue
-        loadedimage = pygame.image.load(filepath).convert()
-        numtiles = float(loadedimage.get_width())/loadedimage.get_height()
+    images = getimages(os.path.join('tiles', 'terrain', name), colorkey=MAGENTA)
+    for image in images:
+        numtiles = float(image.get_width())/image.get_height()
         if numtiles not in [1, 6]:
-            print "Warning: sprite %s has invalid size" %filepath
+            print "Warning: sprite has invalid size"
             continue
-        loadedimage.set_colorkey(MAGENTA, pygame.RLEACCEL)
-        if numtiles == 1:
-            terraingroups[name].append(loadedimage)
-        else:
-            terraingroups[name].append(dirsprites(loadedimage))
+        sprite = dirsprites(image) if numtiles == 6 else image
+        terraingroups[name].append(sprite)
 
 # Create list of all sprites used, in format (layeroffset, surface).
 # Create list of sprite indices and/or of 16-index direction lists of indices...
