@@ -46,15 +46,18 @@ def dirsprites(image):
             sprites[5]
         ]
 
+def pathimage(*path, **kwargs):
+    convfunc = pygame.Surface.convert_alpha if ('alpha' in kwargs and kwargs['alpha']) else pygame.Surface.convert
+    return convfunc(pygame.image.load(os.path.join(*path)))
+
 def getimages(dirpath, alpha=False, colorkey=None):
     assert not (alpha and colorkey)
     images = []
-    convfunc = pygame.Surface.convert_alpha if alpha else pygame.Surface.convert
     for filename in os.listdir(dirpath):
         filepath = os.path.join(dirpath, filename)
         if not imghdr.what(filepath) == 'png':
             continue
-        image = convfunc(pygame.image.load(filepath))
+        image = pathimage(filepath, alpha=alpha)
         image.set_colorkey(colorkey)
         images.append(image)
     return images
@@ -109,8 +112,8 @@ for level in ['groundimage', 'topimage']:
 # Images with transparency use convert_alpha().
 
 # Overlays for unknown, non-visible, damaged or burning tiles.
-Unknown = pygame.image.load("tiles/overlays/Unknown.png").convert()
-NonVisible = pygame.image.load("tiles/overlays/NonVisible.png").convert_alpha()
+Unknown = pathimage('tiles', 'overlays', 'Unknown.png')
+NonVisible = pathimage('tiles', 'overlays', 'NonVisible.png', alpha=True)
 
 # These two can be randomly chosen
 Damaged = getimages(os.path.join('tiles', 'overlays', 'damaged'), alpha=True)
@@ -126,13 +129,13 @@ def rotatedquad(image, direction):
     return rdict
 
 # Overlays for fuses.
-FuseLeft = pygame.image.load("tiles/overlays/Fuse.png").convert_alpha()
+FuseLeft = pathimage('tiles', 'overlays', 'Fuse.png', alpha=True)
 Fuse = rotatedquad(FuseLeft, LEFT)
 
 # Overlays for tiles with collectables.
-Coin = pygame.image.load("tiles/collectables/Coin.png").convert_alpha()
-Choc = pygame.image.load("tiles/collectables/Chocolate.png").convert_alpha()
-Dynamite = pygame.image.load("tiles/collectables/Dynamite.png").convert_alpha()
+Coin = pathimage('tiles', 'collectables', 'Coin.png', alpha=True)
+Choc = pathimage('tiles', 'collectables', 'Chocolate.png', alpha=True)
+Dynamite = pathimage('tiles', 'collectables', 'Dynamite.png', alpha=True)
 
 Collectables = {
     collectables.COIN: Coin,
@@ -141,7 +144,7 @@ Collectables = {
 }
 
 def loadgemgo(name):
-    return pygame.image.load(os.path.join('tiles', 'gemgos', name+'.png')).convert_alpha()
+    return pathimage('tiles', 'gemgos', name+'.png', alpha=True)
 
 # Player sprites.
 Player = rotatedquad(loadgemgo('Player'), UP)
