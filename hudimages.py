@@ -2,19 +2,23 @@ import pygame
 
 """Load and convert all HUD images"""
 
+def pathimage(*path, **kwargs):
+    convfunc = pygame.Surface.convert_alpha if ('alpha' in kwargs and kwargs['alpha']) else pygame.Surface.convert
+    return convfunc(pygame.image.load(os.path.join(*path)))
+
 # HUD score widget images.
-Coin = pygame.image.load("hud/MoneyBag.png").convert_alpha()
-Choc = pygame.image.load("hud/ChocolateBar.png").convert_alpha()
-Dynamite = pygame.image.load("hud/Dynamite.png").convert_alpha()
+Coin = pathimage('hud', 'MoneyBag.png', alpha=True)
+Choc = pathimage('hud', 'ChocolateBar.png', alpha=True)
+Dynamite = pathimage('hud', 'Dynamite.png', alpha=True)
 
 # HUD frame and background textures.
-FrameHoriz =  pygame.image.load("hud/WoodenRuleHoriz.png").convert_alpha()
-FrameVert =  pygame.image.load("hud/WoodenRule.png").convert()
-HudBackground = pygame.image.load("hud/RockWall.png").convert()
+FrameHoriz =  pathimage('hud', 'WoodenRuleHoriz.png', alpha=True)
+FrameVert =  pathimage('hud', 'WoodenRule.png')
+HudBackground = pathimage('hud', 'RockWall.png')
 
 # MessageBox background textures.
-MessageBackground = pygame.image.load("hud/MessageBackground.png").convert()
-MessageBackgroundLeft = pygame.image.load("hud/MessageBackgroundLeft.png").convert()
-MessageBackgroundRight = pygame.image.load("hud/MessageBackgroundRight.png").convert()
+MessageBackground = pathimage('hud', 'MessageBackground.png')
+MessageBackgroundLeft = pathimage('hud', 'MessageBackgroundLeft.png')
+MessageBackgroundRight = pathimage('hud', 'MessageBackgroundRight.png')
 
-HourGlass = pygame.image.load("hud/HourGlass.png").convert_alpha()
+HourGlass = pathimage('hud', 'HourGlass.png', alpha=True)
