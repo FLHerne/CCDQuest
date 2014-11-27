@@ -36,27 +36,32 @@ class PortalException(Exception):
             message = "Portal from %s to %s is unterminated." %(posstr, deststr)
         Exception.__init__(self, message)
 
-def __checkportals():
-    """Validate portal relationships"""
-    postodest = {}
-    for mapname, portaldefs in [(mapdef['dir'], mapdef['gemgos']['portals']) for mapdef in mapdefs.values()]:
+def __procportals():
+    """Reorganise portal definiteions and validate portal relationships"""
+    posindexed = {}
+    for mapname in mapdefs.keys():
+        portaldefs = mapdefs[mapname]['gemgos']['portals']
         for portaldef in portaldefs:
             pos  = (mapname, tuple(portaldef[0]))
             dest = (str(portaldef[1]), tuple(portaldef[2])) if len(portaldef) >= 3 else None
-            postodest[pos] = dest
+            posindexed[pos] = [dest, False, False]
+        mapdefs[mapname]['gemgos']['portals'] = []
 
-    # Check that all portals without incoming connections link somewhere themselves.
-    for nonreceiver in set(postodest.keys()).difference(postodest.values()):
-        if postodest[nonreceiver] is None:
-            raise PortalException(nonreceiver, None)
+    for pos, pdef in posindexed.items():
+        if pdef[0] is not None:
+            if pdef[0] not in posindexed:
+                raise PortalException(pos, pdef[0])
+            if pos[0] == pdef[0][0]:
+                posindexed[pdef[0]][1] = True
+            else:
+                posindexed[pdef[0]][2] = True
 
-    # Check that the destination of each portal is another portal.
-    desttopos = dict((b,a) for a, b in postodest.items())
-    for nondest in set(postodest.values()).difference(postodest.keys()):
-        if nondest is not None:
-            raise PortalException(desttopos[nondest], nondest)
+    for pos, pdef in posindexed.items():
+        if not any(pdef):
+            raise PortalException(pos, None)
+        mapdefs[pos[0]]['gemgos']['portals'].append((pos[1],) + tuple(pdef))
 
-__checkportals()
+__procportals()
 
 __worlds = {}
 
