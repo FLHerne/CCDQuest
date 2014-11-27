@@ -6,7 +6,7 @@ mapdefs = {}
 for name in os.listdir('map'):
     if not os.path.isdir(os.path.join('map', name)):
         continue
-    descfilename = os.path.join('map', name, 'mapdesc.json')
+    descfilename = os.path.join('map', name, name+'.json')
     try:
         imfile = open(descfilename)
     except:
