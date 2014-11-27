@@ -147,7 +147,8 @@ def loadgemgo(name):
     return pathimage('tiles', 'gemgos', name+'.png', alpha=True)
 
 # Player sprites.
-Player = rotatedquad(loadgemgo('Player'), UP)
+PlayerLeft = loadgemgo('Player')
+PlayerRight = pygame.transform.flip(PlayerLeft, True, False)
 
 # Bear sprites.
 BearLeft = loadgemgo('Bear')
