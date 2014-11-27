@@ -7,6 +7,15 @@ class Portal(BaseMGO.GEMGO):
         """Create new sign in position"""
         super(Portal, self).__init__(position, cellmap)
         self.destination = destination
+        if destination is None:
+            outindex = 0
+        elif destination[0] == cellmap.mapdef['dir']:
+            outindex = 1
+        else:
+            outindex = 2
+        inindex = localin + 2*remotein
+        print position, localin, remotein
+        self.image = images.Portal[outindex][inindex]
 
     @classmethod
     def place(cls, cellmap):
@@ -25,12 +34,6 @@ class Portal(BaseMGO.GEMGO):
 
     def sprite(self, player):
         if self.cellmap[self.position]['explored']:
-            if self.destination is None:
-                image = images.Portal[0][1]
-            elif self.destination[0] == self.cellmap.mapdef['dir']:
-                image = images.Portal[1][0]
-            else:
-                image = images.Portal[2][0]
-            return image, self._pixelpos((-6, -6)), -1
+            return self.image, self._pixelpos((-6, -6)), -1
         else:
             return None
