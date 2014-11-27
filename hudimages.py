@@ -1,3 +1,4 @@
+import os.path
 import pygame
 
 """Load and convert all HUD images"""
