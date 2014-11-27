@@ -17,7 +17,7 @@ class Map():
 
     def __init__(self, mapdict):
         """Load the map from image files"""
-
+        self.mapdef = mapdict
         self.startpos = tuple(mapdict['startpos'])
         try:
             self.gemgodefs = mapdict['gemgos']
@@ -32,16 +32,21 @@ class Map():
         itemfilepath = os.path.join('map', mapdict['dir'], mapdict['itemfile'])
         for filepath in terrainfilepath, itemfilepath:
             if not os.path.isfile(filepath):
-                raise Exception(filepath+" is not a file")
+                raise Exception("%s is not a file" %filepath)
 
         groundimage = pygame.image.load(terrainfilepath).convert()
         groundarray = pygame.surfarray.pixels2d(groundimage)
-        if not all(color in terrain.colorlist for color in numpy.unique(groundarray)):
-            raise Exception("Unexpected value in "+terrainfilepath)
+        wronggroundcolours = numpy.setdiff1d(groundarray, terrain.colorlist(groundimage))
+        if wronggroundcolours.size:
+            print wronggroundcolours
+            raise Exception("Unexpected value in %s" %terrainfilepath)
         collectablesimage = pygame.image.load(itemfilepath).convert()
         collectablesarray = pygame.surfarray.pixels2d(collectablesimage)
-        if not all(color in collectables.colorlist for color in numpy.unique(collectablesarray)):
-            raise Exception("Unexpected value in "+itemfilepath)
+        collectablescolorsflat = pygame.surfarray.map_array(collectablesimage, numpy.array(collectables.mapcolor.keys()))
+        wrongcollectablecolors = numpy.setdiff1d(collectablesarray, collectablescolorsflat)
+        if wrongcollectablecolors.size:
+            print wrongcollectablecolors
+            raise Exception("Unexpected value in %s" %itemfilepath)
         self.size = groundimage.get_rect().size
 
         nbrcount = numpy.zeros(self.size, dtype=numpy.uint)
@@ -49,7 +54,7 @@ class Map():
             nbrcount += (groundarray == numpy.roll(groundarray,  i[0], axis=i[1])) * i[2]
 
         self.cellarray = numpy.empty(self.size, dtype=terrain.celldtype)
-        for color_type in terrain.color_typeindex:
+        for color_type in terrain.color_typeindex(groundimage):
             istype = groundarray == color_type[0]
             self.cellarray[istype] = terrain.typeindextocell[color_type[1]]
             for level in ['groundimage', 'topimage']:
@@ -65,7 +70,7 @@ class Map():
                     self.cellarray[level][istype] = numpy.choose(randomgrid, indexmap)[istype]
 
         for color_collectable in collectables.mapcolor.iteritems():
-            color = terrain.mapcolor(color_collectable[0])
+            color = pygame.surfarray.map_array(collectablesimage, numpy.array([color_collectable[0]]))
             self.cellarray['collectableitem'][collectablesarray == color] = color_collectable[1]
 
         self.origcoins = (self.cellarray['collectableitem'] == collectables.COIN).sum()

@@ -28,10 +28,10 @@ class Player(object):
         def lworld():
             try:
                 geplayer = GEPlayer(self, worlds.getworld(name), position)
-            except Exception, e:
+            except Exception:
                 with self.statelock:
                     self.state = 'crashed'
-                raise e; return
+                raise; return
             with self.statelock:
                 self.geplayer = geplayer
                 self.state = 'normal'

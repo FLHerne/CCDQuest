@@ -13,35 +13,39 @@ class GEPlayer(BaseMGO.GEMGO):
     """The player, exploring the grid-based world"""
     FREEPLAYER = config.get('player', 'freeplayer', bool, False)
     XRAYVISION = config.get('player', 'xrayvision', bool, False)
+    POSMESSAGE = config.get('player', 'posmessage', bool, False)
 
     def __init__(self, player, world, position):
         """Initialise instance variables"""
         self.player = player
         self.score = player.score
         self.world = world
-        cellmap = world.cellmap
-        position = position if position else cellmap.startpos
-        super(GEPlayer, self).__init__(position, cellmap)
+        position = position if position else world.cellmap.startpos
+        super(GEPlayer, self).__init__(position, world.cellmap)
         self.color = MAGENTA
         self.visibility = 15
         self.direction = RIGHT
-        self.layingfuse = False
-        self.visibletiles = set()
-        self.pendingteleports = []
         self.surface = pygame.Surface(coords.mul(world.cellmap.size, TILESIZE))
         bgtile = images.Unknown.copy()
         bgtile.blit(images.NonVisible, (0, 0))
         for ix in xrange(0, world.cellmap.size[0]*TILESIZE, TILESIZE):
             for iy in xrange(0, world.cellmap.size[1]*TILESIZE, TILESIZE):
                 self.surface.blit(bgtile, (ix, iy))
-        world.insertgeplayer(self)
+        self.setup()
+
+    def setup(self):
+        self.layingfuse = False
+        self.visibletiles = set()
+        self.pendingteleports = []
+        self.world.insertgeplayer(self)
 
     @classmethod
     def place(cls, cellmap):
         return []
 
     def update(self, world):
-        pass
+        if GEPlayer.POSMESSAGE:
+            self._suggestmessage(str(self.position), 1)
 
     def sprite(self, player):
         if self.position in player.visibletiles:
@@ -64,7 +68,12 @@ class GEPlayer(BaseMGO.GEMGO):
             self.move(*arg)
         self.world.update(self)
         if self.pendingteleports:
-            self.player.setworld(*random.choice(self.pendingteleports))
+            teleport = random.choice(self.pendingteleports)
+            if teleport[0] == self.world.mapdef['name']:
+                self.position = tuple(teleport[1])
+                self.setup()
+            else:
+                self.player.setworld(*random.choice(self.pendingteleports))
 
     def move(self, x, y):
         """Move if possible, update collectable levels accordingly"""

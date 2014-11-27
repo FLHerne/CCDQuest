@@ -1,4 +1,5 @@
 import numpy
+import pygame.surfarray
 
 csvdtype = numpy.dtype([
     ('r',               numpy.uint8),
@@ -22,10 +23,10 @@ csvdtype = numpy.dtype([
 types = numpy.genfromtxt('map/terrain.csv', delimiter=',', dtype=csvdtype, autostrip=True)
 typeslist = types.tolist()
 
-def mapcolor(color):
-    return (color[0] << 16) + (color[1] << 8) + color[2]
-colorlist = [mapcolor(type[0:3]) for type in typeslist]
-color_typeindex = zip(colorlist, range(len(typeslist)))
+def colorlist(surface):
+    return pygame.surfarray.map_array(surface, types[['r','g','b']].view(numpy.uint8).reshape(-1, 3))
+def color_typeindex(surface):
+    return zip(colorlist(surface), range(len(typeslist)))
 
 typetoimageindex = {
     'groundimage': [],

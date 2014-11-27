@@ -11,12 +11,20 @@ from directions import *
 # Size of terrain sprites.
 TILESIZE = 12
 
+def chopimage(image, xslices, yslices=1):
+    """Chop an image into a line or grid of smaller images"""
+    outrect = pygame.Rect(0, 0, image.get_width()/xslices, image.get_height()/yslices)
+    chopped = []
+    for ix in range(xslices):
+        chopped.append([])
+        for iy in range(yslices):
+            choprect = outrect.move(ix*outrect.width, iy*outrect.height)
+            chopped[-1].append(image.subsurface(choprect))
+    # Return a 1d array if only chopping in X axis.
+    return [sub[0] for sub in chopped] if yslices == 1 else chopped
+
 def dirsprites(image):
-    sprites = []
-    for i in range(6):
-        sprites.append(pygame.Surface((loadedimage.get_height(),)*2))
-        sprites[-1].blit(loadedimage, (-i*loadedimage.get_height(), 0))
-        sprites[-1].set_colorkey(MAGENTA, pygame.RLEACCEL)
+    sprites = chopimage(image, 6)
     rot = pygame.transform.rotate
     #FIXME Horribly ugly!
     return [
@@ -38,29 +46,41 @@ def dirsprites(image):
             sprites[5]
         ]
 
-terraingroups = {}
-# Create list of sprites and/or of 16-sprite direction lists for each subdirectory of tiles/terrain.
-for name in os.listdir(os.path.join('tiles', 'terrain')):
-    if not os.path.isdir(os.path.join('tiles', 'terrain', name)):
-        continue
-    if not (name in terrain.types['groundimage'] or name in terrain.types['topimage']):
-        print "Warning: terrain sprites", name, "not used"
-    terraingroups[name] = []
-    for filename in os.listdir(os.path.join('tiles', 'terrain', name)):
-        filepath = os.path.join('tiles', 'terrain', name, filename)
+def pathimage(*path, **kwargs):
+    convfunc = pygame.Surface.convert_alpha if ('alpha' in kwargs and kwargs['alpha']) else pygame.Surface.convert
+    return convfunc(pygame.image.load(os.path.join(*path)))
+
+def getimages(dirpath, alpha=False, colorkey=None):
+    assert not (alpha and colorkey)
+    images = []
+    for filename in os.listdir(dirpath):
+        filepath = os.path.join(dirpath, filename)
         if not imghdr.what(filepath) == 'png':
             continue
-        loadedimage = pygame.image.load(filepath).convert()
-        numtiles = float(loadedimage.get_width())/loadedimage.get_height()
+        image = pathimage(filepath, alpha=alpha)
+        image.set_colorkey(colorkey)
+        images.append(image)
+    return images
+
+def subdirs(dirpath):
+    """Paths to subdirectories of 'dirpath'"""
+    return filter(os.path.isdir, [os.path.join(dirpath, name) for name in os.listdir(dirpath)])
+
+terraingroups = {}
+# Create list of sprites and/or of 16-sprite direction lists for each subdirectory of tiles/terrain.
+for terraindir in subdirs(os.path.join('tiles', 'terrain')):
+    name = os.path.basename(terraindir)
+    if not (name in terrain.types['groundimage'] or name in terrain.types['topimage']):
+        print "Warning: terrain sprites %s not used" %name
+    terraingroups[name] = []
+    images = getimages(terraindir, colorkey=MAGENTA)
+    for image in images:
+        numtiles = float(image.get_width())/image.get_height()
         if numtiles not in [1, 6]:
-            print "Warning: sprite", filepath, "has invalid size"
+            print "Warning: sprite has invalid size"
             continue
-        if numtiles == 1:
-            loadedimage.set_colorkey(MAGENTA, pygame.RLEACCEL)
-            terraingroups[name].append(loadedimage)
-        else:
-            terraingroups[name].append(dirsprites(loadedimage))
-            continue
+        sprite = dirsprites(image) if numtiles == 6 else image
+        terraingroups[name].append(sprite)
 
 # Create list of all sprites used, in format (layeroffset, surface).
 # Create list of sprite indices and/or of 16-index direction lists of indices...
@@ -92,42 +112,30 @@ for level in ['groundimage', 'topimage']:
 # Images with transparency use convert_alpha().
 
 # Overlays for unknown, non-visible, damaged or burning tiles.
-Unknown = pygame.image.load("tiles/overlays/Unknown.png").convert()
-NonVisible = pygame.image.load("tiles/overlays/NonVisible.png").convert_alpha()
+Unknown = pathimage('tiles', 'overlays', 'Unknown.png')
+NonVisible = pathimage('tiles', 'overlays', 'NonVisible.png', alpha=True)
 
 # These two can be randomly chosen
-Damaged = [
-    pygame.image.load("tiles/overlays/damaged/Damaged1.png").convert_alpha(),
-    pygame.image.load("tiles/overlays/damaged/Damaged2.png").convert_alpha(),
-    pygame.image.load("tiles/overlays/damaged/Damaged3.png").convert_alpha(),
-    pygame.image.load("tiles/overlays/damaged/Damaged4.png").convert_alpha()
-]
+Damaged = getimages(os.path.join('tiles', 'overlays', 'damaged'), alpha=True)
+Burning = getimages(os.path.join('tiles', 'overlays', 'fire'), alpha=True)
 
-Burning = [
-    pygame.image.load("tiles/overlays/fire/Fire1.png").convert_alpha(),
-    pygame.image.load("tiles/overlays/fire/Fire2.png").convert_alpha(),
-    pygame.image.load("tiles/overlays/fire/Fire3.png").convert_alpha(),
-    pygame.image.load("tiles/overlays/fire/Fire4.png").convert_alpha()
-]
+def rotatedquad(image, direction):
+    """Return {direction: sprite} for rotations at right-angles to 'direction'"""
+    rotcoord = lambda coord: (coord[1], -coord[0])
+    rdict = {}
+    for count in range(4):
+        rdict[direction] = pygame.transform.rotate(image, 90*count)
+        direction = rotcoord(direction)
+    return rdict
 
 # Overlays for fuses.
-FuseLeft = pygame.image.load("tiles/overlays/Fuse.png").convert_alpha()
-FuseRight = pygame.transform.rotate(FuseLeft, 180)
-FuseUp = pygame.transform.rotate(FuseLeft, -90)
-FuseDown = pygame.transform.rotate(FuseLeft, 90)
-
-Fuse = {
-    UP: FuseUp,
-    DOWN: FuseDown,
-    LEFT: FuseLeft,
-    RIGHT: FuseRight
-}
-
+FuseLeft = pathimage('tiles', 'overlays', 'Fuse.png', alpha=True)
+Fuse = rotatedquad(FuseLeft, LEFT)
 
 # Overlays for tiles with collectables.
-Coin = pygame.image.load("tiles/collectables/Coin.png").convert_alpha()
-Choc = pygame.image.load("tiles/collectables/Chocolate.png").convert_alpha()
-Dynamite = pygame.image.load("tiles/collectables/Dynamite.png").convert_alpha()
+Coin = pathimage('tiles', 'collectables', 'Coin.png', alpha=True)
+Choc = pathimage('tiles', 'collectables', 'Chocolate.png', alpha=True)
+Dynamite = pathimage('tiles', 'collectables', 'Dynamite.png', alpha=True)
 
 Collectables = {
     collectables.COIN: Coin,
@@ -135,40 +143,25 @@ Collectables = {
     collectables.DYNAMITE: Dynamite
 }
 
-# Player sprites.
-PlayerUp = pygame.image.load("tiles/gemgos/Player.png").convert_alpha()
-PlayerDown = pygame.transform.flip(PlayerUp, False, True)
-PlayerLeft = pygame.transform.rotate(PlayerUp, 90)
-PlayerRight = pygame.transform.flip(PlayerLeft, True, False)
+def loadgemgo(name):
+    return pathimage('tiles', 'gemgos', name+'.png', alpha=True)
 
-Player = {
-    UP: PlayerUp,
-    DOWN: PlayerDown,
-    LEFT: PlayerLeft,
-    RIGHT: PlayerRight
-}
+# Player sprites.
+Player = rotatedquad(loadgemgo('Player'), UP)
 
 # Bear sprites.
-BearLeft = pygame.image.load("tiles/gemgos/Bear.png").convert_alpha()
+BearLeft = loadgemgo('Bear')
 BearRight = pygame.transform.flip(BearLeft, True, False)
 
 # Dragon sprites.
-DragonRedUpLeft = pygame.image.load("tiles/gemgos/Dragon-Red.png").convert_alpha()
-DragonRedUpRight = pygame.transform.flip(DragonRedUpLeft, True, False)
-DragonRedDownLeft = pygame.transform.flip(DragonRedUpLeft, False, True)
-DragonRedDownRight = pygame.transform.flip(DragonRedUpLeft, True, True)
+DragonRed = rotatedquad(loadgemgo('Dragon-Red'), UPLEFT)
 
-DragonRed = {
-    UPLEFT: DragonRedUpLeft,
-    UPRIGHT: DragonRedUpRight,
-    DOWNLEFT: DragonRedDownLeft,
-    DOWNRIGHT: DragonRedDownRight
-}
+Sign = loadgemgo('Sign')
 
-Sign = pygame.image.load("tiles/gemgos/Sign.png").convert_alpha()
-Portal = pygame.image.load("tiles/gemgos/Portal.png").convert_alpha()
-PixieLeft = pygame.image.load("tiles/gemgos/Pixie.png").convert_alpha()
+PixieLeft = loadgemgo('Pixie')
 PixieRight = pygame.transform.flip(PixieLeft, True, False)
 
-DuckieLeft = pygame.image.load("tiles/gemgos/Duckie.png").convert_alpha()
+DuckieLeft = loadgemgo('Duckie')
 DuckieRight = pygame.transform.flip(DuckieLeft, True, False)
+
+Portal = chopimage(loadgemgo('Portal'), 3, 4)

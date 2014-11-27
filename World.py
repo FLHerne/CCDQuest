@@ -19,7 +19,8 @@ class World:
             self.gemgos += gemgo.place(self.cellmap)
 
     def insertgeplayer(self, geplayer):
-        self.gemgos.append(geplayer)
+        if geplayer not in self.gemgos:
+            self.gemgos.append(geplayer)
         geplayer.updatevisible()
         self.rendervisible(geplayer)
 
@@ -59,7 +60,7 @@ class World:
                     for iy in range(ry[0]-1, ry[1]+1):
                         regionsprites += self.cellmap.sprites((ix, iy))
                         if coords.mod((ix, iy), self.cellmap.size) not in geplayer.visibletiles:
-                            sprites.append((images.NonVisible, coords.mul((ix, iy), TILESIZE), 100))
+                            sprites.append((images.NonVisible, coords.sum(coords.mul((ix, iy), TILESIZE), (-4,-4)), 100))
                 regionsprites.sort(key=lambda x: x[2])
                 for sprite in regionsprites:
                     surface.blit(*sprite[:2])

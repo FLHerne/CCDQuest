@@ -1,5 +1,4 @@
 from colors import *
-import terrain
 
 NONE = 0
 COIN = 1
@@ -12,7 +11,6 @@ mapcolor = {
     BROWN:  CHOCOLATE,
     RED:    DYNAMITE
 }
-colorlist = [terrain.mapcolor(color) for color in mapcolor.keys()]
 
 value = {
     NONE: 0,
