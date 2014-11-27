@@ -14,7 +14,6 @@ class Portal(BaseMGO.GEMGO):
         else:
             outindex = 2
         inindex = localin + 2*remotein
-        print position, localin, remotein
         self.image = images.Portal[outindex][inindex]
 
     @classmethod
