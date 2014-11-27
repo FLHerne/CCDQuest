@@ -140,24 +140,25 @@ Collectables = {
     collectables.DYNAMITE: Dynamite
 }
 
+def loadgemgo(name):
+    return pygame.image.load(os.path.join('tiles', 'gemgos', name+'.png')).convert_alpha()
+
 # Player sprites.
-PlayerUp = pygame.image.load("tiles/gemgos/Player.png").convert_alpha()
-Player = rotatedquad(PlayerUp, UP)
+Player = rotatedquad(loadgemgo('Player'), UP)
 
 # Bear sprites.
-BearLeft = pygame.image.load("tiles/gemgos/Bear.png").convert_alpha()
+BearLeft = loadgemgo('Bear')
 BearRight = pygame.transform.flip(BearLeft, True, False)
 
 # Dragon sprites.
-DragonRedUpLeft = pygame.image.load("tiles/gemgos/Dragon-Red.png").convert_alpha()
-DragonRed = rotatedquad(DragonRedUpLeft, UPLEFT)
+DragonRed = rotatedquad(loadgemgo('Dragon-Red'), UPLEFT)
 
-Sign = pygame.image.load("tiles/gemgos/Sign.png").convert_alpha()
+Sign = loadgemgo('Sign')
 
-PixieLeft = pygame.image.load("tiles/gemgos/Pixie.png").convert_alpha()
+PixieLeft = loadgemgo('Pixie')
 PixieRight = pygame.transform.flip(PixieLeft, True, False)
 
-DuckieLeft = pygame.image.load("tiles/gemgos/Duckie.png").convert_alpha()
+DuckieLeft = loadgemgo('Duckie')
 DuckieRight = pygame.transform.flip(DuckieLeft, True, False)
 
-Portal = chopimage(pygame.image.load("tiles/gemgos/Portal.png").convert_alpha(), 3, 4)
+Portal = chopimage(loadgemgo('Portal'), 3, 4)
