@@ -91,7 +91,7 @@ class GEPlayer(BaseMGO.GEMGO):
         self.cellmap[self.position]['collectableitem'] = 0
         if not GEPlayer.FREEPLAYER:
             self.score[collectables.CHOCOLATE] -= self.cellmap[self.position]['difficulty']
-        if self.layingfuse and self.cellmap[self.position]['name'] not in ['water', 'deep water']:
+        if self.layingfuse and self.cellmap[self.position]['sogginess'] < 127:
             self.cellmap.placefuse(self.position)
         return True
 
