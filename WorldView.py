@@ -24,17 +24,6 @@ class WorldView:
                 """Display a splash message across the viewing area"""
                 pygame.draw.rect(self.window, BLACK, region)
                 textbox = TextBox(fontsize, WHITE, False)
-                if False and icon == HourGlass:
-                    progress = (0.5*progress)+0.25
-                    iconleft = (region.size[0]-icon.get_size()[0])/2
-                    icontop = (region.size[1]-icon.get_size()[1])/2
-                    iconwidth = icon.get_rect().width
-                    iconhalfheight = icon.get_rect().height/2
-                    upperrect = (iconleft, icontop+(iconhalfheight*progress)), (iconwidth, iconhalfheight*(1-progress))
-                    lowerrect = (iconleft, icontop+(iconhalfheight*(2-progress))), (iconwidth, iconhalfheight*progress)
-                    pygame.draw.rect(self.window, DARKYELLOW, upperrect)
-                    pygame.draw.rect(self.window, DARKYELLOW, lowerrect)
-                    pygame.draw.line(self.window, DARKYELLOW, (iconleft+(iconwidth/2), icontop+iconhalfheight), (iconleft+(iconwidth/2)+random.randint(-2, 2), icontop+(2*iconhalfheight)-1))
                 if icon is not None:
                     self.window.blit(icon, [(region.size[axis]-icon.get_size()[axis])/2 for axis in [0,1]])
                     region.move_ip(0, icon.get_height()/2 + fontsize)
@@ -51,7 +40,7 @@ class WorldView:
                 lowerrect = ((loadingicon.get_rect().left, loadingicon.get_rect().bottom-scaledprogress), loadingicon.get_rect().midright)
                 pygame.draw.rect(loadingicon, DARKYELLOW, upperrect)
                 pygame.draw.rect(loadingicon, DARKYELLOW, lowerrect)
-                pygame.draw.line(loadingicon, YELLOW, loadingicon.get_rect().center, (loadingicon.get_rect().centerx+random.randint(-3, 3), loadingicon.get_rect().bottom))
+                pygame.draw.line(loadingicon, DARKYELLOW, loadingicon.get_rect().center, (loadingicon.get_rect().centerx+random.randint(-3, 3), loadingicon.get_rect().bottom))
                 loadingicon.blit(HourGlass, (0, 0))
                 splash("Loading "+mapdef['name'], 25, loadingicon)
                 if self.progress < 1:
