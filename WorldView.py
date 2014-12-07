@@ -37,11 +37,11 @@ class WorldView:
                 loadingicon.fill(BLACK)
                 scaledprogress = self.progress*loadingicon.get_height()
                 loadingiconrect = loadingicon.get_rect()
-                upperrect = ((loadingiconrect.left, loadingiconrect.top+scaledprogress), (loadingiconrect.right, loadingiconrect.centery-scaledprogress))
+                upperrect = ((loadingiconrect.left, loadingiconrect.top+scaledprogress), (loadingiconrect.width, loadingiconrect.centery-scaledprogress))
                 lowerrect = ((loadingiconrect.left, loadingiconrect.bottom-scaledprogress), loadingiconrect.midright)
                 pygame.draw.rect(loadingicon, DARKYELLOW, upperrect)
                 pygame.draw.rect(loadingicon, DARKYELLOW, lowerrect)
-                pygame.draw.line(loadingicon, DARKYELLOW, loadingiconrect.center, (loadingiconrect.centerx+random.randint(-3, 3), loadingiconrect.bottom))
+                pygame.draw.line(loadingicon, DARKYELLOW, loadingiconrect.center, (loadingiconrect.centerx+random.randint(-3, 3), loadingiconrect.height))
                 loadingicon.blit(HourGlass, (0, 0))
                 splash("Loading "+mapdef['name'], 25, loadingicon)
                 if self.progress < 1:
