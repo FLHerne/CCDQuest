@@ -35,7 +35,7 @@ class WorldView:
             elif state == 'loading':
                 loadingicon = pygame.Surface(HourGlass.get_size())
                 loadingicon.fill(BLACK)
-                scaledprogress = self.progress*loadingicon.get_height()
+                scaledprogress = self.progress*loadingicon.get_height()*0.5
                 loadingiconrect = loadingicon.get_rect()
                 upperrect = ((loadingiconrect.left, loadingiconrect.top+scaledprogress), (loadingiconrect.width, loadingiconrect.centery-scaledprogress))
                 lowerrect = ((loadingiconrect.left, loadingiconrect.bottom-scaledprogress), loadingiconrect.midright)
@@ -44,10 +44,10 @@ class WorldView:
                 pygame.draw.line(loadingicon, DARKYELLOW, loadingiconrect.center, (loadingiconrect.centerx+random.randint(-3, 3), loadingiconrect.height))
                 loadingicon.blit(HourGlass, (0, 0))
                 splash("Loading "+mapdef['name'], 25, loadingicon)
-                if self.progress < 1:
-                    self.progress += 0.02
+                if self.progress < 1.0:
+                    self.progress += 0.05
                 else:
-                    self.progress = 0
+                    self.progress = 0.0
             elif state == 'crashed':
                 splash("Game crashed!")
             return self.scrollpos
