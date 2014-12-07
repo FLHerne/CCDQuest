@@ -20,11 +20,11 @@ class WorldView:
             mapdef = self.player.mapdef
             geplayer = self.player.geplayer
         if state != 'normal':
-            def splash(message, fontsize=40, icon=None, progress=1.0):
+            def splash(message, fontsize=40, icon=None):
                 """Display a splash message across the viewing area"""
                 pygame.draw.rect(self.window, BLACK, region)
                 textbox = TextBox(fontsize, WHITE, False)
-                if icon == HourGlass:
+                if False and icon == HourGlass:
                     progress = (0.5*progress)+0.25
                     iconleft = (region.size[0]-icon.get_size()[0])/2
                     icontop = (region.size[1]-icon.get_size()[1])/2
@@ -36,7 +36,6 @@ class WorldView:
                     pygame.draw.rect(self.window, DARKYELLOW, lowerrect)
                     pygame.draw.line(self.window, DARKYELLOW, (iconleft+(iconwidth/2), icontop+iconhalfheight), (iconleft+(iconwidth/2)+random.randint(-2, 2), icontop+(2*iconhalfheight)-1))
                 if icon is not None:
-                    pass
                     self.window.blit(icon, [(region.size[axis]-icon.get_size()[axis])/2 for axis in [0,1]])
                     region.move_ip(0, icon.get_height()/2 + fontsize)
                 textbox.draw(message, region, surface=self.window)
@@ -45,7 +44,16 @@ class WorldView:
             elif state == 'won':
                 splash("You won!")
             elif state == 'loading':
-                splash("Loading "+mapdef['name'], 25, HourGlass, self.progress)
+                loadingicon = pygame.Surface((HourGlass.get_width(), HourGlass.get_height()))
+                loadingicon.fill(BLACK)
+                scaledprogress = self.progress*loadingicon.get_rect().height
+                upperrect = ((loadingicon.get_rect().left, loadingicon.get_rect().top+scaledprogress), (loadingicon.get_rect().right, loadingicon.get_rect().centery-scaledprogress))
+                lowerrect = ((loadingicon.get_rect().left, loadingicon.get_rect().bottom-scaledprogress), loadingicon.get_rect().midright)
+                pygame.draw.rect(loadingicon, DARKYELLOW, upperrect)
+                pygame.draw.rect(loadingicon, DARKYELLOW, lowerrect)
+                pygame.draw.line(loadingicon, YELLOW, loadingicon.get_rect().center, (loadingicon.get_rect().centerx+random.randint(-3, 3), loadingicon.get_rect().bottom))
+                loadingicon.blit(HourGlass, (0, 0))
+                splash("Loading "+mapdef['name'], 25, loadingicon)
                 if self.progress < 1:
                     self.progress += 0.02
                 else:
