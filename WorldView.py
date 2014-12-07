@@ -33,9 +33,9 @@ class WorldView:
             elif state == 'won':
                 splash("You won!")
             elif state == 'loading':
-                loadingicon = pygame.Surface((HourGlass.get_width(), HourGlass.get_height()))
+                loadingicon = pygame.Surface(HourGlass.get_size())
                 loadingicon.fill(BLACK)
-                scaledprogress = self.progress*loadingicon.get_rect().height
+                scaledprogress = self.progress*loadingicon.get_height()
                 upperrect = ((loadingicon.get_rect().left, loadingicon.get_rect().top+scaledprogress), (loadingicon.get_rect().right, loadingicon.get_rect().centery-scaledprogress))
                 lowerrect = ((loadingicon.get_rect().left, loadingicon.get_rect().bottom-scaledprogress), loadingicon.get_rect().midright)
                 pygame.draw.rect(loadingicon, DARKYELLOW, upperrect)
