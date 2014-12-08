@@ -1,0 +1,11 @@
+{
+    "name":        "caves",
+    "terrainfile": "terrain.png",
+    "itemfile":    "collectables.png",
+    "startpos":    [77, 225],
+    "gemgos": {
+        "portals": [
+            [[77, 225], "menu", [34, 39]]
+        ]
+    }
+}
