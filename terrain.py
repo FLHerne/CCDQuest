@@ -35,7 +35,6 @@ typetoimageindex = {
 
 celldtype = numpy.dtype([
     ('damaged',         numpy.bool_),
-    ('burning',         numpy.bool_),
     ('explored',        numpy.bool_),
     ('collectableitem', numpy.int8),
     ('name',           (numpy.str_, 19)),
@@ -54,4 +53,4 @@ celldtype = numpy.dtype([
     ('random',          numpy.uint8),
     ])
 
-typeindextocell = numpy.array([(0,0,0,0)+i[1][3:14]+(i[0],0,0) for i in enumerate(typeslist)], dtype=celldtype)
+typeindextocell = numpy.array([(0,0,0)+i[1][3:14]+(i[0],0,0) for i in enumerate(typeslist)], dtype=celldtype)
