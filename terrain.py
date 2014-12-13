@@ -1,24 +1,32 @@
 import numpy
 import pygame.surfarray
 
-csvdtype = numpy.dtype([
-    ('r',               numpy.uint8),
-    ('g',               numpy.uint8),
-    ('b',               numpy.uint8),
+celltypefields = [
     ('name',           (numpy.str_, 19)),
     ('top',             numpy.bool_),
     ('destructable',    numpy.bool_),
-    ('temperature',     numpy.int8),
+    ('temperature',     numpy.int8 ),
     ('fireignitechance',numpy.float_),
     ('fireoutchance',   numpy.float_),
     ('hasroof',         numpy.bool_),
-    ('difficulty',      numpy.int8),
+    ('difficulty',      numpy.int8 ),
     ('transparent',     numpy.bool_),
     ('solid',           numpy.bool_),
-    ('sogginess',       numpy.uint8),
+    ('sogginess',       numpy.uint8)
+]
+
+csvcolorfields = [
+    ('r',               numpy.uint8),
+    ('g',               numpy.uint8),
+    ('b',               numpy.uint8)
+]
+
+csvimagefields = [
     ('groundimage',    (numpy.str_, 20)),
     ('topimage',       (numpy.str_, 20))
-    ])
+]
+
+csvdtype = numpy.dtype(csvcolorfields + celltypefields + csvimagefields)
 
 types = numpy.genfromtxt('map/terrain.csv', delimiter=',', dtype=csvdtype, autostrip=True)
 typeslist = types.tolist()
@@ -33,24 +41,21 @@ typetoimageindex = {
     'topimage'   : []
 }
 
-celldtype = numpy.dtype([
+cellstatefields = [
     ('damaged',         numpy.bool_),
     ('explored',        numpy.bool_),
     ('collectableitem', numpy.int8),
-    ('name',           (numpy.str_, 19)),
-    ('top',             numpy.bool_),
-    ('destructable',    numpy.bool_),
-    ('temperature',     numpy.int8),
-    ('fireignitechance',numpy.float_),
-    ('fireoutchance',   numpy.float_),
-    ('hasroof',         numpy.bool_),
-    ('difficulty',      numpy.int8),
-    ('transparent',     numpy.bool_),
-    ('solid',           numpy.bool_),
-    ('sogginess',       numpy.uint8),
-    ('groundimage',     numpy.uint8),
-    ('topimage',        numpy.uint8),
-    ('random',          numpy.uint8),
-    ])
+    ('random',          numpy.uint8)
+]
 
-typeindextocell = numpy.array([(0,0,0)+i[1][3:14]+(i[0],0,0) for i in enumerate(typeslist)], dtype=celldtype)
+cellimagefields = [
+    ('groundimage',     numpy.uint8),
+    ('topimage',        numpy.uint8)
+]
+
+celldtype = numpy.dtype(cellstatefields + celltypefields + cellimagefields)
+
+def copyfill(i):
+    colorlen = len(csvcolorfields)
+    return (0,)*len(cellstatefields) + i[1][colorlen:colorlen+len(celltypefields)] + (i[0],0)
+typeindextocell = numpy.array([copyfill(i) for i in enumerate(typeslist)], dtype=celldtype)
