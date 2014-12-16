@@ -1,6 +1,8 @@
 import numpy
 import pygame.surfarray
 
+import images
+
 celltypefields = [
     ('name',           (numpy.str_, 19)),
     ('top',             numpy.bool_),
@@ -36,26 +38,29 @@ def colorlist(surface):
 def color_typeindex(surface):
     return zip(colorlist(surface), range(len(typeslist)))
 
-typetoimageindex = {
-    'groundimage': [],
-    'topimage'   : []
-}
+typeimages = []
+for type in types:
+    typeimages.append((
+        images.terrain[type['groundimage']],
+        images.terrain[type['topimage']]
+        ))
 
 cellstatefields = [
     ('damaged',         numpy.bool_),
     ('explored',        numpy.bool_),
-    ('collectableitem', numpy.int8),
-    ('random',          numpy.uint8)
+    ('collectableitem', numpy.int8)
 ]
 
 cellimagefields = [
-    ('groundimage',     numpy.uint8),
-    ('topimage',        numpy.uint8)
+    ('layeroffset',     numpy.int_),
+    ('groundimage',     numpy.object),
+    ('topimage',        numpy.object)
 ]
 
 celldtype = numpy.dtype(cellstatefields + celltypefields + cellimagefields)
 
 def copyfill(i):
     colorlen = len(csvcolorfields)
-    return (0,)*len(cellstatefields) + i[1][colorlen:colorlen+len(celltypefields)] + (i[0],0)
+    layeroffset = (len(types)/2-i[0],)
+    return (0,)*len(cellstatefields) + i[1][colorlen:colorlen+len(celltypefields)] + layeroffset + typeimages[i[0]]
 typeindextocell = numpy.array([copyfill(i) for i in enumerate(typeslist)], dtype=celldtype)
