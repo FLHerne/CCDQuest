@@ -114,7 +114,7 @@ class Map():
                     addsprite(images.Fuse[direction], -2)
         if cell['collectableitem'] != 0:
             addsprite(images.Collectables[cell['collectableitem']], -1)
-        if cell['burning']:
+        if coord in self.burningtiles:
             addsprite(pickrandomsprite(images.Burning), -1)
         return sprites
 
@@ -167,7 +167,6 @@ class Map():
         if cell['collectableitem'] == collectables.DYNAMITE:
             self.detonate(coord)
         if forceignite or random.random() < cell['fireignitechance'] * multiplier:
-            cell['burning'] = True
             if cell['fireignitechance'] > 0:
                 self.destroy(coord)
             self.burningtiles.add(coord)
@@ -195,5 +194,4 @@ class Map():
             for nbrpos in coords.neighbours(tile):
                 self.ignite(nbrpos)
             if random.random() < cell['fireoutchance']:
-                cell['burning'] = False
                 self.burningtiles.remove(tile)
