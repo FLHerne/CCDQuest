@@ -26,6 +26,7 @@ class Map():
         self.origcoins = 0
         self.burningtiles = set()
         self.fusetiles = set()
+        self.damagedtiles = {}
         self.crcount = 0
 
         terrainfilepath = os.path.join('map', mapdict['dir'], mapdict['terrainfile'])
@@ -97,8 +98,6 @@ class Map():
         if not cell['explored']:
             addsprite(images.Unknown, -20)
             return sprites
-        def pickrandomsprite(spritelist):
-            return spritelist[cell['random']%len(spritelist)]
 
         offsetsprite = cell['groundimage']
         if offsetsprite:
@@ -107,8 +106,8 @@ class Map():
         if offsetsprite:
             addsprite(offsetsprite, cell['layeroffset']+10)
 
-        if cell['damaged']:
-            addsprite(pickrandomsprite(images.Damaged), -3)
+        if coord in self.damagedtiles:
+            addsprite(self.damagedtiles[coords.mod(coord, self.size)], -3)
         if coord in self.fusetiles:
             for direction in directions.CARDINALS:
                 nbrcoord = coords.modsum(coord, direction, self.size)
@@ -117,7 +116,7 @@ class Map():
         if cell['collectableitem'] != 0:
             addsprite(images.Collectables[cell['collectableitem']], -1)
         if coord in self.burningtiles:
-            addsprite(pickrandomsprite(images.Burning), -1)
+            addsprite(random.choice(images.Burning), -1)
         return sprites
 
     def placefuse(self, coord):
@@ -147,7 +146,7 @@ class Map():
         cell = self[coord]
         if not cell['destructable']:
             return False
-        cell['damaged'] = True
+        self.damagedtiles[coords.mod(coord, self.size)] = random.choice(images.Damaged)
         cell['hasroof'] = False
         cell['name'] = "shattered debris"
         cell['collectableitem'] = 0

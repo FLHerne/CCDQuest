@@ -46,7 +46,6 @@ for type in types:
         ))
 
 cellstatefields = [
-    ('damaged',         numpy.bool_),
     ('explored',        numpy.bool_),
     ('collectableitem', numpy.int8)
 ]
