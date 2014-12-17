@@ -50,7 +50,8 @@ class GEPlayer(BaseMGO.GEMGO):
 
     def sprite(self, player):
         if self.position in player.visibletiles:
-            return (images.PlayerRight if self.direction == RIGHT else images.PlayerLeft), self._pixelpos(), 0
+            image = images.PlayerRight if self.direction == RIGHT else images.PlayerLeft
+            return self._pokedsprite(image, layer=0)
 
     def action(self, arg):
         if arg == 'followpath':

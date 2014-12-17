@@ -58,11 +58,8 @@ class Duckie(BaseMGO.GEMGO):
 
     def sprite(self, player):
         if self.position in player.visibletiles:
-            if random.getrandbits(1):
-                return images.DuckieLeft, self._pixelpos(), -1
-            else:
-                return images.DuckieRight, self._pixelpos(), -1
-
+            image = random.choice([images.DuckieLeft, images.DuckieRight])
+            return self._pokedsprite(image)
         else:
             return None
 

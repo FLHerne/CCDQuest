@@ -55,10 +55,8 @@ class Pixie(BaseMGO.GEMGO):
 
     def sprite(self, player):
         if self.position in player.visibletiles:
-            if random.getrandbits(1):
-                return images.PixieLeft, self._pixelpos(), -1
-            else:
-                return images.PixieRight, self._pixelpos(), -1
+            image = random.choice([images.PixieLeft, images.PixieRight])
+            return self._pokedsprite(image)
 
         else:
             return None

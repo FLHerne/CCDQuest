@@ -31,6 +31,6 @@ class Sign(BaseMGO.GEMGO):
 
     def sprite(self, player):
         if self.cellmap[self.position]['explored']:
-            return images.Sign, self._pixelpos(), -1
+            return self._pokedsprite(images.Sign)
         else:
             return None

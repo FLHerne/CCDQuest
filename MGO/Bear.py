@@ -114,6 +114,7 @@ class Bear(BaseMGO.GEMGO):
 
     def sprite(self, player):
         if self.position in player.visibletiles:
-            return (images.BearRight if self.direction > 0 else images.BearLeft), self._pixelpos((2,2)), 1
+            image = images.BearRight if self.direction > 0 else images.BearLeft
+            return self._pokedsprite(image, layer=1)
         else:
             return None
