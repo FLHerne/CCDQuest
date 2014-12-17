@@ -78,8 +78,9 @@ class Dragon(BaseMGO.GEMGO):
                 isvisible = True
                 break
         if isvisible:
-            return (images.DragonRed[self.direction],
-                    self._pixelpos(coords.mul(tileoffset, images.TILESIZE)),
-                    20)
+            return self._pokedsprite(images.DragonRed[self.direction],
+                                     layer=20,
+                                     offset=coords.mul(tileoffset, images.TILESIZE))
+
         else:
             return None

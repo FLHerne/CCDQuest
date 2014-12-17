@@ -2,7 +2,6 @@ import imghdr
 import os
 import pygame
 import collectables
-import terrain
 from colors import MAGENTA
 from directions import *
 
@@ -66,48 +65,18 @@ def subdirs(dirpath):
     """Paths to subdirectories of 'dirpath'"""
     return filter(os.path.isdir, [os.path.join(dirpath, name) for name in os.listdir(dirpath)])
 
-terraingroups = {}
-# Create list of sprites and/or of 16-sprite direction lists for each subdirectory of tiles/terrain.
+terrain = {'': []}
+# Create list of images or neighbour-dependent-image groups for each subdirectory of tiles/terrain.
 for terraindir in subdirs(os.path.join('tiles', 'terrain')):
-    name = os.path.basename(terraindir)
-    if not (name in terrain.types['groundimage'] or name in terrain.types['topimage']):
-        print "Warning: terrain sprites %s not used" %name
-    terraingroups[name] = []
+    dirname = os.path.basename(terraindir)
+    terrain[dirname] = []
     images = getimages(terraindir, colorkey=MAGENTA)
     for image in images:
-        numtiles = float(image.get_width())/image.get_height()
-        if numtiles not in [1, 6]:
-            print "Warning: sprite has invalid size"
-            continue
-        sprite = dirsprites(image) if numtiles == 6 else image
-        terraingroups[name].append(sprite)
-
-# Create list of all sprites used, in format (layeroffset, surface).
-# Create list of sprite indices and/or of 16-index direction lists of indices...
-# ...for each tile type in each of terrain.indexmaps['groundimage'] and ...['topimage'].
-numtypes = len(terrain.types)
-indexedterrain = [(0, None)]
-for level in ['groundimage', 'topimage']:
-    for i in enumerate(terrain.types[level]):
-        levelmap = terrain.typetoimageindex[level]
-        levelmap.append([])
-        if not i[1]:
-            levelmap[i[0]].append(0)
-            continue
-        group = terraingroups[i[1]]
-        offset = numtypes/2 - i[0]
-        directionlists = []
-        directionlists = filter(lambda a: isinstance(a, list), group)
-        othersprites = filter(lambda a: not isinstance(a, list), group)
-        for sprite in othersprites:
-            index = len(indexedterrain)
-            indexedterrain.append((offset, sprite))
-            levelmap[i[0]].append(index)
-        for dirlist in directionlists:
-            index = len(indexedterrain)
-            indexedterrain += [(offset, sprite) for sprite in dirlist]
-            levelmap[i[0]].append(range(index, index+16))
-
+        ratio = image.get_width() / image.get_height()
+        if ratio == 1:
+            terrain[dirname].append(image)
+        elif ratio == 6:
+            terrain[dirname].append(dirsprites(image))
 
 # Images with transparency use convert_alpha().
 

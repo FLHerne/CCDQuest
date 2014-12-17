@@ -33,6 +33,6 @@ class Portal(BaseMGO.GEMGO):
 
     def sprite(self, player):
         if self.cellmap[self.position]['explored']:
-            return self.image, self._pixelpos((-6, -6)), -1
+            return self._pokedsprite(self.image)
         else:
             return None

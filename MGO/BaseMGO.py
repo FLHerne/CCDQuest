@@ -34,6 +34,9 @@ class GEMGO(BaseMGO):
     def sprite(self, player):
         return None
 
-    def _pixelpos(self, offset=(0,0)):
-        return (self.position[0]*images.TILESIZE + offset[0],
-                self.position[1]*images.TILESIZE + offset[1])
+    def _pokedsprite(self, image, layer=-1, offset=(0,0)):
+        """Return a sprite, calculating coord from gemgo position and image size"""
+        return (image,
+                (self.position[0]*images.TILESIZE + (images.TILESIZE-image.get_width())/2 + offset[0],
+                 self.position[1]*images.TILESIZE + (images.TILESIZE-image.get_height())/2 + offset[1]),
+                layer)

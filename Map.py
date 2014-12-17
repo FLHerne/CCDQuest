@@ -26,6 +26,7 @@ class Map():
         self.origcoins = 0
         self.burningtiles = set()
         self.fusetiles = set()
+        self.damagedtiles = {}
         self.crcount = 0
 
         terrainfilepath = os.path.join('map', mapdict['dir'], mapdict['terrainfile'])
@@ -53,28 +54,30 @@ class Map():
         for i in [(1,1,1), (1,0,2), (-1,1,4), (-1,0,8)]:
             nbrcount += (groundarray == numpy.roll(groundarray,  i[0], axis=i[1])) * i[2]
 
+        randomgrid = numpy.random.randint(256, size=self.size)
         self.cellarray = numpy.empty(self.size, dtype=terrain.celldtype)
         for color_type in terrain.color_typeindex(groundimage):
             istype = groundarray == color_type[0]
             self.cellarray[istype] = terrain.typeindextocell[color_type[1]]
             for level in ['groundimage', 'topimage']:
-                indexmap = terrain.typetoimageindex[level][color_type[1]]
-                dirsetlist = filter(lambda a: isinstance(a, list), indexmap)
-                if dirsetlist:
+                images = terrain.typeindextocell[color_type[1]][level]
+                if not images:
+                    continue
+                nbrimagelists = filter(lambda a: isinstance(a, list), images)
+                if nbrimagelists:
                     # Non-directional sprites are ignored if one or more directional sets provided.
-                    firstindexlist = [m[0] for m in dirsetlist]
-                    randomgrid = numpy.random.randint(len(dirsetlist), size=self.size)
-                    self.cellarray[level][istype] = (numpy.choose(randomgrid, firstindexlist) + nbrcount)[istype]
+                    zimages = zip(*nbrimagelists)
+                    for i in range(16):
+                        ind = (nbrcount == i) & istype
+                        self.cellarray[level][ind] = numpy.choose(randomgrid[ind], zimages[i], mode='wrap')
                 else:
-                    randomgrid = numpy.random.randint(len(indexmap), size=self.size)
-                    self.cellarray[level][istype] = numpy.choose(randomgrid, indexmap)[istype]
+                    self.cellarray[level][istype] = numpy.choose(randomgrid[istype], images, mode='wrap')
 
         for color_collectable in collectables.mapcolor.iteritems():
             color = pygame.surfarray.map_array(collectablesimage, numpy.array([color_collectable[0]]))
             self.cellarray['collectableitem'][collectablesarray == color] = color_collectable[1]
 
         self.origcoins = (self.cellarray['collectableitem'] == collectables.COIN).sum()
-        self.cellarray['random'] = numpy.random.randint(256, size=self.size)
 
     def __getitem__(self, coord):
         """Get map item with [], wrapping"""
@@ -95,18 +98,16 @@ class Map():
         if not cell['explored']:
             addsprite(images.Unknown, -20)
             return sprites
-        def pickrandomsprite(spritelist):
-            return spritelist[cell['random']%len(spritelist)]
 
-        offsetsprite = images.indexedterrain[cell['groundimage']]
-        if offsetsprite[1]:
-            addsprite(offsetsprite[1], offsetsprite[0]-10)
-        offsetsprite = images.indexedterrain[cell['topimage']]
-        if offsetsprite[1]:
-            addsprite(offsetsprite[1], offsetsprite[0]+10)
+        offsetsprite = cell['groundimage']
+        if offsetsprite:
+            addsprite(offsetsprite, cell['layeroffset']-10)
+        offsetsprite = cell['topimage']
+        if offsetsprite:
+            addsprite(offsetsprite, cell['layeroffset']+10)
 
-        if cell['damaged']:
-            addsprite(pickrandomsprite(images.Damaged), -3)
+        if coord in self.damagedtiles:
+            addsprite(self.damagedtiles[coords.mod(coord, self.size)], -3)
         if coord in self.fusetiles:
             for direction in directions.CARDINALS:
                 nbrcoord = coords.modsum(coord, direction, self.size)
@@ -115,7 +116,7 @@ class Map():
         if cell['collectableitem'] != 0:
             addsprite(images.Collectables[cell['collectableitem']], -1)
         if coord in self.burningtiles:
-            addsprite(pickrandomsprite(images.Burning), -1)
+            addsprite(random.choice(images.Burning), -1)
         return sprites
 
     def placefuse(self, coord):
@@ -145,7 +146,7 @@ class Map():
         cell = self[coord]
         if not cell['destructable']:
             return False
-        cell['damaged'] = True
+        self.damagedtiles[coords.mod(coord, self.size)] = random.choice(images.Damaged)
         cell['hasroof'] = False
         cell['name'] = "shattered debris"
         cell['collectableitem'] = 0
