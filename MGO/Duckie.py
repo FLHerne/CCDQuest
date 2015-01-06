@@ -20,7 +20,7 @@ class Duckie(BaseMGO.GEMGO):
         for i in xrange(int(cellmap.size[0]*cellmap.size[1]*self.PER_TILE)):
             attempt = (random.randint(0, cellmap.size[0]-1),
                        random.randint(0, cellmap.size[1]-1))
-            if False or cellmap[attempt]['sogginess'] > 100 and not cellmap[attempt]['solid']:
+            if False or cellmap[attempt]['sogginess'] >= 50 and not cellmap[attempt]['solid']:
                 created.append(self(attempt, cellmap))
         return created
 
@@ -51,7 +51,7 @@ class Duckie(BaseMGO.GEMGO):
         self.direction = poschange[0] if abs(poschange[0]) else self.direction
         newpos = coords.modsum(self.position, poschange, self.cellmap.size)
 
-        if cellmap[newpos]['sogginess'] <= 100 or cellmap[newpos]['solid']:
+        if cellmap[newpos]['sogginess'] < 50 or cellmap[newpos]['solid']:
             return False
         self.position = newpos
         return True
