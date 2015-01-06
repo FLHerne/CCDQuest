@@ -11,7 +11,7 @@ import os.path
 
 class Map():
     """Contains array of Cells and properties representing the map as a whole"""
-    CELLDAMAGEDCOST = 5
+    CELLDAMAGEDROUGHNESS = 40
     CELLBURNINGCOST = 200
     DIRTYCACHE = False
 
@@ -155,7 +155,7 @@ class Map():
         cell['fireoutchance'] = 1
         cell['transparent'] = True
         cell['solid'] = False
-        cell['difficulty'] += Map.CELLDAMAGEDCOST
+        cell['roughness'] = max(100, cell['roughness'] + Map.CELLDAMAGEDROUGHNESS)
         cell['topimage'] = 0
         return True
 

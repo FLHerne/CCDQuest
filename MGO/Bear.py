@@ -54,7 +54,7 @@ class Bear(BaseMGO.GEMGO):
                     nbrpos[0] >= 2*self.pfmapsize or nbrpos[1] >= 2*self.pfmapsize or
                     nbrpos == (self.pfmapsize, self.pfmapsize)):
                     continue
-                newdist = curdist+self.cellmap[mapcoord(nbrpos)]['difficulty']
+                newdist = curdist+self.terraincost(self.cellmap[mapcoord(nbrpos)])
                 if ((dijkstramap[nbrpos[0]][nbrpos[1]][0] <= newdist and dijkstramap[nbrpos[0]][nbrpos[1]][0] != 0) or
                     self.cellmap[mapcoord(nbrpos)]['solid']):
                     continue
@@ -111,6 +111,15 @@ class Bear(BaseMGO.GEMGO):
             if self.position == player.position:
                 player.scattercoins(4, random.randint(4,8))
                 self._suggestmessage("The bear rips a hole in your bag!", 6)
+
+    def terraincost(self, cell):
+        """Determine cost of a cell for pathfinding"""
+        cost = 1.5 if not cell['transparent'] else 1.0
+        cost += float(abs(cell['temperature'] - 20)) / 16
+        cost += float(cell['sogginess']) / 8
+        # Bears are spooked by artificially-smooth surfaces.
+        cost += max(0, 5 - cell['roughness'])
+        return cost
 
     def sprite(self, player):
         if self.position in player.visibletiles:

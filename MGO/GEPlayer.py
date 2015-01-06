@@ -92,7 +92,7 @@ class GEPlayer(BaseMGO.GEMGO):
             self._suggestmessage("You pick up " + collectables.name[collectable], 4)
         self.cellmap[self.position]['collectableitem'] = 0
         if not GEPlayer.FREEPLAYER:
-            self.score[collectables.CHOCOLATE] -= self.cellmap[self.position]['difficulty']
+            self.score[collectables.CHOCOLATE] -= self.terraincost()
         if self.layingfuse and self.cellmap[self.position]['sogginess'] < 25:
             self.cellmap.placefuse(self.position)
         return True
@@ -139,6 +139,15 @@ class GEPlayer(BaseMGO.GEMGO):
 
     def delayedteleport(self, worldname, position=None):
         self.pendingteleports.append((worldname, position))
+
+    def terraincost(self):
+        """Determine cost of moving onto a cell"""
+        cell = self.cellmap[self.position]
+        cost = 3.0 if not cell['transparent'] else 1.0
+        cost += float(abs(cell['temperature'] - 20)) / 8
+        cost += float(cell['sogginess']) / 8
+        cost += float(cell['roughness']) / 16
+        return cost
 
     def updatevisible(self):
         """Calculate and return the set of tiles visible to player"""
