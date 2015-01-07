@@ -3,7 +3,7 @@ import random
 import collectables
 import images
 import coords
-from MGO import *
+import MGO
 from Map import Map
 from colors import *
 
@@ -15,7 +15,7 @@ class World:
         self.cellmap = Map(mapdict)
 
         self.gemgos = []
-        for gemgo in BaseMGO.GEMGO.__subclasses__():
+        for gemgo in MGO.GEMGOTYPES:
             self.gemgos += gemgo.place(self.cellmap)
 
     def insertgeplayer(self, geplayer):
@@ -70,7 +70,7 @@ class World:
         self.cellmap.update()
         geplayer.updatevisible()
 
-        self.players = filter(lambda x: isinstance(x, GEPlayer.GEPlayer), self.gemgos)
+        self.players = filter(lambda x: isinstance(x, MGO.GEPlayer), self.gemgos)
         gemgosprites = []
         for gemgo in self.gemgos:
             gemgo.update(self)
