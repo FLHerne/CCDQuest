@@ -15,13 +15,13 @@ class Duckie(BaseMGO.GEMGO):
         self.visible = False
 
     @classmethod
-    def place(self, cellmap):
+    def place(cls, cellmap):
         created = []
-        for i in xrange(int(cellmap.size[0]*cellmap.size[1]*self.PER_TILE)):
+        for i in xrange(int(cellmap.size[0]*cellmap.size[1]*cls.PER_TILE)):
             attempt = (random.randint(0, cellmap.size[0]-1),
                        random.randint(0, cellmap.size[1]-1))
             if False or cellmap[attempt]['sogginess'] >= 50 and not cellmap[attempt]['solid']:
-                created.append(self(attempt, cellmap))
+                created.append(cls(attempt, cellmap))
         return created
 
     def update(self, world):
