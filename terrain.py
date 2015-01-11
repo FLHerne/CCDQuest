@@ -4,15 +4,13 @@ import pygame.surfarray
 import images
 
 celltypefields = [
-    ('name',           (numpy.str_, 19)),
-    ('top',             numpy.bool_),
     ('destructable',    numpy.bool_),
-    ('temperature',     numpy.int8 ),
     ('fireignitechance',numpy.float_),
     ('fireoutchance',   numpy.float_),
-    ('hasroof',         numpy.bool_),
+    ('covered',         numpy.bool_),
     ('transparent',     numpy.bool_),
     ('solid',           numpy.bool_),
+    ('temperature',     numpy.int8 ),
     ('sogginess',       numpy.uint8),
     ('roughness',       numpy.uint8)
 ]

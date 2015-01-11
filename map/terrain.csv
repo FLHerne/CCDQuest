@@ -1,14 +1,14 @@
-# r    g    b   name             top    destr tmp  ignite out roof  trans solid soggy/roughness groundimage  topimage
-  0,   0,   0,  wall,            False, True,  20, 0,     1, False, False, True,    0,     0,       wall,
-  0, 255, 255,  window,          False, True,  20, 0,     1, False, True,  True,    0,     0,       glass,
-127, 127, 127,  rocky ground,    False, True,  20, 0,     1, False, True,  False,   0,    60,       rock,
-255, 255, 255,  snow,            False, True,  -5, 0,     1, False, True,  False,  10,     5,       snow,
-128,   0, 128,  floor,           False, True,  20, 0.5, 0.05, True, True,  False,   0,     0,       floor,
-  0, 255,   0,  grass,           False, True,  20, 0.1, 0.3, False, True,  False,   5,     5,       grass,
- 64, 127,  64,  forest,          True,  True,  20, 0.5, 0.1, False, False, False,  15,    20,       grass,     trees
- 127, 127,   0, sand,            False, True,  20, 0,     1, False, True,  False,   5,     5,       sand,
-255, 255, 127,  paving,          False, True,  20, 0,     1, False, True,  False,   0,     2,       paving,
-127,  64,   0,  wooden planking, False, True,  20, 0.4, 0.1, False, True,  False,   0,     2,       planks,
- 64, 127, 127,  marshland,       False, True,  20, 0,     1, False, True,  False,  60,    10,       marsh,
-  0, 127, 255,  water,           False, False, 12, 0,     1, False, True,  False, 100,    10,       water,
-  0,   0, 255,  deep water,      False, False,  8, 0,     1, False, True,  True,  100,    40,       deepwater,
+# r    g    b  destr  ignite out covered trans solid temp soggy/roughness groundimage  topimage
+  0,   0,   0, True,  0,     1,   False, False, True,  20,   0,     0,       wall,             # Walls
+  0, 255, 255, True,  0,     1,   False, True,  True,  20,   0,     0,       glass,            # Glass
+127, 127, 127, True,  0,     1,   False, True,  False, 20,   0,    60,       rock,             # Rocks
+255, 255, 255, True,  0,     1,   False, True,  False, -5,  10,     5,       snow,             # Snow
+128,   0, 128, True,  0.5, 0.05,  True,  True,  False, 20,   0,     0,       floor,            # Indoor tiles
+  0, 255,   0, True,  0.1, 0.3,   False, True,  False, 20,   5,     5,       grass,            # Grass
+ 64, 127,  64, True,  0.5, 0.1,   False, False, False, 20,  15,    20,       grass,     trees  # Forest
+ 127, 127,  0, True,  0,     1,   False, True,  False, 20,   5,     5,       sand,             # Sand
+255, 255, 127, True,  0,     1,   False, True,  False, 20,   0,     2,       paving,           # Paving tiles
+127,  64,   0, True,  0.4, 0.1,   False, True,  False, 20,   0,     2,       planks,           # Planked floor
+ 64, 127, 127, True,  0,     1,   False, True,  False, 20,  60,    10,       marsh,            # Marsh
+  0, 127, 255, False, 0,     1,   False, True,  False, 12,  95,    10,       water,            # Water
+  0,   0, 255, False, 0,     1,   False, True,  True,   8, 100,    40,       deepwater,        # Deep water

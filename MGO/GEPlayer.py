@@ -99,7 +99,7 @@ class GEPlayer(BaseMGO.GEMGO):
         oldpos = subtuple(self.position, self.direction)
         pathnbrs = []
         for nbrpos in coords.neighbours(self.position):
-            if (nbrpos == oldpos) or (self.cellmap[nbrpos]['name'] not in ['wooden planking', 'paving']):
+            if (nbrpos == oldpos) or (self.cellmap[nbrpos]['roughness'] > 2):
                 continue
             pathnbrs.append(nbrpos)
         if len(pathnbrs) != 1:

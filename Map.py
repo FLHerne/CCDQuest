@@ -147,10 +147,8 @@ class Map():
         if not cell['destructable']:
             return False
         self.damagedtiles[coords.mod(coord, self.size)] = random.choice(images.Damaged)
-        cell['hasroof'] = False
-        cell['name'] = "shattered debris"
+        cell['covered'] = False
         cell['collectableitem'] = 0
-        cell['top'] = False
         cell['fireignitechance'] = 0
         cell['fireoutchance'] = 1
         cell['transparent'] = True

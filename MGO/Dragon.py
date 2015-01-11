@@ -43,7 +43,7 @@ class Dragon(BaseMGO.GEMGO):
         self.hunting = None
         for player in world.players:
             playerpos = player.position
-            if not self.cellmap[playerpos]['top'] and not self.cellmap[playerpos]['hasroof'] and random.random() < Dragon.speed:
+            if not self.cellmap[playerpos]['covered'] and random.random() < Dragon.speed:
                 offset = tileoffset(self.position, playerpos, self.cellmap.size)
                 if offset[0]**2 + offset[1]**2 <= Dragon.detectionrange**2:
                     self.hunting = player
