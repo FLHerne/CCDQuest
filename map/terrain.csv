@@ -11,4 +11,4 @@
 127,  64,   0, True,  0.4, 0.1,   False, True,  False, 20,   0,     2,       planks,           # Planked floor
  64, 127, 127, True,  0,     1,   False, True,  False, 20,  60,    10,       marsh,            # Marsh
   0, 127, 255, False, 0,     1,   False, True,  False, 12,  95,    10,       water,            # Water
-  0,   0, 255, False, 0,     1,   False, True,  True,   8, 100,    40,       deepwater,        # Deep water
+  0,   0, 255, False, 0,     1,   False, True,  False,  8, 100,    40,       deepwater,        # Deep water

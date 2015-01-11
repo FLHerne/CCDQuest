@@ -78,8 +78,9 @@ class GEPlayer(BaseMGO.GEMGO):
         if abs(x) + abs(y) != 1:
             return False
         self.direction = (x, y)
-        if self.cellmap[coords.sum(self.position, (x, y))]['solid'] and not GEPlayer.FREEPLAYER:
-            self.score[collectables.CHOCOLATE] -= 50
+        if ((self.cellmap[coords.sum(self.position, (x, y))]['solid'] or
+             self.cellmap[coords.sum(self.position, (x, y))]['sogginess'] == 100) and
+            not GEPlayer.FREEPLAYER):
             return False
         self.position = coords.modsum(self.position, self.direction, self.cellmap.size)
         collectable = self.cellmap[self.position]['collectableitem']
