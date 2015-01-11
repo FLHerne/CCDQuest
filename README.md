@@ -13,13 +13,41 @@ Aims:
     
 Basic concepts:
 -----------
-* Dynamite can be used to destroy obsacles, but not in water
+* Dynamite can be used to destroy obstacles, but not in water
 * Each tile requires you to eat some chocolate - more for more difficult tiles
 * Dragons and fire make you lose chocolate
+* Bears make you lose coins, some of which are scattered around
 * You must not run out of chocolate
     
-Notes
+Map content:
+-----------
+* Terrain types are specified in map/terrain.csv
+    - r,g,b: Reprenting color in maps' terrain images
+    - destr: Destructable with dynamite
+    - ignite: Probability of igniting each turn if a neighbour is burning
+    - out: Probability of fire going out each turn
+    - solid: A solid block of something (e.g walls)
+    - trans: Transparent
+    - covered: Has a roof or similar (not necessarily shown)
+    - soggy/roughness: Sogginess and roughness, as percentages
+    - ground/topimage: Sprite(s) to use below and above player
+        - Refer to subdirectories of tiles/terrain/
+        - Square PNG images are used as-is, 6:1 (W:H) images represent neighbour-sensitive sprites (see wall for example)
+        - Each tile's sprite is selected randomly, single images are ignored if any neighbour-sensitive sets exist
+        - Sprites are centred on their tile and must have side length below 2x TILESIZE
+        - Large tile sprites overlap in the same order as their entries in terrain.csv
+
+* Maps each have a directory under map/, which must contain a file <dirname>.json
+This file is in JSON format, with the following attributes:
+    - "name": Required. Name of the map as seen by players
+    - "terrainfile": Required. PNG file in the map directory representing terrain types from map/terrain.csv
+    - "itemfile": Required. PNG file with location of coins (#FFFF00), chocolate (#7F4000) and dynamite (#FF0000)
+    - "startpos": Required. Initial position [x, y] of a player not arriving by portal.
+    - "gemgos": Optional. Positions and properties of in-game objects, with optional subattributes:
+        - "signs": List of positions and text of signs [[x, y], text]
+        - "portals": List of positions and destination of portals [[x, y], destmap, [dx, dy]]. 'destmap' must have a portal at (dx, dy).
+        - "pixies": List of initial positions and strings of pixies [[x, y], [string1, string2, stringn]]
+
+Notes:
 -----------
 * This is a potential target application for FLHerne's [mapgen](https://github.com/FLHerne/mapgen)
-* Maps come in the form of a ground file defining terrain and a collectables files with coins, chocs, dynamite and starting position
-
