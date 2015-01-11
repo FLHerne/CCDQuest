@@ -14,6 +14,8 @@ class GEPlayer(BaseMGO.GEMGO):
     XRAYVISION = config.get('player', 'xrayvision', bool, False)
     POSMESSAGE = config.get('player', 'posmessage', bool, False)
 
+    MAXFUSESOG = 25 # Maximum sogginess for explosives.
+
     def __init__(self, player, world, position):
         """Initialise instance variables"""
         self.player = player
@@ -87,7 +89,7 @@ class GEPlayer(BaseMGO.GEMGO):
         self.cellmap[self.position]['collectableitem'] = 0
         if not GEPlayer.FREEPLAYER:
             self.score[collectables.CHOCOLATE] -= self.terraincost()
-        if self.layingfuse and self.cellmap[self.position]['sogginess'] < 25:
+        if self.layingfuse and self.cellmap[self.position]['sogginess'] < GEPlayer.MAXFUSESOG:
             self.cellmap.placefuse(self.position)
         return True
 
@@ -109,7 +111,7 @@ class GEPlayer(BaseMGO.GEMGO):
         """Detonate carried explosives at player's location"""
         if self.score[collectables.DYNAMITE] <= 0:
             return
-        if not self.cellmap[self.position]['destructable']:
+        if self.cellmap[self.position]['sogginess'] >= GEPlayer.MAXFUSESOG:
             return
         self._suggestmessage("You detonate some dynamite", 4)
         self.cellmap.detonate(self.position)
