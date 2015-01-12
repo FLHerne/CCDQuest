@@ -2,6 +2,7 @@ import random
 import images
 import coords
 import config
+import terrain
 import BaseMGO
 
 def mindist(a, b, size):
@@ -58,7 +59,7 @@ class Bear(BaseMGO.GEMGO):
                     nbrpos[0] >= 2*self.pfmapsize or nbrpos[1] >= 2*self.pfmapsize or
                     nbrpos == (self.pfmapsize, self.pfmapsize)):
                     continue
-                cellcost = self.terraincost(self.cellmap[mapcoord(nbrpos)])
+                cellcost = Bear.terraincost(self.cellmap[mapcoord(nbrpos)])
                 newdist = curdist+cellcost
                 if ((dijkstramap[nbrpos[0]][nbrpos[1]][0] <= newdist and dijkstramap[nbrpos[0]][nbrpos[1]][0] != 0) or
                     self.cellmap[mapcoord(nbrpos)]['solid'] or cellcost > 8):
@@ -117,7 +118,8 @@ class Bear(BaseMGO.GEMGO):
                 player.scattercoins(4, random.randint(4,8))
                 self._suggestmessage("The bear rips a hole in your bag!", 6)
 
-    def terraincost(self, cell):
+    @staticmethod
+    def terraincost(cell):
         """Determine cost of a cell for pathfinding"""
         cost = 1.5 if not cell['transparent'] else 1.0
         cost += float(abs(cell['temperature'] - 20)) / 16
@@ -125,6 +127,25 @@ class Bear(BaseMGO.GEMGO):
         # Bears are spooked by artificially-smooth surfaces.
         cost += max(0, 5 - cell['roughness'])
         return cost
+
+    @classmethod
+    def place(cls, cellmap):
+        """Create set of objects with random positions"""
+        typecosts = [cls.terraincost(t) for t in terrain.types]
+        mintc, maxtc = min(typecosts), max(typecosts)
+        def normterraincost(cell):
+            return (cls.terraincost(cell) - mintc) / (maxtc - mintc)
+        created = []
+        numtocreate = int(cellmap.size[0]*cellmap.size[1]*cls.PER_TILE)
+        for i in xrange(numtocreate * 20): # Avoid infinite loop if not placeable.
+            attempt = (random.randint(0, cellmap.size[0]-1),
+                       random.randint(0, cellmap.size[1]-1))
+            cell = cellmap[attempt]
+            if cell['solid'] or cell['sogginess'] > 90:
+                continue
+            if random.random() > normterraincost(cell):
+                created.append(cls(attempt, cellmap))
+        return created
 
     def sprite(self, player):
         if self.position in player.visibletiles:
