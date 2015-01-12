@@ -22,11 +22,12 @@ Basic concepts:
 Map content:
 -----------
 * Terrain types are specified in map/terrain.csv
-    - r,g,b: Reprenting color in maps' terrain images
+    - r,g,b: Representing color in maps' terrain images
     - destr: Destructable with dynamite
     - ignite: Probability of igniting each turn if a neighbour is burning
     - out: Probability of fire going out each turn
-    - solid: A solid block of something (e.g walls)
+    - solid: Terrain is a solid block of something (e.g walls)
+    - temp: Temerature, in vague degrees-C
     - trans: Transparent
     - covered: Has a roof or similar (not necessarily shown)
     - soggy/roughness: Sogginess and roughness, as percentages
