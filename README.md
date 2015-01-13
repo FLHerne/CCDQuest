@@ -10,7 +10,7 @@ Aims:
 * Collect dynamite
 * Avoid bears
 * Avoid dragons
-    
+
 Basic concepts:
 -----------
 * Dynamite can be used to destroy obstacles, but not in water
@@ -18,7 +18,11 @@ Basic concepts:
 * Dragons and fire make you lose chocolate
 * Bears make you lose coins, some of which are scattered around
 * You must not run out of chocolate
-    
+
+Settings:
+-----------
+All settings are in CCDQuest.cfg and described there
+
 Map content:
 -----------
 * Terrain types are specified in map/terrain.csv
