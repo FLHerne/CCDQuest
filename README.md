@@ -10,7 +10,7 @@ Aims:
 * Collect dynamite
 * Avoid bears
 * Avoid dragons
-    
+
 Basic concepts:
 -----------
 * Dynamite can be used to destroy obstacles, but not in water
@@ -18,7 +18,11 @@ Basic concepts:
 * Dragons and fire make you lose chocolate
 * Bears make you lose coins, some of which are scattered around
 * You must not run out of chocolate
-    
+
+Settings:
+-----------
+All settings are in CCDQuest.cfg and described there
+
 Map content:
 -----------
 * Terrain types are specified in map/terrain.csv
@@ -33,10 +37,11 @@ Map content:
     - soggy/roughness: Sogginess and roughness, as percentages
     - ground/topimage: Sprite(s) to use below and above player
         - Refer to subdirectories of tiles/terrain/
-        - Square PNG images are used as-is, 6:1 (W:H) images represent neighbour-sensitive sprites (see wall for example)
-        - Each tile's sprite is selected randomly, single images are ignored if any neighbour-sensitive sets exist
+        - Square PNG images are used as-is, 6:1 (W:H) images represent sets of neighbour-sensitive sprites (see wall for example)
+        - Each tile's sprite is randomly selected from images in tiles/terrain/<name>/, or only from neighbour-sensitive sets if one or more is present
         - Sprites are centred on their tile and must have side length below 2x TILESIZE
         - Large tile sprites overlap in the same order as their entries in terrain.csv
+        - Magenta (#FF00FF) is used for transparency
 
 * Maps each have a directory under map/, which must contain a file <dirname>.json
 This file is in JSON format, with the following attributes:
@@ -51,4 +56,4 @@ This file is in JSON format, with the following attributes:
 
 Notes:
 -----------
-* This is a potential target application for FLHerne's [mapgen](https://github.com/FLHerne/mapgen)
+* This is a target application for FLHerne's [mapgen](https://github.com/FLHerne/mapgen)
