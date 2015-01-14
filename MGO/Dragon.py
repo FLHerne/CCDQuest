@@ -69,6 +69,16 @@ class Dragon(BaseMGO.GEMGO):
         self.position = coords.modsum(self.position, self.direction, self.cellmap.size)
         flameplayer()
 
+    @classmethod
+    def place(cls, cellmap):
+        """Create dragons in random positions"""
+        created = []
+        for i in xrange(int(cellmap.size[0]*cellmap.size[1]*cls.PER_TILE)):
+            attempt = (random.randint(0, cellmap.size[0]-1),
+                       random.randint(0, cellmap.size[1]-1))
+            created.append(cls(attempt, cellmap))
+        return created
+
     def sprite(self, player):
         isvisible = False
         tileoffset = [-1 if axis == 1 else 0 for axis in self.direction]

@@ -130,7 +130,7 @@ class Bear(BaseMGO.GEMGO):
 
     @classmethod
     def place(cls, cellmap):
-        """Create set of objects with random positions"""
+        """Create bears in random positions, favouring suitable terrain types"""
         typecosts = [cls.terraincost(t) for t in terrain.types]
         mintc, maxtc = min(typecosts), max(typecosts)
         def normterraincost(cell):
