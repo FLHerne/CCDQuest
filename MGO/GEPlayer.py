@@ -147,27 +147,8 @@ class GEPlayer(BaseMGO.GEMGO):
         return cost
 
     def updatevisible(self):
-        """Calculate and return the set of tiles visible to player"""
-        self.visibletiles = set()
-        self.visibletiles.add(self.position)
-
-        def inrange(a):
-            return ((a[0]-self.position[0])**2 + (a[1]-self.position[1])**2 < self.visibility**2)
-        for outdir in CARDINALS:
-            trunkpos = self.position
-            while inrange(trunkpos):
-                self.visibletiles.add(coords.mod(trunkpos, self.cellmap.size))
-                for perpdir in perpendiculars(outdir):
-                    diagdir = coords.sum(outdir, perpdir)
-                    branchpos = trunkpos
-                    while inrange(branchpos):
-                        self.visibletiles.add(coords.mod(branchpos, self.cellmap.size))
-                        if not GEPlayer.XRAYVISION and not self.cellmap[branchpos]['transparent']:
-                            break
-                        branchpos = coords.sum(branchpos, diagdir)
-                if not GEPlayer.XRAYVISION and not self.cellmap[trunkpos]['transparent']:
-                    break
-                trunkpos = coords.sum(trunkpos, outdir)
+        self.visibletiles = BaseMGO.visibletiles(self.position, self.cellmap,
+                                                 self.visibility, GEPlayer.XRAYVISION)
 
         for tile in self.visibletiles:
             cell = self.cellmap[tile]
