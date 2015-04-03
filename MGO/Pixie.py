@@ -14,6 +14,7 @@ class Pixie(BaseMGO.GEMGO):
 
     @classmethod
     def place(cls, cellmap):
+        """Populate the world with pixies"""
         created = []
         if 'pixies' in cellmap.gemgodefs:
             for pixiedef in cellmap.gemgodefs['pixies']:
@@ -21,7 +22,7 @@ class Pixie(BaseMGO.GEMGO):
         return created
 
     def update(self, world):
-        """DOCSTRING NEEDED HERE"""
+        """Move; tell player if becoming visible"""
         self.move()
         nearbytiles = coords.neighbours(self.position) + [self.position]
         for player in world.players:
@@ -54,12 +55,10 @@ class Pixie(BaseMGO.GEMGO):
         return True
 
     def sprite(self, player):
+        """Sprite facing in random direction (ugly)"""
         if self.position in player.visibletiles:
             image = random.choice([images.PixieLeft, images.PixieRight])
             return self._pokedsprite(image)
 
         else:
             return None
-
-
-

@@ -2,9 +2,13 @@ import images
 import BaseMGO
 
 class Portal(BaseMGO.GEMGO):
-    """Sign that displays message when walked over"""
+    """Portals teleport the player to other locations/worlds"""
     def __init__(self, position, destination, localin, remotein, cellmap):
-        """Create new sign in position"""
+        """
+        Create new portal
+        position, destination: obvious
+        local/remotein: Is destination of >0 portals in this/other world(s)
+        """
         super(Portal, self).__init__(position, cellmap)
         self.destination = destination
         if destination is None:
@@ -18,6 +22,7 @@ class Portal(BaseMGO.GEMGO):
 
     @classmethod
     def place(cls, cellmap):
+        """Place portals when creating world"""
         created = []
         if 'portals' in cellmap.gemgodefs:
             for portaldef in cellmap.gemgodefs['portals']:
@@ -25,13 +30,14 @@ class Portal(BaseMGO.GEMGO):
         return created
 
     def update(self, world):
-        """Display message if becoming visible or trodden on"""
+        """Teleport player when trodden on"""
         for player in world.players:
             if (player.position == self.position) and self.destination:
                 self._suggestmessage("Fizzap!", 50)
                 player.delayedteleport(*self.destination)
 
     def sprite(self, player):
+        """Sprite depends on incoming and outgoing links"""
         if self.cellmap[self.position]['explored']:
             return self._pokedsprite(self.image, layer=-2)
         else:
