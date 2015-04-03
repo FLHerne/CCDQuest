@@ -4,7 +4,8 @@ import BaseMGO
 GEMGOTYPES = []
 # Hacky automagic importing of all MGO classes
 # in lieu of a sane plugin system.
-modnames = [os.path.basename(file)[:-3] for file in glob.glob(os.path.dirname(__file__)+"/*.py")]
+modfiles = glob.glob(os.path.join(os.path.dirname(__file__), "*.py"))
+modnames = [os.path.basename(file)[:-3] for file in modfiles]
 for name in modnames:
     if name == "__init__" or name == "BaseMGO":
         continue
