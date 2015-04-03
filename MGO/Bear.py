@@ -5,10 +5,6 @@ import config
 import terrain
 import BaseMGO
 
-def mindist(a, b, size):
-    """Distance between two values accounting for world wrapping"""
-    return min((b-a)%size,(a-b)%size)
-
 class Bear(BaseMGO.GEMGO):
     """Harmless animal that follows the player"""
     PER_TILE = 1/config.get('fauna', 'tiles_per_bear', float, 2500)
@@ -23,10 +19,13 @@ class Bear(BaseMGO.GEMGO):
         self.maxcost = 32   # Max path cost before giving up.
         self.hunting = None
 
+    def mindistto(self, position):
+        return coords.mindist(position, self.position, self.cellmap.size[0])
+
     def directiontoplayer(self, playerpos):
         """Find the best direction to move towards the player"""
-        if (mindist(playerpos[0], self.position[0], self.cellmap.size[0]) > self.pfmapsize or
-            mindist(playerpos[1], self.position[1], self.cellmap.size[1]) > self.pfmapsize):
+
+        if (any(ax > self.pfmapsize for ax in self.mindistto(playerpos))):
             # Player is outside pathfinder area
             return False
 
@@ -75,8 +74,7 @@ class Bear(BaseMGO.GEMGO):
     def update(self, world):
         def chaseplayer(playerpos):
             """Decide whether to chase the player"""
-            if (mindist(playerpos[0], self.position[0], self.cellmap.size[0])**2 +
-                mindist(playerpos[1], self.position[1], self.cellmap.size[1])**2) > self.detectionrange**2:
+            if (sum(ax**2 for ax in self.mindistto(playerpos)) > self.detectionrange**2):
                 # Can't see/smell/hear (?) player
                 return False
             if random.random() > self.speed:

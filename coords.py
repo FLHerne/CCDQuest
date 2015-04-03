@@ -23,4 +23,21 @@ def mul(a, b):
         return tuple([ea*eb for ea, eb in zip(a, b)])
 
 def neighbours(a):
+    """List of 4 tiles neighbouring a"""
     return [sum(a, dir) for dir in directions.CARDINALS]
+
+def mindist(a, b, size):
+    """Distance per axis between two points accounting for world wrapping"""
+    return tuple([min((eb-ea)%size, (ea-eb)%size) for ea, eb in zip(a, b)])
+
+def tileoffset(a, b, size):
+    """Offset of b from a, accounting for wrapping of world size"""
+    offset = [0, 0]
+    for axis in [0, 1]:
+        subtract = b[axis] - a[axis]
+        absubtract = abs(subtract)
+        if absubtract*2 <= size:
+            offset[axis] = subtract
+        else:
+            offset[axis] = (size-absubtract) * cmp(0, subtract)
+    return offset
