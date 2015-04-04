@@ -2,6 +2,7 @@ import random
 import images
 import coords
 import config
+import pathfind
 import terrain
 import BaseMGO
 
@@ -14,67 +15,21 @@ class Bear(BaseMGO.GEMGO):
         super(Bear, self).__init__(position, cellmap)
         self.direction = -1 # Left
         self.speed = 0.7    # Chance of moving per turn, max 1, min 0
-        self.pfmapsize = 32
-        self.detectionrange = 18
+        self.pfmapsize = 16
+        self.detectionrange = 16
         self.maxcost = 32   # Max path cost before giving up.
         self.hunting = None
 
-    def mindistto(self, position):
-        return coords.mindist(position, self.position, self.cellmap.size[0])
-
     def directiontoplayer(self, playerpos):
         """Find the best direction to move towards the player"""
-
-        if (any(ax > self.pfmapsize for ax in self.mindistto(playerpos))):
-            # Player is outside pathfinder area
-            return False
-
-        def mapcoord(pfcoord):
-            """Get map coordinate from pathfinder one"""
-            return coords.modsum(self.position, pfcoord, (-self.pfmapsize,)*2, self.cellmap.size)
-
-        foundtarget = False
-        dijkstramap = [[[0, (self.pfmapsize,)*2, False] for x in xrange(2*self.pfmapsize)] for x in xrange(2*self.pfmapsize)]
-        import heapq
-        openlist = []
-        heapq.heappush(openlist, (0, (self.pfmapsize,)*2))
-        curpos = None
-        while openlist:
-            curnode = heapq.heappop(openlist)
-            curdist = curnode[0]
-            if curdist > self.maxcost:
-                # Give up if player is painfully unreachable.
-                break
-            curpos = curnode[1]
-            if mapcoord(curpos) == tuple(playerpos):
-                foundtarget = True
-                break
-            if dijkstramap[curpos[0]][curpos[1]][2] == True:
-                continue
-            else:
-                dijkstramap[curpos[0]][curpos[1]][2] = True
-            for nbrpos in coords.neighbours(curpos):
-                if (nbrpos[0] < 0 or nbrpos[1] < 0 or
-                    nbrpos[0] >= 2*self.pfmapsize or nbrpos[1] >= 2*self.pfmapsize or
-                    nbrpos == (self.pfmapsize, self.pfmapsize)):
-                    continue
-                cellcost = Bear.terraincost(self.cellmap[mapcoord(nbrpos)])
-                newdist = curdist+cellcost
-                if ((dijkstramap[nbrpos[0]][nbrpos[1]][0] <= newdist and dijkstramap[nbrpos[0]][nbrpos[1]][0] != 0) or
-                    self.cellmap[mapcoord(nbrpos)]['solid'] or cellcost > 8):
-                    continue
-                dijkstramap[nbrpos[0]][nbrpos[1]] = [newdist, curpos, False]
-                heapq.heappush(openlist, (newdist, nbrpos))
-        if not foundtarget:
-            return False
-        while dijkstramap[curpos[0]][curpos[1]][1] != (self.pfmapsize, self.pfmapsize):
-            curpos = dijkstramap[curpos[0]][curpos[1]][1]
-        return coords.sum(curpos, (-self.pfmapsize,)*2)
+        return pathfind.firstmove(self.position, playerpos, Bear.terraincost,
+                                  self.cellmap, self.pfmapsize, self.maxcost)
 
     def update(self, world):
         def chaseplayer(playerpos):
             """Decide whether to chase the player"""
-            if (sum(ax**2 for ax in self.mindistto(playerpos)) > self.detectionrange**2):
+            playerdist = coords.mindist(self.position, playerpos, self.cellmap.size)
+            if (sum(ax**2 for ax in playerdist) > self.detectionrange**2):
                 # Can't see/smell/hear (?) player
                 return False
             if random.random() > self.speed:

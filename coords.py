@@ -28,7 +28,7 @@ def neighbours(a):
 
 def mindist(a, b, size):
     """Distance per axis between two points accounting for world wrapping"""
-    return tuple([min((eb-ea)%size, (ea-eb)%size) for ea, eb in zip(a, b)])
+    return tuple([min((eb-ea)%es, (ea-eb)%es) for ea, eb, es in zip(a, b, size)])
 
 def tileoffset(a, b, size):
     """Offset of b from a, accounting for wrapping of world size"""
@@ -36,8 +36,8 @@ def tileoffset(a, b, size):
     for axis in [0, 1]:
         subtract = b[axis] - a[axis]
         absubtract = abs(subtract)
-        if absubtract*2 <= size:
+        if absubtract*2 <= size[axis]:
             offset[axis] = subtract
         else:
-            offset[axis] = (size-absubtract) * cmp(0, subtract)
+            offset[axis] = (size[axis]-absubtract) * cmp(0, subtract)
     return offset
