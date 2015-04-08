@@ -9,7 +9,7 @@ import terrain
 import numpy
 import os.path
 
-class Map():
+class CellMap():
     """Contains array of Cells and properties representing the map as a whole"""
     CELLDAMAGEDROUGHNESS = 40
     CELLBURNINGCOST = 200
@@ -153,7 +153,7 @@ class Map():
         cell['fireoutchance'] = 1
         cell['transparent'] = True
         cell['solid'] = False
-        cell['roughness'] = max(100, cell['roughness'] + Map.CELLDAMAGEDROUGHNESS)
+        cell['roughness'] = max(100, cell['roughness'] + CellMap.CELLDAMAGEDROUGHNESS)
         cell['topimage'] = 0
         return True
 
