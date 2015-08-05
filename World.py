@@ -4,7 +4,7 @@ import collectables
 import images
 import coords
 import MGO
-from Map import Map
+from CellMap import CellMap
 from colors import *
 
 TILESIZE = images.TILESIZE
@@ -12,7 +12,7 @@ TILESIZE = images.TILESIZE
 class World:
     def __init__(self, mapdict):
         self.mapdef = mapdict
-        self.cellmap = Map(mapdict)
+        self.cellmap = CellMap(mapdict)
 
         self.gemgos = []
         for gemgo in MGO.GEMGOTYPES:
@@ -78,4 +78,4 @@ class World:
         self.rendervisible(geplayer, gemgosprites)
 
         if geplayer.position in self.cellmap.burningtiles:
-            geplayer.score[collectables.CHOCOLATE] -= Map.CELLBURNINGCOST
+            geplayer.score[collectables.CHOCOLATE] -= CellMap.CELLBURNINGCOST
